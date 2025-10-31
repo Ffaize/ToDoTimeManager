@@ -57,10 +57,20 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
+    <Folder Include="StoredProcedures\TimeLogs" />
+    <Folder Include="StoredProcedures\ToDos" />
+    <Folder Include="StoredProcedures\Users" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\TimeLogs.sql" />
     <Build Include="Tables\ToDos.sql" />
     <Build Include="Tables\Users.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_Create.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetById.sql" />
+    <Build Include="StoredProcedures\ToDos\sp_ToDos_Create.sql" />
+    <Build Include="StoredProcedures\ToDos\sp_ToDos_GetById.sql" />
+    <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_Create.sql" />
+    <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetById.sql" />
   </ItemGroup>
 </Project>
