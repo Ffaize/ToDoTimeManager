@@ -11,8 +11,8 @@ namespace ToDoTimeManager.WebApi.Utils.Implementations
 
         public string HashPassword(UserEntity user, string password)
         {
-            if (user.Username == null) throw new ArgumentNullException("Username cannot be null");
-            var userHash = HashPasswordWithSalt(password, DateToByteArray(user.Username));
+            if (user.UserName == null) throw new ArgumentNullException("Username cannot be null");
+            var userHash = HashPasswordWithSalt(password, DateToByteArray(user.UserName));
             return userHash;
         }
 

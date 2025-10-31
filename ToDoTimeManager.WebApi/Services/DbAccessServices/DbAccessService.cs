@@ -20,7 +20,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
         /// <typeparam name="TResult"></typeparam>
         /// <param name="procedureName"></param>
         /// <returns>List of items, type of stored procedure table item type</returns>
-        Task<List<TResult>> GetRecords<TResult>(string procedureName);
+        Task<List<TResult>> GetAllRecords<TResult>(string procedureName);
 
         /// <summary>
         /// Adds one record to the database using a stored procedure.
@@ -151,7 +151,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
         /// <typeparam name="TResult"></typeparam>
         /// <param name="procedureName"></param>
         /// <returns>List of items, type of stored procedure table item type</returns>
-        public async Task<List<TResult>> GetRecords<TResult>(string procedureName)
+        public async Task<List<TResult>> GetAllRecords<TResult>(string procedureName)
         {
             try
             {

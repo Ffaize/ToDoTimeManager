@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 using ToDoTimeManager.WebApi.Middleware;
+using ToDoTimeManager.WebApi.Services.DbAccessServices;
 using ToDoTimeManager.WebApi.Utils.Implementations;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
@@ -26,6 +27,8 @@ namespace ToDoTimeManager.WebApi
             // Add utils to the container.
             builder.Services.AddScoped<IPasswordHelperService, PasswordHelperService>();
             builder.Services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
+
+            builder.Services.AddScoped<IDbAccessService, DbAccessService>();
 
 
 

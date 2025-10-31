@@ -72,5 +72,9 @@
     <Build Include="StoredProcedures\ToDos\sp_ToDos_GetById.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_Create.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetById.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetAll.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetbyUsername.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_DeleteById.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_Update.sql" />
   </ItemGroup>
 </Project>
