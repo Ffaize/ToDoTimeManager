@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ToDoTimeManager.Shared\ToDoTimeManager.Shared.csproj" />
   </ItemGroup>
 
