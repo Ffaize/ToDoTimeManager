@@ -16,11 +16,11 @@ namespace ToDoTimeManager.WebApi
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            _ = builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            
-            builder.Services.AddSwaggerGen(options =>
+            _ = builder.Services.AddEndpointsApiExplorer();
+
+            _ = builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -33,9 +33,9 @@ namespace ToDoTimeManager.WebApi
                 });
                 options.OperationFilter<AuthResponsesOperationFilter>();
             });
-            builder.Services.AddAuthorization();
+            _ = builder.Services.AddAuthorization();
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            _ = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -56,15 +56,15 @@ namespace ToDoTimeManager.WebApi
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                _ = app.UseSwagger();
+                _ = app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseMiddleware<GlobalExceptionHandler>();
-            app.MapControllers();
+            _ = app.UseHttpsRedirection();
+            _ = app.UseAuthentication();
+            _ = app.UseAuthorization();
+            _ = app.UseMiddleware<GlobalExceptionHandler>();
+            _ = app.MapControllers();
 
             app.Run();
         }

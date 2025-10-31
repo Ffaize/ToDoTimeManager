@@ -5,7 +5,7 @@
         public DateTime ErrorTimeStamp { get; set; }
         public string CauseOfError { get; set; }
 
-        private string msgDetails = string.Empty;
+        private readonly string msgDetails = string.Empty;
 
         #region Constructors
 

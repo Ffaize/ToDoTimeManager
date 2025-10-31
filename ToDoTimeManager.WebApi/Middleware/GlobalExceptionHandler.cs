@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 
 namespace ToDoTimeManager.WebApi.Middleware
@@ -11,14 +11,14 @@ namespace ToDoTimeManager.WebApi.Middleware
             var stopwatch = Stopwatch.StartNew();
 
             try
-            { 
+            {
                 await next(context);
                 if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
                 {
                     context.Response.StatusCode = StatusCodes.Status206PartialContent;
                     context.Response.Body = null;
                 }
-                    
+
 
                 stopwatch.Stop();
             }
