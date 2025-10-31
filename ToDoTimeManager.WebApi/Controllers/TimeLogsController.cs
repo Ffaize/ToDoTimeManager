@@ -6,6 +6,6 @@ namespace ToDoTimeManager.WebApi.Controllers
     [Route("api/[controller]")]
     public class TimeLogsController : ControllerBase
     {
-
+        private readonly ILogger<AuthController> _logger;
     }
 }

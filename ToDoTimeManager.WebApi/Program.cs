@@ -5,6 +5,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 using ToDoTimeManager.WebApi.Middleware;
+using ToDoTimeManager.WebApi.Utils.Implementations;
+using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi
 {
@@ -20,9 +22,16 @@ namespace ToDoTimeManager.WebApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
+
+            // Add utils to the container.
+            builder.Services.AddScoped<IPasswordHelperService, PasswordHelperService>();
+            builder.Services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
+
+
+
             builder.Services.AddSwaggerGen(options =>
             {
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                options.AddSecurityDefinition("Bearer", new()
                 {
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
@@ -38,7 +47,7 @@ namespace ToDoTimeManager.WebApi
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new()
                     {
                         ValidateIssuer = true,
                         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],

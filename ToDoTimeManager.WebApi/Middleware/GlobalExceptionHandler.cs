@@ -45,7 +45,7 @@ namespace ToDoTimeManager.WebApi.Middleware
 
         private static ProblemDetails CreateProblemDetails(int status, string title, string detail = null)
         {
-            return new ProblemDetails
+            return new()
             {
                 Status = status,
                 Title = title,

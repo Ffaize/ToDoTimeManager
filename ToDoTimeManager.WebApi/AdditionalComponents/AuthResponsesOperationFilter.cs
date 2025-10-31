@@ -18,9 +18,9 @@ namespace ToDoTimeManager.WebApi.AdditionalComponents
                 {
                     {
                         // Put here you own security scheme, this one is an example
-                        new OpenApiSecurityScheme
+                        new()
                         {
-                            Reference = new OpenApiReference
+                            Reference = new()
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
@@ -33,7 +33,7 @@ namespace ToDoTimeManager.WebApi.AdditionalComponents
                     }
                 };
                 operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+                operation.Responses.Add("401", new() { Description = "Unauthorized" });
             }
         }
     }
