@@ -1,4 +1,4 @@
-﻿namespace TodoUI.CircuitServicesAccesors
+﻿namespace ToDoTimeManager.WebUI.CircuitServicesAccesor
 {
     public class CircuitServicesAccesor
     {

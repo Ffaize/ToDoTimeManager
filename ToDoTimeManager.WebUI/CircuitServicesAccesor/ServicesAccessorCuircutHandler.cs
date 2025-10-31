@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Server.Circuits;
 
-namespace TodoUI.CircuitServicesAccesors
+namespace ToDoTimeManager.WebUI.CircuitServicesAccesor
 {
     public class ServicesAccessorCuircutHandler (IServiceProvider services, 
         CircuitServicesAccesor servicesAccesor) : CircuitHandler
