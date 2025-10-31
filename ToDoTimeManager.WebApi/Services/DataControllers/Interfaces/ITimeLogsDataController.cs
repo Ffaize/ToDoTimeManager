@@ -6,8 +6,8 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Interfaces
     {
         Task<List<TimeLogEntity>> GetAllTimeLogs();
         Task<TimeLogEntity?> GetTimeLogById(Guid timeLogId);
-        Task<TimeLogEntity> CreateTimeLog(TimeLogEntity newTimeLog);
-        Task<TimeLogEntity?> UpdateTimeLog(TimeLogEntity updatedTimeLog);
+        Task<bool> CreateTimeLog(TimeLogEntity newTimeLog);
+        Task<bool> UpdateTimeLog(TimeLogEntity updatedTimeLog);
         Task<bool> DeleteTimeLog(Guid timeLogId);
     }
 }

@@ -1,7 +1,5 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace ToDoTimeManager.WebApi.Services.DbAccessServices
@@ -165,7 +163,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
             }
         }
 
-       
+
         //public async Task<List<TResult>> GetRecordsAsync<T1, T2, T3, T4, TResult>(
         //    string procedureName,
         //    Func<T1, T2, T3, T4, TResult> map,
@@ -195,7 +193,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
         //        param: parameters,
         //        splitOn: splitOn,
         //        commandType: CommandType.StoredProcedure);
-            
+
         //    return result.ToList().FirstOrDefault();
         //}
 
@@ -212,7 +210,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
         //        param: parameters,
         //        splitOn: splitOn,
         //        commandType: CommandType.StoredProcedure);
-            
+
         //    return result.ToList();
         //}
 
@@ -296,7 +294,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
             catch (Exception e)
             {
                 throw new InvalidOperationException($"Error retrieving record with ID '{id}' using procedure '{procedureName}' : {e.Message}");
-            } 
+            }
         }
 
         /// <summary>
@@ -347,7 +345,7 @@ namespace ToDoTimeManager.WebApi.Services.DbAccessServices
             }
         }
 
-       
+
         public async Task<List<TResult>> GetRecordsByParameters<TResult>(string procedureName, DynamicParameters parameters)
         {
             try
