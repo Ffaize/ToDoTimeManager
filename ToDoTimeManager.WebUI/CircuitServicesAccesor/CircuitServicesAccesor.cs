@@ -2,7 +2,7 @@
 {
     public class CircuitServicesAccesor
     {
-        static readonly AsyncLocal<IServiceProvider> _blazoredService = new();
+        static readonly AsyncLocal<IServiceProvider?> _blazoredService = new();
 
         public IServiceProvider? Service
         {

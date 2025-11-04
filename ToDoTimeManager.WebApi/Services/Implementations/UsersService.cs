@@ -2,6 +2,7 @@
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
+using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations
 {
@@ -10,11 +11,13 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
 
         private readonly IUsersDataController _usersDataController;
         private readonly ILogger<UsersService> _logger;
+        private readonly IPasswordHelperService _passwordHelperService;
 
-        public UsersService(IUsersDataController usersDataController, ILogger<UsersService> logger)
+        public UsersService(IUsersDataController usersDataController, ILogger<UsersService> logger, IPasswordHelperService passwordHelperService)
         {
             _usersDataController = usersDataController;
             _logger = logger;
+            _passwordHelperService = passwordHelperService;
         }
 
         public async Task<List<User>> GetAllUsers()
@@ -63,6 +66,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
         {
             try
             {
+                newUser.Password = _passwordHelperService.HashPassword(newUser.Id.ToString(), newUser.Password!);
                 return await _usersDataController.CreateUser(new UserEntity(newUser));
             }
             catch (Exception e)

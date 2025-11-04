@@ -20,7 +20,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             try
             {
                 var res = await _timeLogsDataController.GetAllTimeLogs();
-                return res.Select(tle => tle.ToTimeLog()).ToList();
+                return res.Select(tle => tle.ToTimeLog()).ToList()!;
             }
             catch (Exception e)
             {
@@ -48,7 +48,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             try
             {
                 var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
-                return res.Select(tle => tle.ToTimeLog()).ToList();
+                return res.Select(tle => tle.ToTimeLog()).ToList()!;
             }
             catch (Exception e)
             {
@@ -62,7 +62,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             try
             {
                 var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
-                return res.Select(tle => tle.ToTimeLog()).ToList();
+                return res.Select(tle => tle.ToTimeLog()).ToList()!;
             }
             catch (Exception e)
             {
@@ -76,7 +76,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             try
             {
                 var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
-                return res.Select(tle => tle.ToTimeLog()).ToList();
+                return res.Select(tle => tle.ToTimeLog()).ToList()!;
             }
             catch (Exception e)
             {

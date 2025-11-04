@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
@@ -9,20 +10,19 @@ namespace ToDoTimeManager.WebApi.Utils.Implementations
     public class PasswordHelperService : IPasswordHelperService
     {
 
-        public string HashPassword(UserEntity user, string password)
+        public string HashPassword(string salt, string password)
         {
-            if (user.UserName == null) throw new ArgumentNullException("Username cannot be null");
-            var userHash = HashPasswordWithSalt(password, DateToByteArray(user.UserName));
+            var userHash = HashPasswordWithSalt(password, DateToByteArray(salt));
             return userHash;
         }
 
-        public bool VerifyPassword(UserEntity user, string hashedPassword)
+        public bool VerifyPassword(User user, string hashedPassword)
         {
             var result = VerifyHashedPassword(user, hashedPassword);
             return result == PasswordVerificationResult.Success;
         }
 
-        private static PasswordVerificationResult VerifyHashedPassword(UserEntity user, string hashedPassword)
+        private static PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword)
         {
             return user.Password != null && user.Password.Equals(hashedPassword) ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;
         }
