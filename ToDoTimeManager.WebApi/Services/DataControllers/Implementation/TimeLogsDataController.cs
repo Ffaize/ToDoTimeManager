@@ -7,8 +7,8 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
     public class TimeLogsDataController : ITimeLogsDataController
     {
         private readonly IDbAccessService _dbAccessService;
-        private readonly ILogger<UsersDataController> _logger;
-        public TimeLogsDataController(IDbAccessService dbAccessService, ILogger<UsersDataController> logger)
+        private readonly ILogger<TimeLogsDataController> _logger;
+        public TimeLogsDataController(IDbAccessService dbAccessService, ILogger<TimeLogsDataController> logger)
         {
             _dbAccessService = dbAccessService;
             _logger = logger;

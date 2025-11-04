@@ -1,25 +1,28 @@
-﻿using ToDoTimeManager.WebApi.Entities;
+﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.DbAccessServices;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 
-namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
+namespace ToDoTimeManager.WebApi.Services.Implementations
 {
-    public class ToDosDataController : IToDosDataController
+    public class ToDosService : IToDosService
     {
 
-        private readonly IDbAccessService _dbAccessService;
-        private readonly ILogger<ToDosDataController> _logger;
+        private readonly IToDosDataController _toDosDataController;
+        private readonly ILogger<ToDosService> _logger;
 
-        public ToDosDataController(IDbAccessService dbAccessService, ILogger<ToDosDataController> logger)
+        public ToDosService(IToDosDataController toDosDataController, ILogger<ToDosService> logger)
         {
-            _dbAccessService = dbAccessService;
+            _toDosDataController = toDosDataController;
             _logger = logger;
         }
-        public async Task<List<ToDoEntity>> GetAllToDos()
+        public async Task<List<ToDo>> GetAllToDos()
         {
             try
             {
-                return await _dbAccessService.GetAllRecords<ToDoEntity>("sp_ToDos_GetAll");
+                var res = await _toDosDataController.GetAllToDos();
+                return res.Select(tde => tde.ToToDo()).ToList();
             }
             catch (Exception e)
             {
@@ -28,11 +31,12 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
             }
         }
 
-        public async Task<ToDoEntity?> GetToDoById(Guid toDoId)
+        public async Task<ToDo?> GetToDoById(Guid toDoId)
         {
             try
             {
-                return await _dbAccessService.GetRecordById<ToDoEntity>("sp_ToDos_GetById", toDoId);
+                var res = await _toDosDataController.GetToDoById(toDoId);
+                return res?.ToToDo();
             }
             catch (Exception e)
             {
@@ -41,11 +45,11 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
             }
         }
 
-        public async Task<bool> CreateToDo(ToDoEntity newToDo)
+        public async Task<bool> CreateToDo(ToDo newToDo)
         {
             try
             {
-                return await _dbAccessService.AddRecord("sp_ToDos_Create", newToDo) >= 1;
+                return await _toDosDataController.CreateToDo(new ToDoEntity(newToDo));
             }
             catch (Exception e)
             {
@@ -54,11 +58,11 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
             }
         }
 
-        public async Task<bool> UpdateToDo(ToDoEntity updatedToDo)
+        public async Task<bool> UpdateToDo(ToDo updatedToDo)
         {
             try
             {
-                return await _dbAccessService.UpdateRecord("sp_ToDos_Update", updatedToDo) >= 1;
+                return await _toDosDataController.UpdateToDo(new ToDoEntity(updatedToDo));
             }
             catch (Exception e)
             {
@@ -71,7 +75,7 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
         {
             try
             {
-                return await _dbAccessService.DeleteRecordById("sp_ToDos_Delete", toDoId) >= 1;
+                return await _toDosDataController.DeleteToDo(toDoId);
             }
             catch (Exception e)
             {
