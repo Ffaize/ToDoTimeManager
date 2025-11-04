@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TimeLogsController : ControllerBase

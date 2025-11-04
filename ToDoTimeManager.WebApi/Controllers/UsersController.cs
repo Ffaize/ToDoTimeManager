@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -17,6 +18,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             _usersService = usersService;
         }
 
+        [Authorize]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -24,6 +26,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
@@ -32,7 +35,8 @@ namespace ToDoTimeManager.WebApi.Controllers
             var user = await _usersService.GetUserById(id);
             return user == null ? NotFound("User was not found") : Ok(user);
         }
-
+        
+        [Authorize]
         [HttpGet("GetByUsername/{userName}")]
         public async Task<IActionResult> GetUserByUsername(string userName)
         {
@@ -42,6 +46,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             return user is null ? NotFound("User was not found") : Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] User? user)
         {
@@ -60,6 +65,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             return newUser ? Ok(newUser) : BadRequest("User could not be created");
         }
 
+        [Authorize]
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateUser([FromBody] User? user)
         {
@@ -74,6 +80,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             return updatedUser ? Ok(updatedUser) : BadRequest("User could not be updated");
         }
 
+        [Authorize]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

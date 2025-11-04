@@ -9,15 +9,18 @@
 
         #region Constructors
 
-        public CustomException() { }
+        public CustomException(string causeOfError)
+        {
+            CauseOfError = causeOfError;
+        }
 
-        public CustomException(string msg)
+        public CustomException(string msg, string causeOfError)
         {
             msgDetails = msg;
             CauseOfError = "Unknown";
         }
 
-        public CustomException(string msg, string cause, DateTime dateTime)
+        public CustomException(string msg, string cause, DateTime dateTime, string causeOfError)
         {
             msgDetails = msg;
             CauseOfError = cause;

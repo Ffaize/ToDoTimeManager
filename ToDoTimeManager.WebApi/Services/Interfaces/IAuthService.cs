@@ -4,7 +4,7 @@ namespace ToDoTimeManager.WebApi.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<TokenModel> AuthenticateUser(LoginUser loginUser);
-        Task<TokenModel> RefreshAuthToken(TokenModel tokenModel);
+        TokenModel? AuthenticateUser(LoginUser loginUser, User user);
+        TokenModel? RefreshAuthToken(TokenModel tokenModel);
     }
 }

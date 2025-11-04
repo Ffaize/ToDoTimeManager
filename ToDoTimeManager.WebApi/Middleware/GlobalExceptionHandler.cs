@@ -4,22 +4,14 @@ using ToDoTimeManager.WebApi.AdditionalComponents;
 
 namespace ToDoTimeManager.WebApi.Middleware
 {
-    public class GlobalExceptionHandler(ILogger logger) : IMiddleware
+    public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IMiddleware
     {
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var stopwatch = Stopwatch.StartNew();
-
             try
             {
                 await next(context);
-                if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
-                {
-                    context.Response.StatusCode = StatusCodes.Status206PartialContent;
-                    context.Response.Body = null;
-                }
-
-
                 stopwatch.Stop();
             }
             catch (CustomException exception)
@@ -43,9 +35,9 @@ namespace ToDoTimeManager.WebApi.Middleware
             }
         }
 
-        private static ProblemDetails CreateProblemDetails(int status, string title, string detail = null)
+        private static ProblemDetails CreateProblemDetails(int status, string title, string? detail = null)
         {
-            return new()
+            return new ProblemDetails
             {
                 Status = status,
                 Title = title,
