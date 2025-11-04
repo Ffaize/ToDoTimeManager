@@ -8,7 +8,7 @@ namespace ToDoTimeManager.WebApi.Entities
 
         public ToDoEntity()
         {
-            
+
         }
 
         public ToDoEntity(ToDo toDo)

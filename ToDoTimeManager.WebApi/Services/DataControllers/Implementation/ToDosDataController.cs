@@ -1,6 +1,6 @@
 ﻿using ToDoTimeManager.WebApi.Entities;
+using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
-using ToDoTimeManager.WebApi.Services.DbAccessServices;
 
 namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
 {
@@ -38,6 +38,19 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
             {
                 _logger.LogError(e, e.Message);
                 return null;
+            }
+        }
+
+        public async Task<List<ToDoEntity>> GetToDosByUserId(Guid userId)
+        {
+            try
+            {
+                return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByUserId", "AssignedTo", userId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
             }
         }
 

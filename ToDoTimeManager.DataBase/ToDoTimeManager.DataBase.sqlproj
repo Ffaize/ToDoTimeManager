@@ -82,5 +82,9 @@
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetAll.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_Update.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_DeleteById.sql" />
+    <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByUserIdAndToDoId.sql" />
+    <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByUserId.sql" />
+    <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByToDoId.sql" />
+    <Build Include="StoredProcedures\ToDos\sp_ToDos_GetByAssignedTo.sql" />
   </ItemGroup>
 </Project>

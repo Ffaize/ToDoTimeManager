@@ -33,6 +33,35 @@ namespace ToDoTimeManager.WebApi.Controllers
             return timeLog == null ? NotFound("Time log was not found") : Ok(timeLog);
         }
 
+        [HttpGet("GetByToDoId/{toDoId}")]
+        public async Task<IActionResult> GetTimeLogsByToDoId(Guid toDoId)
+        {
+            if (toDoId == Guid.Empty)
+                return BadRequest("Invalid to-do ID");
+            var timeLogs = await _timeLogsService.GetTimeLogsByToDoId(toDoId);
+            return Ok(timeLogs);
+        }
+
+        [HttpGet("GetByUserId/{userId}")]
+        public async Task<IActionResult> GetTimeLogsByUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                return BadRequest("Invalid user ID");
+            var timeLogs = await _timeLogsService.GetTimeLogsByUserId(userId);
+            return Ok(timeLogs);
+        }
+
+        [HttpGet("GetByUserIdAndToDoId/{userId}/{toDoId}")]
+        public async Task<IActionResult> GetTimeLogsByUserIdAndToDoId(Guid userId, Guid toDoId)
+        {
+            if (userId == Guid.Empty)
+                return BadRequest("Invalid user ID");
+            if (toDoId == Guid.Empty)
+                return BadRequest("Invalid to-do ID");
+            var timeLogs = await _timeLogsService.GetTimeLogsByUserIdAndToDoId(userId, toDoId);
+            return Ok(timeLogs);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateTimeLog([FromBody] TimeLog? timeLog)
         {

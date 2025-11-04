@@ -1,6 +1,7 @@
-﻿using ToDoTimeManager.WebApi.Entities;
+﻿using Dapper;
+using ToDoTimeManager.WebApi.Entities;
+using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
-using ToDoTimeManager.WebApi.Services.DbAccessServices;
 
 namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
 {
@@ -37,6 +38,48 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
             {
                 _logger.LogError(e, e.Message);
                 return null;
+            }
+        }
+
+        public async Task<List<TimeLogEntity>> GetTimeLogsByToDoId(Guid toDoId)
+        {
+            try
+            {
+                return await _dbAccessService.GetAllByParameter<TimeLogEntity>("sp_TimeLogs_GetByToDoId", "ToDoId", toDoId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
+            }
+        }
+
+        public async Task<List<TimeLogEntity>> GetTimeLogsByUserId(Guid userId)
+        {
+            try
+            {
+                return await _dbAccessService.GetAllByParameter<TimeLogEntity>("sp_TimeLogs_GetByUserId", "UserId", userId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
+            }
+        }
+
+        public async Task<List<TimeLogEntity>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("ToDoId", toDoId);
+                parameters.Add("UserId", userId);
+                return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndToDoId", parameters);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
             }
         }
 

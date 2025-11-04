@@ -1,7 +1,6 @@
 ﻿using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
-using ToDoTimeManager.WebApi.Services.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations
@@ -20,7 +19,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
         {
             try
             {
-                var res =  await _timeLogsDataController.GetAllTimeLogs();
+                var res = await _timeLogsDataController.GetAllTimeLogs();
                 return res.Select(tle => tle.ToTimeLog()).ToList();
             }
             catch (Exception e)
@@ -41,6 +40,48 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             {
                 _logger.LogError(e, e.Message);
                 return null;
+            }
+        }
+
+        public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId)
+        {
+            try
+            {
+                var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
+                return res.Select(tle => tle.ToTimeLog()).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
+            }
+        }
+
+        public async Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId)
+        {
+            try
+            {
+                var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
+                return res.Select(tle => tle.ToTimeLog()).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
+            }
+        }
+
+        public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId)
+        {
+            try
+            {
+                var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
+                return res.Select(tle => tle.ToTimeLog()).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return [];
             }
         }
 

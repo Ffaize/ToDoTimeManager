@@ -7,7 +7,7 @@ namespace ToDoTimeManager.WebApi.Entities
 
         public TimeLogEntity()
         {
-            
+
         }
 
 

@@ -1,5 +1,4 @@
 ﻿using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebApi.Entities;
 
 namespace ToDoTimeManager.WebApi.Services.Interfaces
 {
@@ -7,6 +6,9 @@ namespace ToDoTimeManager.WebApi.Services.Interfaces
     {
         Task<List<TimeLog>> GetAllTimeLogs();
         Task<TimeLog?> GetTimeLogById(Guid timeLogId);
+        Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId);
+        Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId);
+        Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId);
         Task<bool> CreateTimeLog(TimeLog newTimeLog);
         Task<bool> UpdateTimeLog(TimeLog updatedTimeLog);
         Task<bool> DeleteTimeLog(Guid timeLogId);

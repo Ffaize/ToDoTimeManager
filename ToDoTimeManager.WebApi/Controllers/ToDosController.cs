@@ -33,6 +33,15 @@ namespace ToDoTimeManager.WebApi.Controllers
             return toDo == null ? NotFound("To-do was not found") : Ok(toDo);
         }
 
+        [HttpGet("GetByUserId/{userId}")]
+        public async Task<IActionResult> GetToDosByUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                return BadRequest("Invalid user ID");
+            var toDos = await _toDosService.GetToDosByUserId(userId);
+            return Ok(toDos);
+        }
+
         [HttpPost("Create")]
         public async Task<IActionResult> CreateToDo([FromBody] ToDo? toDo)
         {

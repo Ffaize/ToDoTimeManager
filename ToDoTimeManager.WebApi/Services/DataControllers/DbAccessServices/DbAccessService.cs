@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace ToDoTimeManager.WebApi.Services.DbAccessServices
+namespace ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices
 {
     public interface IDbAccessService
     {

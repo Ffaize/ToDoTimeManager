@@ -8,7 +8,7 @@ namespace ToDoTimeManager.WebApi.Entities
 
         public UserEntity()
         {
-            
+
         }
 
         public UserEntity(User user)
