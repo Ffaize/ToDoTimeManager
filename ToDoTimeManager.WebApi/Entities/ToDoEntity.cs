@@ -19,9 +19,13 @@ namespace ToDoTimeManager.WebApi.Entities
             CreatedAt = toDo.CreatedAt;
             DueDate = toDo.DueDate;
             Status = toDo.Status;
+            AssignedTo = toDo.AssignedTo;
+            NumberedId = toDo.NumberedId;
         }
 
         public Guid Id { get; set; }
+        public int NumberedId { get; set; }
+
         public string? Title { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -39,7 +43,8 @@ namespace ToDoTimeManager.WebApi.Entities
                 CreatedAt = CreatedAt,
                 DueDate = DueDate,
                 Status = Status,
-                AssignedTo = AssignedTo
+                AssignedTo = AssignedTo,
+                NumberedId = NumberedId
             };
         }
     }

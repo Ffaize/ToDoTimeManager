@@ -8,6 +8,7 @@ AS
 		CreatedAt,
 		DueDate,
 		Status,
-		AssignedTo
+		AssignedTo,
+		NumberedId
 	FROM [dbo].[ToDos]
 	WHERE Id = @Id

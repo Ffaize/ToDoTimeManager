@@ -14,7 +14,8 @@ AS
 		CreatedAt,
 		DueDate,
 		Status,
-		AssignedTo
+		AssignedTo,
+		NumberedId
 	)
 	VALUES (
 		@Id,
@@ -23,5 +24,6 @@ AS
 		@CreatedAt,
 		@DueDate,
 		@Status,
-		@AssignedTo
+		@AssignedTo,
+		(SELECT ISNULL(MAX(NumberedId), 0) + 1 FROM [dbo].[ToDos])
 	)

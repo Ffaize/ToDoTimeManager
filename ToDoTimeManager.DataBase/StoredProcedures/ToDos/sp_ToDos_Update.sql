@@ -5,7 +5,8 @@
     @CreatedAt DATETIME,
     @DueDate DATETIME,
     @Status INT,
-    @AssignedTo UNIQUEIDENTIFIER
+    @AssignedTo UNIQUEIDENTIFIER,
+    @NumberedId INT
 AS
     UPDATE [dbo].[ToDos]
     SET
