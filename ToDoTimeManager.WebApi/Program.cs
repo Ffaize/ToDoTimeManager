@@ -8,6 +8,8 @@ using ToDoTimeManager.WebApi.Middleware;
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
+using ToDoTimeManager.WebApi.Services.Implementations;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.WebApi.Utils.Implementations;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
@@ -35,6 +37,10 @@ namespace ToDoTimeManager.WebApi
             builder.Services.AddScoped<IUsersDataController, UsersDataController>();
             builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
             builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
+            
+            builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IToDosService, ToDosService>();
+            builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
 
 
 
