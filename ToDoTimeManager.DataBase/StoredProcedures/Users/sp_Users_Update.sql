@@ -14,5 +14,5 @@ AS
 			Password = @Password,
 			UserRole = @UserRole
 		WHERE 
-			UserID = @Id;
+			Id = @Id;
 	END

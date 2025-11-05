@@ -3,11 +3,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SELECT 
-		UserID,
+		Id,
 		UserName,
 		Email,
-		CreatedAt,
-		IsActive
+		Password,
+		UserRole
 	FROM 
 		dbo.Users
 	ORDER BY 

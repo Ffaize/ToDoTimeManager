@@ -1,17 +1,17 @@
 ﻿CREATE PROCEDURE [dbo].[sp_Users_DeleteById]
-	@UserID UniqueIdentifier
+	@Id UniqueIdentifier
 AS
 	BEGIN
 		Update dbo.TimeLogs
 			SET UserID = '00000000-0000-0000-0000-000000000000'
-		WHERE UserID = @UserID;
+		WHERE UserID = @Id;
 
 		UPDATE dbo.TimeLogs
 			SET UserId = '00000000-0000-0000-0000-000000000000'
-		WHERE UserId = @UserID;
+		WHERE UserId = @Id;
 
 		DELETE FROM 
 			dbo.Users
 		WHERE
-			UserID = @UserID;
+			Id = @Id;
 	END

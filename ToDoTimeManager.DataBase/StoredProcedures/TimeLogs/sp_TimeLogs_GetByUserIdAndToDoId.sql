@@ -3,13 +3,11 @@
 	@ToDoId UNIQUEIDENTIFIER
 AS
 	SELECT 
-		Id,
-		UserId,
-		ToDoId,
-		StartTime,
-		EndTime,
-		DurationInMinutes,
-		Description,
-		CreatedAt
+		[Id],
+		[UserId],
+		[ToDoId],
+		[HoursSpent],
+		[LogDescription],
+		[LogDate]
 		FROM [dbo].[TimeLogs]
 		WHERE UserId = @UserId AND ToDoId = @ToDoId
