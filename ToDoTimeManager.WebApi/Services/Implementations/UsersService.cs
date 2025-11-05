@@ -62,6 +62,34 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             }
         }
 
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            try
+            {
+                var res = await _usersDataController.GetUserByEmail(email);
+                return res?.ToUser();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return null;
+            }
+        }
+
+        public async Task<User?> GetUserByLoginParameter(string loginParameter)
+        {
+            try
+            {
+                var res = await _usersDataController.GetUserByLoginParameter(loginParameter);
+                return res?.ToUser();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return null;
+            }
+        }
+
         public async Task<bool> CreateUser(User newUser)
         {
             try

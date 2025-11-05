@@ -53,6 +53,32 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
                 return null;
             }
         }
+        
+        public async Task<UserEntity?> GetUserByEmail(string email)
+        {
+            try
+            {
+                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByEmail", "Email", email);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return null;
+            }
+        }
+        
+        public async Task<UserEntity?> GetUserByLoginParameter(string loginParameter)
+        {
+            try
+            {
+                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "Email", loginParameter);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return null;
+            }
+        }
 
         public async Task<bool> CreateUser(UserEntity newUser)
         {

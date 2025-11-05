@@ -86,5 +86,7 @@
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByUserId.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByToDoId.sql" />
     <Build Include="StoredProcedures\ToDos\sp_ToDos_GetByAssignedTo.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetByEmail.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetByLoginParameter.sql" />
   </ItemGroup>
 </Project>

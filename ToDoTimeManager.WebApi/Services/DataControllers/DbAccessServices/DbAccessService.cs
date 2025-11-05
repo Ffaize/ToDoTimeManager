@@ -134,7 +134,7 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices
         {
             try
             {
-                return _configuration.GetConnectionString("SqlServer");
+                return _configuration.GetConnectionString("DefaultConnection");
             }
             catch (Exception e)
             {

@@ -46,6 +46,26 @@ namespace ToDoTimeManager.WebApi.Controllers
             return user is null ? NotFound("User was not found") : Ok(user);
         }
 
+        [Authorize]
+        [HttpGet("GetByEmail/{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest("Invalid email");
+            var user = await _usersService.GetUserByEmail(email);
+            return user is null ? NotFound("User was not found") : Ok(user);
+        }
+
+        [Authorize]
+        [HttpGet("GetByLoginParameter/{loginParameter}")]
+        public async Task<IActionResult> GetUserByLoginParameter(string loginParameter)
+        {
+            if (string.IsNullOrWhiteSpace(loginParameter))
+                return BadRequest("Invalid login parameter");
+            var user = await _usersService.GetUserByLoginParameter(loginParameter);
+            return user is null ? NotFound("User was not found") : Ok(user);
+        }
+
         [AllowAnonymous]
         [HttpPost("Create")]
         public async Task<IActionResult> CreateUser([FromBody] User? user)

@@ -42,6 +42,8 @@ namespace ToDoTimeManager.WebApi
             builder.Services.AddScoped<IToDosService, ToDosService>();
             builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            
+            builder.Services.AddScoped<GlobalExceptionHandler>();
 
 
 

@@ -26,10 +26,10 @@ namespace ToDoTimeManager.WebApi.Controllers
         {
             if(loginUser is null)
                 return Unauthorized("Login data is null");
-            if(string.IsNullOrWhiteSpace(loginUser.Password) || string.IsNullOrWhiteSpace(loginUser.Username))
+            if(string.IsNullOrWhiteSpace(loginUser.Password) || string.IsNullOrWhiteSpace(loginUser.LoginParameter))
                 return Unauthorized("Login data is invalid");
 
-            var user = await _usersService.GetUserByUsername(loginUser.Username);
+            var user = await _usersService.GetUserByLoginParameter(loginUser.LoginParameter);
             if (user is null)
                 return Unauthorized("User was not found");
 
