@@ -24,7 +24,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
         {
             try
             {
-                if (_passwordHelperService.VerifyPassword(user,
+                if (!_passwordHelperService.VerifyPassword(user,
                 _passwordHelperService.HashPassword(user.Id.ToString(), loginUser.Password!)))
                     return null;
 
@@ -47,7 +47,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
             try
             {
                 var (userId, userRole) = _jwtGeneratorService.GetUserDataFromAccessToken(tokenModel.AccessToken!);
-                if(string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
+                if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                     return null;
 
                 return new TokenModel()

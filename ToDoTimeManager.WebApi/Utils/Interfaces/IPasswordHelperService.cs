@@ -1,5 +1,4 @@
 ﻿using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebApi.Entities;
 
 namespace ToDoTimeManager.WebApi.Utils.Interfaces
 {

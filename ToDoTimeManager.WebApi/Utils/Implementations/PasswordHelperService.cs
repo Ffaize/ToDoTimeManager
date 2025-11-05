@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Utils.Implementations

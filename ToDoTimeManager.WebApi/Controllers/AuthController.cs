@@ -24,9 +24,9 @@ namespace ToDoTimeManager.WebApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginUser? loginUser)
         {
-            if(loginUser is null)
+            if (loginUser is null)
                 return Unauthorized("Login data is null");
-            if(string.IsNullOrWhiteSpace(loginUser.Password) || string.IsNullOrWhiteSpace(loginUser.LoginParameter))
+            if (string.IsNullOrWhiteSpace(loginUser.Password) || string.IsNullOrWhiteSpace(loginUser.LoginParameter))
                 return Unauthorized("Login data is invalid");
 
             var user = await _usersService.GetUserByLoginParameter(loginUser.LoginParameter);
@@ -45,8 +45,8 @@ namespace ToDoTimeManager.WebApi.Controllers
             if (tokenModel is null || string.IsNullOrWhiteSpace(tokenModel.RefreshToken))
                 return Unauthorized("Token data is null or invalid");
 
-            if(tokenModel.RefreshTokenExpiresAt > DateTime.UtcNow)
-                return Unauthorized("Refresh token has not expired yet");
+            if (tokenModel.RefreshTokenExpiresAt < DateTime.UtcNow)
+                return Unauthorized("Refresh token has expired");
 
             var newTokenModel = _authService.RefreshAuthToken(tokenModel);
             if (newTokenModel is null)

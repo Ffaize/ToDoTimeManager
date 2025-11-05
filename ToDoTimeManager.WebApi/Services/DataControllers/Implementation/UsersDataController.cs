@@ -53,7 +53,7 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
                 return null;
             }
         }
-        
+
         public async Task<UserEntity?> GetUserByEmail(string email)
         {
             try
@@ -66,12 +66,12 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
                 return null;
             }
         }
-        
+
         public async Task<UserEntity?> GetUserByLoginParameter(string loginParameter)
         {
             try
             {
-                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "Email", loginParameter);
+                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "LoginParameter", loginParameter);
             }
             catch (Exception e)
             {

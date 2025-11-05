@@ -35,7 +35,7 @@ namespace ToDoTimeManager.WebApi.Controllers
             var user = await _usersService.GetUserById(id);
             return user == null ? NotFound("User was not found") : Ok(user);
         }
-        
+
         [Authorize]
         [HttpGet("GetByUsername/{userName}")]
         public async Task<IActionResult> GetUserByUsername(string userName)
