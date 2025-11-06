@@ -1,10 +1,9 @@
 ﻿using ToDoTimeManager.Shared.Models;
 
-namespace ToDoTimeManager.WebApi.Services.Interfaces
+namespace ToDoTimeManager.WebApi.Services.Interfaces;
+
+public interface IAuthService
 {
-    public interface IAuthService
-    {
-        TokenModel? AuthenticateUser(LoginUser loginUser, User user);
-        TokenModel? RefreshAuthToken(TokenModel tokenModel);
-    }
+    TokenModel? AuthenticateUser(LoginUser loginUser, User user);
+    TokenModel? RefreshAuthToken(TokenModel tokenModel);
 }

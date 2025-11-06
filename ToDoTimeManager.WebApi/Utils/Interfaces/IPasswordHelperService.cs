@@ -1,10 +1,9 @@
 ﻿using ToDoTimeManager.Shared.Models;
 
-namespace ToDoTimeManager.WebApi.Utils.Interfaces
+namespace ToDoTimeManager.WebApi.Utils.Interfaces;
+
+public interface IPasswordHelperService
 {
-    public interface IPasswordHelperService
-    {
-        string HashPassword(string salt, string password);
-        bool VerifyPassword(User user, string hashedPassword);
-    }
+    string HashPassword(string salt, string password);
+    bool VerifyPassword(User user, string hashedPassword);
 }

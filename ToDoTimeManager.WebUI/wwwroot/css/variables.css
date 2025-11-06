@@ -1,0 +1,21 @@
+﻿:root {
+    --primary-color: #5A7C73;
+    --secondary-color: #CFC7C4;
+    --main-background-color: #F2FAF6;
+    --black-color: #000000;
+    --white-color: #ffffff;
+    --success-color: #4CAF50;
+    --warning-color: #ffc107;
+    --error-color: #dc3545;
+    --dark-gray-color: #666;
+    --light-gray: rgba(0, 0, 0, 0.4);
+    --light-text-color: white;
+    --dark-text-color: black;
+    --spacer: 1rem;
+    --border-radius-box: 0.4rem;
+    --border-radius-bth: 0.25rem;
+    --border-radius-container: 1rem;
+    --shadow-card: 0 0 10px rgba(0, 0, 0, 0.3);
+    --shadow-button: 0 0 10px rgba(0, 0, 0, 0.3);
+    --shadow-card-primary-color: 0 0 10px $color-primary;
+}

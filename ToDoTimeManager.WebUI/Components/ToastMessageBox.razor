@@ -1,0 +1,60 @@
+
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
+@using ToDoTimeManager.WebUI.Services.Interfaces
+@inject IToastMessagesService ToastService
+
+<div class="toast-m @_statusStyle @(_isVisible ? "show" : "")">
+    <EnvelopeIcon IconSize="30" IconStyle="toast-m__icon" />
+    <p>@_message</p>
+</div>
+
+@code {
+    private string _message = "";
+    private bool _isVisible;
+    private string _statusStyle = "";
+    private CancellationTokenSource? _cts;
+
+    protected override void OnInitialized()
+    {
+        _cts = new CancellationTokenSource();
+        _ = ListenToToasts(_cts.Token);
+    }
+
+    private async Task ListenToToasts(CancellationToken ct)
+    {
+        await foreach (var (msg, isError) in ToastService.GetToastStream(ct))
+        {
+            _message = msg;
+            _statusStyle = isError ? "toast-m--error" : "toast-m--success";
+            _isVisible = true;
+            await InvokeAsync(StateHasChanged);
+
+            try
+            {
+                await Task.Delay(3000, ct);
+            }
+            catch (TaskCanceledException) { }
+
+            _isVisible = false;
+            await InvokeAsync(StateHasChanged);
+
+            try
+            {
+                await Task.Delay(500, ct);  
+            }
+            catch (TaskCanceledException) { }
+
+            _message = string.Empty;
+            await InvokeAsync(StateHasChanged);
+
+            if (ct.IsCancellationRequested)
+                break;
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+}

@@ -4,65 +4,64 @@ using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
-namespace ToDoTimeManager.WebApi.Services.Implementations
+namespace ToDoTimeManager.WebApi.Services.Implementations;
+
+public class AuthService : IAuthService
 {
-    public class AuthService : IAuthService
+    private readonly ILogger<AuthService> _logger;
+    private readonly IPasswordHelperService _passwordHelperService;
+    private readonly IJwtGeneratorService _jwtGeneratorService;
+    private readonly IConfiguration _configuration;
+
+    public AuthService(ILogger<AuthService> logger, IPasswordHelperService passwordHelperService, IJwtGeneratorService jwtGeneratorService, IConfiguration configuration)
     {
-        private readonly ILogger<AuthService> _logger;
-        private readonly IPasswordHelperService _passwordHelperService;
-        private readonly IJwtGeneratorService _jwtGeneratorService;
-        private readonly IConfiguration _configuration;
+        _logger = logger;
+        _passwordHelperService = passwordHelperService;
+        _jwtGeneratorService = jwtGeneratorService;
+        _configuration = configuration;
+    }
 
-        public AuthService(ILogger<AuthService> logger, IPasswordHelperService passwordHelperService, IJwtGeneratorService jwtGeneratorService, IConfiguration configuration)
+    public TokenModel? AuthenticateUser(LoginUser loginUser, User user)
+    {
+        try
         {
-            _logger = logger;
-            _passwordHelperService = passwordHelperService;
-            _jwtGeneratorService = jwtGeneratorService;
-            _configuration = configuration;
-        }
-
-        public TokenModel? AuthenticateUser(LoginUser loginUser, User user)
-        {
-            try
-            {
-                if (!_passwordHelperService.VerifyPassword(user,
-                _passwordHelperService.HashPassword(user.Id.ToString(), loginUser.Password!)))
-                    return null;
-
-                return new TokenModel()
-                {
-                    AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-                    RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
-                    RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
+            if (!_passwordHelperService.VerifyPassword(user,
+                    _passwordHelperService.HashPassword(user.Id.ToString(), loginUser.Password!)))
                 return null;
-            }
+
+            return new TokenModel()
+            {
+                AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
+                RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
+                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
+            };
         }
-
-        public TokenModel? RefreshAuthToken(TokenModel tokenModel)
+        catch (Exception ex)
         {
-            try
-            {
-                var (userId, userRole) = JwtTokenHelper.GetUserDataFromAccessToken(tokenModel.AccessToken!);
-                if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
-                    return null;
+            _logger.LogError(ex, ex.Message);
+            return null;
+        }
+    }
 
-                return new TokenModel()
-                {
-                    AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
-                    RefreshToken = tokenModel.RefreshToken,
-                    RefreshTokenExpiresAt = tokenModel.RefreshTokenExpiresAt
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
+    public TokenModel? RefreshAuthToken(TokenModel tokenModel)
+    {
+        try
+        {
+            var (userId, userRole) = JwtTokenHelper.GetUserDataFromAccessToken(tokenModel.AccessToken!);
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                 return null;
-            }
+
+            return new TokenModel()
+            {
+                AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
+                RefreshToken = tokenModel.RefreshToken,
+                RefreshTokenExpiresAt = tokenModel.RefreshTokenExpiresAt
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return null;
         }
     }
 }

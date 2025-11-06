@@ -2,121 +2,120 @@
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 
-namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
+namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
+
+public class UsersDataController : IUsersDataController
 {
-    public class UsersDataController : IUsersDataController
+    private readonly IDbAccessService _dbAccessService;
+    private readonly ILogger<UsersDataController> _logger;
+
+    public UsersDataController(IDbAccessService dbAccessService, ILogger<UsersDataController> logger)
     {
-        private readonly IDbAccessService _dbAccessService;
-        private readonly ILogger<UsersDataController> _logger;
+        _dbAccessService = dbAccessService;
+        _logger = logger;
+    }
 
-        public UsersDataController(IDbAccessService dbAccessService, ILogger<UsersDataController> logger)
+    public async Task<List<UserEntity>> GetAllUsers()
+    {
+        try
         {
-            _dbAccessService = dbAccessService;
-            _logger = logger;
+            return await _dbAccessService.GetAllRecords<UserEntity>("sp_Users_GetAll");
         }
-
-        public async Task<List<UserEntity>> GetAllUsers()
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.GetAllRecords<UserEntity>("sp_Users_GetAll");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            _logger.LogError(e, e.Message);
+            return [];
         }
+    }
 
-        public async Task<UserEntity?> GetUserById(Guid userId)
+    public async Task<UserEntity?> GetUserById(Guid userId)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.GetRecordById<UserEntity>("sp_Users_GetById", userId);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            return await _dbAccessService.GetRecordById<UserEntity>("sp_Users_GetById", userId);
         }
-
-        public async Task<UserEntity?> GetUserByUsername(string username)
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByUsername", "UserName", username);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            _logger.LogError(e, e.Message);
+            return null;
         }
+    }
 
-        public async Task<UserEntity?> GetUserByEmail(string email)
+    public async Task<UserEntity?> GetUserByUsername(string username)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByEmail", "Email", email);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByUsername", "UserName", username);
         }
-
-        public async Task<UserEntity?> GetUserByLoginParameter(string loginParameter)
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "LoginParameter", loginParameter);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            _logger.LogError(e, e.Message);
+            return null;
         }
+    }
 
-        public async Task<bool> CreateUser(UserEntity newUser)
+    public async Task<UserEntity?> GetUserByEmail(string email)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.AddRecord("sp_Users_Create", newUser) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByEmail", "Email", email);
         }
-
-        public async Task<bool> UpdateUser(UserEntity updatedUser)
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.UpdateRecord("sp_Users_Update", updatedUser) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            _logger.LogError(e, e.Message);
+            return null;
         }
+    }
 
-        public async Task<bool> DeleteUser(Guid userId)
+    public async Task<UserEntity?> GetUserByLoginParameter(string loginParameter)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.DeleteRecordById("sp_Users_DeleteById", userId) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "LoginParameter", loginParameter);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
+    }
+
+    public async Task<bool> CreateUser(UserEntity newUser)
+    {
+        try
+        {
+            return await _dbAccessService.AddRecord("sp_Users_Create", newUser) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateUser(UserEntity updatedUser)
+    {
+        try
+        {
+            return await _dbAccessService.UpdateRecord("sp_Users_Update", updatedUser) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteUser(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.DeleteRecordById("sp_Users_DeleteById", userId) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
         }
     }
 }

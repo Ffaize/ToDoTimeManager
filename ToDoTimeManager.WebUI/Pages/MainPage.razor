@@ -1,0 +1,24 @@
+﻿@page "/"
+@using ToDoTimeManager.WebUI.Services.Interfaces
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@code {
+    [Inject] public IToastMessagesService ToastService { get; set; } = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ToastService.ShowToast("test message", false);
+            await Task.Delay(5_000);
+            await ToastService.ShowToast("error message", true);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}
