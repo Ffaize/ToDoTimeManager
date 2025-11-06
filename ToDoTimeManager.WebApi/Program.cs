@@ -13,87 +13,86 @@ using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.WebApi.Utils.Implementations;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
-namespace ToDoTimeManager.WebApi
+namespace ToDoTimeManager.WebApi;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+
+
+        // Add utils to the container.
+        builder.Services.AddScoped<IPasswordHelperService, PasswordHelperService>();
+        builder.Services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
+
+        builder.Services.AddScoped<IDbAccessService, DbAccessService>();
+
+        builder.Services.AddScoped<IUsersDataController, UsersDataController>();
+        builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
+        builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
+
+        builder.Services.AddScoped<IUsersService, UsersService>();
+        builder.Services.AddScoped<IToDosService, ToDosService>();
+        builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+        builder.Services.AddScoped<GlobalExceptionHandler>();
+
+
+
+        builder.Services.AddSwaggerGen(options =>
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-
-
-            // Add utils to the container.
-            builder.Services.AddScoped<IPasswordHelperService, PasswordHelperService>();
-            builder.Services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
-
-            builder.Services.AddScoped<IDbAccessService, DbAccessService>();
-
-            builder.Services.AddScoped<IUsersDataController, UsersDataController>();
-            builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
-            builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
-
-            builder.Services.AddScoped<IUsersService, UsersService>();
-            builder.Services.AddScoped<IToDosService, ToDosService>();
-            builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-
-            builder.Services.AddScoped<GlobalExceptionHandler>();
-
-
-
-            builder.Services.AddSwaggerGen(options =>
+            options.AddSecurityDefinition("Bearer", new()
             {
-                options.AddSecurityDefinition("Bearer", new()
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "Enter ONLY your valid token in the text input below.\n\nExample: \"eyJhbGciOiJIUzI1NiIsInR...\""
-                });
-                options.OperationFilter<AuthResponsesOperationFilter>();
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter ONLY your valid token in the text input below.\n\nExample: \"eyJhbGciOiJIUzI1NiIsInR...\""
             });
-            builder.Services.AddAuthorization();
+            options.OperationFilter<AuthResponsesOperationFilter>();
+        });
+        builder.Services.AddAuthorization();
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                        ValidateAudience = true,
-                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? string.Empty)),
-                        ValidateIssuerSigningKey = true,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? string.Empty)),
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseMiddleware<GlobalExceptionHandler>();
-            app.MapControllers();
+        var app = builder.Build();
 
-            app.Run();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseMiddleware<GlobalExceptionHandler>();
+        app.MapControllers();
+
+        app.Run();
     }
 }

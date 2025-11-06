@@ -3,125 +3,124 @@ using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
-namespace ToDoTimeManager.WebApi.Services.Implementations
+namespace ToDoTimeManager.WebApi.Services.Implementations;
+
+public class TimeLogsService : ITimeLogsService
 {
-    public class TimeLogsService : ITimeLogsService
+    private readonly ITimeLogsDataController _timeLogsDataController;
+    private readonly ILogger<TimeLogsService> _logger;
+    public TimeLogsService(ITimeLogsDataController timeLogsDataController, ILogger<TimeLogsService> logger)
     {
-        private readonly ITimeLogsDataController _timeLogsDataController;
-        private readonly ILogger<TimeLogsService> _logger;
-        public TimeLogsService(ITimeLogsDataController timeLogsDataController, ILogger<TimeLogsService> logger)
-        {
-            _timeLogsDataController = timeLogsDataController;
-            _logger = logger;
-        }
+        _timeLogsDataController = timeLogsDataController;
+        _logger = logger;
+    }
 
-        public async Task<List<TimeLog>> GetAllTimeLogs()
+    public async Task<List<TimeLog>> GetAllTimeLogs()
+    {
+        try
         {
-            try
-            {
-                var res = await _timeLogsDataController.GetAllTimeLogs();
-                return res.Select(tle => tle.ToTimeLog()).ToList()!;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            var res = await _timeLogsDataController.GetAllTimeLogs();
+            return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
-
-        public async Task<TimeLog?> GetTimeLogById(Guid timeLogId)
+        catch (Exception e)
         {
-            try
-            {
-                var res = await _timeLogsDataController.GetTimeLogById(timeLogId);
-                return res?.ToTimeLog();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            _logger.LogError(e, e.Message);
+            return [];
         }
+    }
 
-        public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId)
+    public async Task<TimeLog?> GetTimeLogById(Guid timeLogId)
+    {
+        try
         {
-            try
-            {
-                var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
-                return res.Select(tle => tle.ToTimeLog()).ToList()!;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            var res = await _timeLogsDataController.GetTimeLogById(timeLogId);
+            return res?.ToTimeLog();
         }
-
-        public async Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId)
+        catch (Exception e)
         {
-            try
-            {
-                var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
-                return res.Select(tle => tle.ToTimeLog()).ToList()!;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            _logger.LogError(e, e.Message);
+            return null;
         }
+    }
 
-        public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId)
+    public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId)
+    {
+        try
         {
-            try
-            {
-                var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
-                return res.Select(tle => tle.ToTimeLog()).ToList()!;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
+            return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
-
-        public async Task<bool> CreateTimeLog(TimeLog newTimeLog)
+        catch (Exception e)
         {
-            try
-            {
-                return await _timeLogsDataController.CreateTimeLog(new TimeLogEntity(newTimeLog));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            _logger.LogError(e, e.Message);
+            return [];
         }
+    }
 
-        public async Task<bool> UpdateTimeLog(TimeLog updatedTimeLog)
+    public async Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId)
+    {
+        try
         {
-            try
-            {
-                return await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
+            return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
-
-        public async Task<bool> DeleteTimeLog(Guid timeLogId)
+        catch (Exception e)
         {
-            try
-            {
-                return await _timeLogsDataController.DeleteTimeLog(timeLogId);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId)
+    {
+        try
+        {
+            var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
+            return res.Select(tle => tle.ToTimeLog()).ToList()!;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    public async Task<bool> CreateTimeLog(TimeLog newTimeLog)
+    {
+        try
+        {
+            return await _timeLogsDataController.CreateTimeLog(new TimeLogEntity(newTimeLog));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateTimeLog(TimeLog updatedTimeLog)
+    {
+        try
+        {
+            return await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteTimeLog(Guid timeLogId)
+    {
+        try
+        {
+            return await _timeLogsDataController.DeleteTimeLog(timeLogId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
         }
     }
 }

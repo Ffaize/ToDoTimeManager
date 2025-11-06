@@ -2,95 +2,94 @@
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 
-namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation
+namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
+
+public class ToDosDataController : IToDosDataController
 {
-    public class ToDosDataController : IToDosDataController
+
+    private readonly IDbAccessService _dbAccessService;
+    private readonly ILogger<ToDosDataController> _logger;
+
+    public ToDosDataController(IDbAccessService dbAccessService, ILogger<ToDosDataController> logger)
     {
-
-        private readonly IDbAccessService _dbAccessService;
-        private readonly ILogger<ToDosDataController> _logger;
-
-        public ToDosDataController(IDbAccessService dbAccessService, ILogger<ToDosDataController> logger)
+        _dbAccessService = dbAccessService;
+        _logger = logger;
+    }
+    public async Task<List<ToDoEntity>> GetAllToDos()
+    {
+        try
         {
-            _dbAccessService = dbAccessService;
-            _logger = logger;
+            return await _dbAccessService.GetAllRecords<ToDoEntity>("sp_ToDos_GetAll");
         }
-        public async Task<List<ToDoEntity>> GetAllToDos()
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.GetAllRecords<ToDoEntity>("sp_ToDos_GetAll");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            _logger.LogError(e, e.Message);
+            return [];
         }
+    }
 
-        public async Task<ToDoEntity?> GetToDoById(Guid toDoId)
+    public async Task<ToDoEntity?> GetToDoById(Guid toDoId)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.GetRecordById<ToDoEntity>("sp_ToDos_GetById", toDoId);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return null;
-            }
+            return await _dbAccessService.GetRecordById<ToDoEntity>("sp_ToDos_GetById", toDoId);
         }
-
-        public async Task<List<ToDoEntity>> GetToDosByUserId(Guid userId)
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByUserId", "AssignedTo", userId);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return [];
-            }
+            _logger.LogError(e, e.Message);
+            return null;
         }
+    }
 
-        public async Task<bool> CreateToDo(ToDoEntity newToDo)
+    public async Task<List<ToDoEntity>> GetToDosByUserId(Guid userId)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.AddRecord("sp_ToDos_Create", newToDo) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByUserId", "AssignedTo", userId);
         }
-
-        public async Task<bool> UpdateToDo(ToDoEntity updatedToDo)
+        catch (Exception e)
         {
-            try
-            {
-                return await _dbAccessService.UpdateRecord("sp_ToDos_Update", updatedToDo) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            _logger.LogError(e, e.Message);
+            return [];
         }
+    }
 
-        public async Task<bool> DeleteToDo(Guid toDoId)
+    public async Task<bool> CreateToDo(ToDoEntity newToDo)
+    {
+        try
         {
-            try
-            {
-                return await _dbAccessService.DeleteRecordById("sp_ToDos_Delete", toDoId) >= 1;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return false;
-            }
+            return await _dbAccessService.AddRecord("sp_ToDos_Create", newToDo) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateToDo(ToDoEntity updatedToDo)
+    {
+        try
+        {
+            return await _dbAccessService.UpdateRecord("sp_ToDos_Update", updatedToDo) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteToDo(Guid toDoId)
+    {
+        try
+        {
+            return await _dbAccessService.DeleteRecordById("sp_ToDos_Delete", toDoId) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
         }
     }
 }

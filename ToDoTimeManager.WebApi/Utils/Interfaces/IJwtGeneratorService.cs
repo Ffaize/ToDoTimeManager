@@ -1,10 +1,9 @@
 ﻿using ToDoTimeManager.Shared.Enums;
 
-namespace ToDoTimeManager.WebApi.Utils.Interfaces
+namespace ToDoTimeManager.WebApi.Utils.Interfaces;
+
+public interface IJwtGeneratorService
 {
-    public interface IJwtGeneratorService
-    {
-        string GenerateAccessToken(string userId, UserRole? Role);
-        string GenerateRefreshToken();
-    }
+    string GenerateAccessToken(string userId, UserRole? Role);
+    string GenerateRefreshToken();
 }
