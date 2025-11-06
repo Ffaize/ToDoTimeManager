@@ -41,16 +41,5 @@ namespace ToDoTimeManager.WebApi.Utils.Implementations
         {
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
-
-        public (string? UserId, string? Role) GetUserDataFromAccessToken(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var role = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-
-            return (userId, role);
-        }
     }
 }

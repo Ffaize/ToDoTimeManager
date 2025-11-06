@@ -6,6 +6,5 @@ namespace ToDoTimeManager.WebApi.Utils.Interfaces
     {
         string GenerateAccessToken(string userId, UserRole? Role);
         string GenerateRefreshToken();
-        (string? UserId, string? Role) GetUserDataFromAccessToken(string token);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
@@ -46,7 +47,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations
         {
             try
             {
-                var (userId, userRole) = _jwtGeneratorService.GetUserDataFromAccessToken(tokenModel.AccessToken!);
+                var (userId, userRole) = JwtTokenHelper.GetUserDataFromAccessToken(tokenModel.AccessToken!);
                 if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                     return null;
 
