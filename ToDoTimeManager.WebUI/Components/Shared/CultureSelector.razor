@@ -1,0 +1,38 @@
+﻿@using System.Globalization
+@inject NavigationManager Navigation
+
+<div class="language-selector">
+    <select @bind="Culture">
+        <option value="en-US">English (US)</option>
+        <option value="uk-UA">Українська (UA)</option>
+    </select>
+</div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        Culture = CultureInfo.CurrentCulture;
+    }
+
+    private CultureInfo Culture
+    {
+        get
+        {
+            return CultureInfo.CurrentCulture;
+        }
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                var uri = new Uri(Navigation.Uri)
+                    .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+                var cultureEscaped = Uri.EscapeDataString(value.Name);
+                var uriEscaped = Uri.EscapeDataString(uri);
+
+                var fullUri = $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}";
+                Navigation.NavigateTo(fullUri, forceLoad: true);
+            }
+        }
+    }
+}

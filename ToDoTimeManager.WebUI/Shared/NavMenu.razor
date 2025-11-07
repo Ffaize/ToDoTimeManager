@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Localization
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ToDoTimeManager.WebUI</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -14,13 +18,27 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
+        <CultureSelector/>
+        <h1>@Localizer["test"]</h1>
     </nav>
 </div>
 
 @code {
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+    [Inject] private ProtectedLocalStorage ProtectedBrowserStorage { get; set; } = null!;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ProtectedBrowserStorage.SetAsync("a", "1");
+            Console.WriteLine(await ProtectedBrowserStorage.GetAsync<string>("a"));
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     private void ToggleNavMenu()
     {
