@@ -26,4 +26,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ToDoTimeManager.Shared\ToDoTimeManager.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

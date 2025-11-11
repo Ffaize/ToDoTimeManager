@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
+using ToDoTimeManager.WebUI.Handlers;
 using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
 using ToDoTimeManager.WebUI.Services.Interfaces;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace ToDoTimeManager.WebUI;
 
@@ -25,7 +28,19 @@ public class Program
             });
 
         builder.Services.AddScoped<IToastMessagesService, ToastMessagesService>();
+        builder.Services.AddScoped<TokenMessageHandler>();
+        builder.Services.AddScoped<ToastMessageHandler>();
+        builder.Services.AddScoped<AuthService>();
 
+        builder.Services.AddScoped<CustomAuthStateProvider>();
+        builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
+            provider.GetRequiredService<CustomAuthStateProvider>());
+
+        builder.Services.AddHttpClient("TodoTimeManager", client =>
+        {
+            client.BaseAddress = new Uri(builder.Configuration["BaseApiUrlAddress"] ?? "https://localhost:7130/");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }).AddHttpMessageHandler<ToastMessageHandler>().AddHttpMessageHandler<TokenMessageHandler>();
 
         var app = builder.Build();
 

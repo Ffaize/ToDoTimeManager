@@ -40,7 +40,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RefreshToken")]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         if (tokenModel is null || string.IsNullOrWhiteSpace(tokenModel.RefreshToken))
             return Unauthorized("Token data is null or invalid");
