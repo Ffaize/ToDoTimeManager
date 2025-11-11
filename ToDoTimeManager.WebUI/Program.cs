@@ -19,6 +19,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddCircuitServicesAccesor();
+        builder.Services.AddAuthorizationCore();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddLocalization();
         builder.Services.AddServerSideBlazor()
@@ -32,13 +33,13 @@ public class Program
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();
 
-        builder.Services.AddScoped<CustomAuthStateProvider>();
-        builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
-            provider.GetRequiredService<CustomAuthStateProvider>());
+        builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
         builder.Services.AddHttpClient("TodoTimeManager", client =>
         {
             client.BaseAddress = new Uri(builder.Configuration["BaseApiUrlAddress"] ?? "https://localhost:7130/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.Timeout = TimeSpan.FromMinutes(5);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }).AddHttpMessageHandler<ToastMessageHandler>().AddHttpMessageHandler<TokenMessageHandler>();
 
@@ -63,6 +64,8 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapBlazorHub();
         app.MapControllers();
         app.MapFallbackToPage("/_Host");

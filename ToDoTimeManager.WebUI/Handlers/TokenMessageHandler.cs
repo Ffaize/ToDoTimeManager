@@ -35,7 +35,7 @@ public class TokenMessageHandler : DelegatingHandler
 
             var authService = _circuitServicesAccesor.Service?.GetRequiredService<AuthService>();
             var tokenModel = await authService?.RefreshToken(tokens.Value)!;
-            await _authenticationStateProvider?.MarkUserAsAuthenticated(tokenModel)!;
+            if (tokenModel != null) await _authenticationStateProvider?.MarkUserAsAuthenticated(tokenModel)!;
             await ConfigureRequest(request);
 
             response.Dispose();

@@ -1,13 +1,60 @@
-﻿@using ToDoTimeManager.WebUI.Shared
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Shared
+@inject AuthenticationStateProvider AuthProvider
+
+@if (!IsAuthStateKnown)
+{
+    <LayoutView Layout="@typeof(MainLayout)">
+        <Loader IsLoading="true" />
+    </LayoutView>
+}
+else
+{
+    <CascadingAuthenticationState>
+        <AuthorizeView>
+            <Authorized>
+                <Router AppAssembly="@typeof(App).Assembly">
+                    <Found Context="routeData">
+                        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                    </Found>
+                    <NotFound>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <p role="alert">Sorry, there's nothing at this address.</p>
+                        </LayoutView>
+                    </NotFound>
+                </Router>
+            </Authorized>
+
+            <Authorizing>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <Loader IsLoading="true" />
+                </LayoutView>
+            </Authorizing>
+
+            <NotAuthorized>
+                <LayoutView Layout="@typeof(AuthLayout)">
+                    <AuthComponent />
+                </LayoutView>
+            </NotAuthorized>
+        </AuthorizeView>
+    </CascadingAuthenticationState>
+}
+
+
+
+
+@code {
+    private bool IsAuthStateKnown = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Викликаємо і чекаємо стан автентифікації один раз
+        var _ = await AuthProvider.GetAuthenticationStateAsync();
+        IsAuthStateKnown = true;
+
+        // Змушуємо компонент перемалюватися після того, як стан визначено
+        StateHasChanged();
+    }
+}

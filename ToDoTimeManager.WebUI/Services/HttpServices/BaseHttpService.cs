@@ -5,15 +5,15 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
     public abstract class BaseHttpService
     {
         protected readonly HttpClient _httpClient;
-        protected abstract string _apiControllerName { get; set; }
+        protected string? ApiControllerName { get; set; }
 
         protected BaseHttpService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("TodoTimeManager");
         }
 
-        protected string Url() => $"/api/{_apiControllerName}";
+        protected string Url() => $"/api/{ApiControllerName}";
 
-        protected string Url(string action) => $"/api/{_apiControllerName}/{action}";
+        protected string Url(string action) => $"/api/{ApiControllerName}/{action}";
     }
 }

@@ -30,11 +30,14 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
                 {
                     var authService = circuitServicesAccesor?.Service?.GetRequiredService<AuthService>();
                     var res = await authService?.RefreshToken(result.Value)!;
-                    await MarkUserAsAuthenticated(res);
-                    if (res?.AccessToken != null)
+                    if (res != null)
                     {
-                        var claimsPrincipals = GetClaimsPrincipalFromJwt(res.AccessToken);
-                        return new AuthenticationState(claimsPrincipals);
+                        await MarkUserAsAuthenticated(res);
+                        if (res?.AccessToken != null)
+                        {
+                            var claimsPrincipals = GetClaimsPrincipalFromJwt(res.AccessToken);
+                            return new AuthenticationState(claimsPrincipals);
+                        }
                     }
                 }
 

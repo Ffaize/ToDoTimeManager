@@ -10,11 +10,4 @@
     background-color: var(--primary-color-dark) !important;
 }
 
-main {
-    background-color: var(--main-background-color) !important;
-    height: 100%;
-}
 
-page {
-    height: 100vh
-}
