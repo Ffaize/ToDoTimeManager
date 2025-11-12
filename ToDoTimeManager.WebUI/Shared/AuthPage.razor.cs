@@ -7,10 +7,11 @@ using ToDoTimeManager.WebUI.Services.Implementations;
 
 namespace ToDoTimeManager.WebUI.Shared;
 
-public partial class AuthComponent
+public partial class AuthPage
 {
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     private LoginUser User { get; set; } = new();
 
     private async Task Login()
@@ -21,6 +22,7 @@ public partial class AuthComponent
             if (AuthenticationStateProvider is CustomAuthStateProvider customAuthStateProvider)
             {
                 await customAuthStateProvider.MarkUserAsAuthenticated(result);
+                NavigationManager.NavigateTo(NavigationManager.BaseUri);
             }
 
         }
