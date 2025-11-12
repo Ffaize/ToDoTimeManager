@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
 
-namespace ToDoTimeManager.WebUI.Shared;
+namespace ToDoTimeManager.WebUI.Pages;
 
 public partial class AuthPage
 {

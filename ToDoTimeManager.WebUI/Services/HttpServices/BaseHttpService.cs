@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Headers;
-
-namespace ToDoTimeManager.WebUI.Services.HttpServices
+﻿namespace ToDoTimeManager.WebUI.Services.HttpServices
 {
     public abstract class BaseHttpService
     {

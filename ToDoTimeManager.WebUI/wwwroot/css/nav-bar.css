@@ -1,5 +1,5 @@
 ﻿.navbar {
-    background-color: var(--primary-color) !important;
+    background-color: var(--dark-slate-gray) !important;
 }
 
 .navbar-toggler-icon {
@@ -7,7 +7,7 @@
 }
 
 .nav-scrollable {
-    background-color: var(--primary-color-dark) !important;
+    background-color: var(--feldgrau) !important;
 }
 
 

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 
 namespace ToDoTimeManager.WebUI.Services.Implementations;

@@ -1,15 +1,21 @@
 ﻿:root {
-    --primary-color: #5A7C73;
-    --primary-color-dark: #6f8b85;
-    --secondary-color: #CFC7C4;
-    --main-background-color: #F2FAF6;
+    /*custom colors*/
+    --midnight-green: #052f33;
+    --dark-slate-gray: #284D4C;
+    --feldgrau: #496665;
+    --battleship-gray: #F2FAF6;
+    --chestnut: #9C3A24;
+    /*black-white colors*/
     --black-color: #000000;
     --white-color: #ffffff;
+    /*state colors*/
     --success-color: #4CAF50;
     --warning-color: #ffc107;
     --error-color: #dc3545;
+    /*grey colors*/
     --dark-gray-color: #666;
     --light-gray: rgba(0, 0, 0, 0.4);
+    /*text-colors*/
     --light-text-color: white;
     --dark-text-color: black;
     --spacer: 1rem;
