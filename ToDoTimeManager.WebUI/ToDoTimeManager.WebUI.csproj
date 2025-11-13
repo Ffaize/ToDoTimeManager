@@ -31,4 +31,8 @@
     <ProjectReference Include="..\ToDoTimeManager.Shared\ToDoTimeManager.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\font\" />
+  </ItemGroup>
+
 </Project>
