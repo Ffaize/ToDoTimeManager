@@ -28,7 +28,7 @@ a, .btn-link {
 
 @font-face {
     font-family: 'Ubuntu-Light' !important;
-    src: url(./font/Ubuntu/Ubuntu-Medium.ttf) format('ttf') !important;
+    src: url(.././font/Ubuntu/Ubuntu-Medium.ttf) format('ttf') !important;
 }
 
 main {

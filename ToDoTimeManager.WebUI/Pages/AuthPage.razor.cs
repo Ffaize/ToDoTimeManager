@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
 
@@ -11,6 +13,7 @@ public partial class AuthPage
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     private LoginUser User { get; set; } = new();
 
     private async Task Login()

@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 @inject NavigationManager Navigation
 
-<div class="language-selector">
+<div class="language-selector @AdditionalCssClass">
     <select @bind="Culture">
         <option value="en-US">English (US)</option>
         <option value="uk-UA">Українська (UA)</option>
@@ -10,6 +10,9 @@
 
 @code
 {
+
+    [Parameter] public string AdditionalCssClass { get; set;} = string.Empty;
+
     protected override void OnInitialized()
     {
         Culture = CultureInfo.CurrentCulture;

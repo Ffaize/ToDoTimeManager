@@ -1,15 +1,31 @@
 ﻿@using ToDoTimeManager.Shared.Models
+@using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Shared
 @layout AuthLayout
 
 @page "/auth"
 
+<div class="auth-page">
+    <div class="auth-content-block">
+        <div class="auth-left-logo-container">
+            <img class="auth-logo" src="Images/TaskForge_battleship_gray.png" alt=""/>
+        </div>
+        <div class="auth-right-content-container">
+            <h2 class="auth-welcome-text">@Localizer["authWelcomeText"]</h2>
+            <div class="auth-content">
+                <InputText @bind-Value="@User.LoginParameter">
 
-<InputText @bind-Value="@User.LoginParameter">
+                </InputText>
+                <InputText @bind-Value="@User.Password">
 
-</InputText>
-<InputText @bind-Value="@User.Password">
+                </InputText>
+                <button @onclick="Login"> login</button>
+            </div>
+            <CultureSelector AdditionalCssClass="auth-culture-selector"/>
 
-</InputText>
+        </div>
+    </div>
+</div>
 
-<button @onclick="Login"> login</button>
+
+

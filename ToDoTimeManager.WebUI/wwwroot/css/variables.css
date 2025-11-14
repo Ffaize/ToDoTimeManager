@@ -23,6 +23,6 @@
     --border-radius-bth: 0.25rem;
     --border-radius-container: 1rem;
     --shadow-card: 0 0 10px rgba(0, 0, 0, 0.3);
+    --shadow-card-big: 0 0 20px rgba(0, 0, 0, 0.3);
     --shadow-button: 0 0 10px rgba(0, 0, 0, 0.3);
-    --shadow-card-primary-color: 0 0 10px $color-primary;
 }

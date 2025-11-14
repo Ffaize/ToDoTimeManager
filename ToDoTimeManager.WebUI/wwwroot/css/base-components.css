@@ -1,0 +1,13 @@
+﻿input {
+    border-radius: var(--border-radius-box);
+    border: 2px solid var(--feldgrau);
+}
+
+    input:focus {
+        border: 2px solid var(--chestnut);
+    }
+
+    input:focus-visible {
+        border: 2px solid var(--chestnut);
+        outline: unset;
+    }

@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\font\" />
+    <Folder Include="wwwroot\font\" />
   </ItemGroup>
 
 </Project>
