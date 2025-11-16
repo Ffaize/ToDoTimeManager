@@ -61,11 +61,128 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome to the TaskForge .
+        ///   Looks up a localized string similar to Authorization.
         /// </summary>
-        public static string authWelcomeText {
+        public static string Authorization {
             get {
-                return ResourceManager.GetString("authWelcomeText", resourceCulture);
+                return ResourceManager.GetString("Authorization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm password.
+        /// </summary>
+        public static string ConfirmPassword {
+            get {
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        public static string Email {
+            get {
+                return ResourceManager.GetString("Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email/Username.
+        /// </summary>
+        public static string Email_Username {
+            get {
+                return ResourceManager.GetString("Email/Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter....
+        /// </summary>
+        public static string Enter___ {
+            get {
+                return ResourceManager.GetString("Enter...", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to registration.
+        /// </summary>
+        public static string GoToRegistration {
+            get {
+                return ResourceManager.GetString("GoToRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to sign in.
+        /// </summary>
+        public static string GoToSignIn {
+            get {
+                return ResourceManager.GetString("GoToSignIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwords don`t match.
+        /// </summary>
+        public static string PasswordsDontMatch {
+            get {
+                return ResourceManager.GetString("PasswordsDontMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter all credentials.
+        /// </summary>
+        public static string PleaseEnterAllCredentials {
+            get {
+                return ResourceManager.GetString("PleaseEnterAllCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter сredentials.
+        /// </summary>
+        public static string PleaseEnterCredentials {
+            get {
+                return ResourceManager.GetString("PleaseEnterCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register.
+        /// </summary>
+        public static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sign in.
+        /// </summary>
+        public static string SignIn {
+            get {
+                return ResourceManager.GetString("SignIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Username.
+        /// </summary>
+        public static string UserName {
+            get {
+                return ResourceManager.GetString("UserName", resourceCulture);
             }
         }
     }

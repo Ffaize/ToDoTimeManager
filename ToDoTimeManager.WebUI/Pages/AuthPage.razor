@@ -1,31 +1,112 @@
 ﻿@using ToDoTimeManager.Shared.Models
 @using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Shared
 @layout AuthLayout
 
 @page "/auth"
+<PageTitle>@Localizer["Authorization"]</PageTitle>
 
 <div class="auth-page">
     <div class="auth-content-block">
         <div class="auth-left-logo-container">
-            <img class="auth-logo" src="Images/TaskForge_battleship_gray.png" alt=""/>
+            <img class="auth-logo" src="Images/TaskForge_battleship_gray.png" alt="" />
+            <h2 class="auth-under-logo-text">TaskForge</h2>
         </div>
         <div class="auth-right-content-container">
-            <h2 class="auth-welcome-text">@Localizer["authWelcomeText"]</h2>
             <div class="auth-content">
-                <InputText @bind-Value="@User.LoginParameter">
+                @if (IsLogin)
+                {
+                    <div class="login-component">
+                        <WavingHandIcon IconSize="40" IconColor="var(--battleship-gray)" />
+                        <h2>@Localizer["SignIn"]</h2>
+                        <div style="width: 100%;">
+                            <h4>@Localizer["Email/Username"]</h4>
+                            <InputText @bind-Value="@LoginUser.LoginParameter" placeholder="@Localizer["Enter..."]" />
+                        </div>
+                        <div style="width: 100%;">
+                            <h4>@Localizer["Password"]</h4>
+                            <div class="password-container">
+                                <InputText @bind-Value="@LoginUser.Password" type="@PasswordInputsTypes["LoginPassword"]" placeholder="@Localizer["Enter..."]" />
+                                <button class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(LoginPasswordName)">
+                                    @if (IsPasswordVisible(@PasswordInputsTypes["LoginPassword"]))
+                                    {
+                                        <EyeSlashIcon IconSize="20"/>
+                                    }
+                                    else
+                                    {
+                                        <EyeFillIcon IconSize="20"/>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="auth-button-container">
+                            <button class="secondary-button" @onclick="ChangeState">@Localizer["GoToRegistration"]</button>
+                            <button class="primary-button" @onclick="Login">@Localizer["SignIn"]</button>
+                        </div>
 
-                </InputText>
-                <InputText @bind-Value="@User.Password">
+                    </div>
+                }
+                else
+                {
+                    <div class="register-component">
+                        <PersonPlusFillIcon IconSize="35" IconColor="#F2FAF6" />
+                        <h2>@Localizer["Register"]</h2>
+                        
+                        <div style="width: 100%;">
+                            <h4>@Localizer["UserName"]</h4>
+                            <InputText @bind-Value="@RegisterUser.UserName" placeholder="@Localizer["Enter..."]" />
+                        </div>
+                        
+                        <div style="width: 100%;">
+                            <h4>@Localizer["Email"]</h4>
+                            <InputText @bind-Value="@RegisterUser.Email" placeholder="@Localizer["Enter..."]" />
+                        </div>
+                        
+                        <div style="width: 100%;">
+                            <h4>@Localizer["Password"]</h4>
+                            <div class="password-container">
+                                <InputText @bind-Value="@RegisterUser.Password" type="@PasswordInputsTypes["RegisterPassword"]" placeholder="@Localizer["Enter..."]" />
+                                <button class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(RegisterPasswordName)">
+                                    @if (IsPasswordVisible(@PasswordInputsTypes["RegisterPassword"]))
+                                    {
+                                        <EyeSlashIcon IconSize="20"/>
+                                    }
+                                    else
+                                    {
+                                        <EyeFillIcon IconSize="20"/>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="width: 100%;">
+                            <h4>@Localizer["ConfirmPassword"]</h4>
+                            <div class="password-container">
+                                <InputText @bind-Value="@ConfirmPassword" type="@PasswordInputsTypes["ConfirmPassword"]" placeholder="@Localizer["Enter..."]" />
+                                <button type="button" class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(ConfirmPasswordName)">
+                                    @if (IsPasswordVisible(@PasswordInputsTypes["ConfirmPassword"]))
+                                    {
+                                        <EyeSlashIcon IconSize="20"/>
+                                    }
+                                    else
+                                    {
+                                        <EyeFillIcon IconSize="20"/>
+                                    }
+                                </button>
+                            </div>
+                        </div>
 
-                </InputText>
-                <button @onclick="Login"> login</button>
+                        <div class="auth-button-container">
+                            <button class="secondary-button" @onclick="ChangeState">@Localizer["GoToSignIn"]</button>
+                            <button class="primary-button" @onclick="Register">@Localizer["Register"]</button>
+                        </div>
+                        </div>
+                }
             </div>
-            <CultureSelector AdditionalCssClass="auth-culture-selector"/>
 
         </div>
     </div>
+    <CultureSelector AdditionalCssClass="auth-culture-selector" />
 </div>
-
-
-
