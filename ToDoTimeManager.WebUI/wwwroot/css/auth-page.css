@@ -4,7 +4,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url(../Images/Auth_background.png)
+    background: url(../Images/Auth_background.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;+-+
 }
 
 .auth-content-block {
