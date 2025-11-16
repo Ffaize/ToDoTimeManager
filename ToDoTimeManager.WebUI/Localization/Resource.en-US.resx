@@ -117,7 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="authWelcomeText" xml:space="preserve">
-    <value>Welcome to the TaskForge </value>
+  <data name="SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="PasswordsDontMatch" xml:space="preserve">
+    <value>Passwords don`t match</value>
+  </data>
+  <data name="PleaseEnterAllCredentials" xml:space="preserve">
+    <value>Please enter all credentials</value>
+  </data>
+  <data name="PleaseEnterCredentials" xml:space="preserve">
+    <value>Please enter сredentials</value>
+  </data>
+  <data name="Email/Username" xml:space="preserve">
+    <value>Email/Username</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="GoToRegistration" xml:space="preserve">
+    <value>Go to registration</value>
+  </data>
+  <data name="GoToSignIn" xml:space="preserve">
+    <value>Go to sign in</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Enter..." xml:space="preserve">
+    <value>Enter...</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
   </data>
 </root>

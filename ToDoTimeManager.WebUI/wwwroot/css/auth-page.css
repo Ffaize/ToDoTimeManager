@@ -22,10 +22,12 @@
 }
 
 .auth-left-logo-container {
+    display: flex;
+    flex-direction: column;
     flex: 0 0 33.33%;
     background: var(--midnight-green);
     border-radius: var(--border-radius-container) 0 0 var(--border-radius-container);
-    align-content: center;
+    justify-content: center;
 }
 
 .auth-right-content-container {
@@ -36,30 +38,103 @@
 }
 
 .auth-logo {
-    width: 100%;
-    --bs-aspect-ratio: 1 / 1
+    justify-self: center;
+    align-self: center;
+    width: 80%;
+    --bs-aspect-ratio: 1 / 1;
 }
 
-.auth-welcome-text {
+.auth-under-logo-text {
     color: var(--light-text-color);
     text-align: center;
     margin: 10px;
+    margin-left: 25px;
 }
 
 .auth-content {
     gap: 10px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    /* ReSharper disable UnknownCssVendorExtension */
+    height: -webkit-fill-available;
+    /* ReSharper restore UnknownCssVendorExtension */
 }
 
 .auth-culture-selector {
-
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 200px;
 }
 
-.base-input {
 
+
+.auth-content h2 {
+    color: var(--light-text-color);
+    text-align: center;
+    margin: 0;
+}
+
+.auth-content h4 {
+    color: var(--light-text-color);
+    text-align: start;
+    margin: 0 3px;
+}
+
+.login-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 20px;
+}
+
+.register-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 20px;
+}
+
+.password-container {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+}
+
+.eye-toggle {
+    width: auto !important;
+    height: auto !important;
+    color: var(--battleship-gray) !important;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+}
+
+.auth-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 5px;
+}
+
+.register-component h4 {
+    font-size: 18px;
+}
+.register-component h2 {
+    font-size: 28px;
+}
+
+.auth-right-content-container:has(.register-component) {
+    padding: 10px 20px
+}
+
+.auth-button-container .secondary-button {
+    color: var(--light-text-color);
 }
 
 
@@ -71,5 +146,11 @@
     .auth-right-content-container {
         flex: 0 0 100%;
         border-radius: var(--border-radius-container);
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-content h4 {
+        text-align: center;
     }
 }

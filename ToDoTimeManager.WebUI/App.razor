@@ -1,5 +1,6 @@
 ﻿@using ToDoTimeManager.WebUI.Shared
-<Router AppAssembly="@typeof(Program).Assembly">
+
+<Router AppAssembly="@typeof(Program).Assembly" @rendermode="new InteractiveServerRenderMode(prerender: false)">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>

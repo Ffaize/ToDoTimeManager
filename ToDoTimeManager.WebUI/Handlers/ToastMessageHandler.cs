@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+﻿using System;
+using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.Interfaces;
 
 namespace ToDoTimeManager.WebUI.Handlers;
@@ -10,15 +11,13 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
         var response = await base.SendAsync(request, cancellationToken);
         try
         {
-            var contentType = response.Content.Headers.ContentType?.MediaType;
-            if (string.IsNullOrWhiteSpace(contentType) || !contentType.Equals("text/plain", StringComparison.OrdinalIgnoreCase))
-                return response;
-
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (string.IsNullOrWhiteSpace(content) || circuitServicesAccesor.Service == null)
+            var isJson = IsJsonResponse(content);
+            if (string.IsNullOrWhiteSpace(content) || isJson || circuitServicesAccesor.Service == null)
                 return response;
 
             var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<IToastMessagesService>();
+            content = content.Replace("\"", string.Empty);
             await toastMessagesService.ShowToast(content, !response.IsSuccessStatusCode);
 
             return response;
@@ -28,5 +27,10 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
             Console.WriteLine(e.Message);
             return response;
         }
+    }
+
+    private static bool IsJsonResponse(string response)
+    {
+        return response.TrimStart().StartsWith("{") || response.TrimStart().StartsWith("[");
     }
 }
