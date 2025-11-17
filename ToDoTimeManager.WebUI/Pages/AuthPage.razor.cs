@@ -6,15 +6,15 @@ using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Services.Interfaces;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
 public partial class AuthPage
 {
     [Inject] private AuthService AuthService { get; set; } = null!;
+    [Inject] private UserService UserService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
-    [Inject] private IToastMessagesService ToastMessagesService { get; set; } = null!;
+    [Inject] private ToastMessagesService ToastMessagesService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
@@ -43,7 +43,7 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(LoginUser.LoginParameter) || string.IsNullOrWhiteSpace(LoginUser.Password))
             {
-                await ToastMessagesService.ShowToast(Localizer["PleaseEnterCredentials"], true);
+                ToastMessagesService.ShowToast(Localizer["PleaseEnterCredentials"], ToastLevel.Error);
                 return;
             }
 
@@ -71,16 +71,25 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(RegisterUser.Email) || string.IsNullOrWhiteSpace(RegisterUser.Password) || string.IsNullOrWhiteSpace(RegisterUser.UserName) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                await ToastMessagesService.ShowToast(Localizer["PleaseEnterAllCredentials"], true);
+                ToastMessagesService.ShowToast(Localizer["PleaseEnterAllCredentials"], ToastLevel.Error);
                 return;
             }
 
             if (!RegisterUser.Password.Equals(ConfirmPassword))
             {
 
-                await ToastMessagesService.ShowToast(Localizer["PasswordsDontMatch"], true);
+                ToastMessagesService.ShowToast(Localizer["PasswordsDontMatch"], ToastLevel.Error);
                 return;
             }
+
+            var creationResult = await UserService.Create(RegisterUser);
+            if (creationResult)
+            {
+                ToastMessagesService.ShowToast(Localizer["RegistrationSuccessful"]);
+                ChangeState();
+            }
+            else
+                ToastMessagesService.ShowToast(Localizer["RegistrationFailed"], ToastLevel.Error);
 
         }
         catch (Exception ex)

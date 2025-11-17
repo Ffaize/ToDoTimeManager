@@ -1,6 +1,6 @@
 ﻿using System;
 using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
-using ToDoTimeManager.WebUI.Services.Interfaces;
+using ToDoTimeManager.WebUI.Services.Implementations;
 
 namespace ToDoTimeManager.WebUI.Handlers;
 
@@ -16,9 +16,9 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
             if (string.IsNullOrWhiteSpace(content) || isJson || circuitServicesAccesor.Service == null)
                 return response;
 
-            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<IToastMessagesService>();
+            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<ToastMessagesService>();
             content = content.Replace("\"", string.Empty);
-            await toastMessagesService.ShowToast(content, !response.IsSuccessStatusCode);
+            toastMessagesService.ShowToast(content, response.IsSuccessStatusCode ? ToastLevel.Success : ToastLevel.Error);
 
             return response;
         }
