@@ -6,6 +6,7 @@
 
 @page "/auth"
 <PageTitle>@Localizer["Authorization"]</PageTitle>
+<Loader IsLoading="IsLoading"/>
 
 <div class="auth-page">
     <div class="auth-content-block">
@@ -22,7 +23,7 @@
                         <h2>@Localizer["SignIn"]</h2>
                         <div style="width: 100%;">
                             <h4>@Localizer["Email/Username"]</h4>
-                            <InputText @bind-Value="@LoginUser.LoginParameter" placeholder="@Localizer["Enter..."]" />
+                            <InputText @bind-Value="@LoginUser.LoginParameter" type="email" placeholder="@Localizer["Enter..."]" />
                         </div>
                         <div style="width: 100%;">
                             <h4>@Localizer["Password"]</h4>

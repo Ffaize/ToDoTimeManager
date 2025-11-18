@@ -18,7 +18,7 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
 
             var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<ToastsService>();
             content = content.Replace("\"", string.Empty);
-            toastMessagesService.ShowToast(content, !response.IsSuccessStatusCode);
+            await toastMessagesService.ShowToast(content, !response.IsSuccessStatusCode);
 
             return response;
         }

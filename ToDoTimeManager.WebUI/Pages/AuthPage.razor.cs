@@ -27,6 +27,19 @@ public partial class AuthPage
     public string LoginPasswordName => "LoginPassword";
     public string RegisterPasswordName => "RegisterPassword";
     public string ConfirmPasswordName => "ConfirmPassword";
+    public bool IsLoading { get; set; }
+
+    public void ShowLoader()
+    {
+        IsLoading = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void HideLoader()
+    {
+        IsLoading = false;
+        InvokeAsync(StateHasChanged);
+    }
 
     protected override void OnInitialized()
     {
@@ -43,11 +56,12 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(LoginUser.LoginParameter) || string.IsNullOrWhiteSpace(LoginUser.Password))
             {
-                ToastsService.ShowToast(Localizer["PleaseEnterCredentials"], true);
+                await ToastsService.ShowToast(Localizer["PleaseEnterCredentials"], true);
                 return;
             }
-
+            ShowLoader();
             var result = await AuthService.Login(LoginUser);
+            HideLoader();
             if (result is not null)
             {
                 await CustomAuthStateProvider?.MarkUserAsAuthenticated(result)!;
@@ -71,25 +85,27 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(RegisterUser.Email) || string.IsNullOrWhiteSpace(RegisterUser.Password) || string.IsNullOrWhiteSpace(RegisterUser.UserName) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                ToastsService.ShowToast(Localizer["PleaseEnterAllCredentials"], true);
+                await ToastsService.ShowToast(Localizer["PleaseEnterAllCredentials"], true);
                 return;
             }
 
             if (!RegisterUser.Password.Equals(ConfirmPassword))
             {
 
-                ToastsService.ShowToast(Localizer["PasswordsDontMatch"], true);
+                await ToastsService.ShowToast(Localizer["PasswordsDontMatch"], true);
                 return;
             }
 
+            ShowLoader();
             var creationResult = await UserService.Create(RegisterUser);
+            HideLoader();
             if (creationResult)
             {
-                ToastsService.ShowToast(Localizer["RegistrationSuccessful"], false);
+                await ToastsService.ShowToast(Localizer["RegistrationSuccessful"], false);
                 ChangeState();
             }
             else
-                ToastsService.ShowToast(Localizer["RegistrationFailed"], true);
+                await ToastsService.ShowToast(Localizer["RegistrationFailed"], true);
 
         }
         catch (Exception ex)

@@ -11,15 +11,11 @@ Welcome to your new app.
 
 @code {
     [Inject] public ToastsService ToastService { get; set; } = null!;
-    string text = "ksjdcnvk";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            ToastService.ShowToast("test message", false);
-            await Task.Delay(5_000);
-            ToastService.ShowToast("error message", true);
         }
         await base.OnAfterRenderAsync(firstRender);
     }

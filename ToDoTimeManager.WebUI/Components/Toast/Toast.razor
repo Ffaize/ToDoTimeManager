@@ -2,7 +2,7 @@
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Services.Implementations
 
-<div class="custom-toast @(ToastModel.IsError ? "error" : "success")">
+<div class="custom-toast @ToastModel.AdditionalClass @ToastModel.AnimationClass @(ToastModel.IsError ? "error" : "success")">
     <EnvelopeIcon IconSize="35" IconColor="#ffffff" />
     <div class="toast-message">@ToastModel.Message</div>
     <button class="toast-close-button" @onclick="@ToastModel.RemoveToast">

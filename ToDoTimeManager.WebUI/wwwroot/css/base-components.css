@@ -93,7 +93,6 @@ button:active {
     gap: 20px;
     justify-content: center;
     opacity: 0;
-    animation: toastAnimation 3.9s linear forwards 0.1s;
 }
 
 @media(max-width: 1500px) {
@@ -167,21 +166,37 @@ button:active {
 
 .toast-close-button {
     border-radius: var(--border-radius-box);
+   
+    
     border: 2px solid transparent;
 }
 
-@keyframes toastAnimation {
+.toast-fade-in {
+    animation: fadeIn 0.31s linear;
+}
+
+.toast-fade-out {
+    animation: fadeOut 0.3s linear;
+}
+
+.toast-faded {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+@keyframes fadeIn {
     0% {
         opacity: 0;
         transform: translateY(-50px);
     }
 
-    10% {
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
-
-    90% {
+}
+@keyframes fadeOut {
+    0% {
         opacity: 1;
         transform: translateY(0);
     }

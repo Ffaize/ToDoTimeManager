@@ -24,7 +24,6 @@
 
 @code {
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
-    [Inject] private ProtectedLocalStorage ProtectedBrowserStorage { get; set; } = null!;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -33,7 +32,6 @@
     {
         if (firstRender)
         {
-            Console.WriteLine((await ProtectedBrowserStorage.GetAsync<TokenModel>(nameof(TokenModel))).Value?.AccessToken);
         }
         await base.OnAfterRenderAsync(firstRender);
     }
