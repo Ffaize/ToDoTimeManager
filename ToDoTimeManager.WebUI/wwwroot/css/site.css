@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Ubuntu-Light' !important;
+    overflow: hidden;
 }
 
 h1:focus {

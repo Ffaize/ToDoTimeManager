@@ -8,6 +8,16 @@
 
 .nav-scrollable {
     background-color: var(--feldgrau) !important;
+    position: relative;
 }
 
+.nav-bar-culture-selector {
+    position: absolute;
+    bottom: 10px;
+    width: 90%;
+    align-self: center;
+    justify-self: center;
+    padding-top: 10px;
+    border-top: 2px solid var(--midnight-green)
+}
 
