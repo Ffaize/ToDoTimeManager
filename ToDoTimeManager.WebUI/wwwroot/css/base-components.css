@@ -68,3 +68,40 @@ button:active {
     border: 2px solid var(--chestnut);
 }
 
+.toast-box {
+    background: 0 0;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    top: 0;
+    z-index: 1000;
+    right: 50%;
+    transform: translateX(50%);
+    height: fit-content;
+    width: fit-content;
+}
+
+.custom-toast {
+    width: 80vw;
+    justify-self: center;
+    align-self: center;
+    display: flex;
+}
+
+
+.i-white {
+    fill: var(--white-color);
+}
+
+.success {
+    background: var(--success-color)
+}
+
+.error {
+    background: var(--error-color)
+}
+
+.toast-close-button {
+
+}

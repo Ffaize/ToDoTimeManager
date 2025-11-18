@@ -27,7 +27,7 @@ public class Program
                 options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1);
             });
 
-        builder.Services.AddSingleton<ToastMessagesService>();
+        builder.Services.AddSingleton<ToastsService>();
         builder.Services.AddScoped<TokenMessageHandler>();
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();

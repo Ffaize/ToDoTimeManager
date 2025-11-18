@@ -1,0 +1,7 @@
+﻿@using ToDoTimeManager.WebUI.Services.Implementations
+<div class="toast-box">
+    @foreach (var toast in ToastService.Messages)
+    {
+        <Toast ToastModel="toast"/>
+    }
+</div>

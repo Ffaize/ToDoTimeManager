@@ -16,9 +16,9 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
             if (string.IsNullOrWhiteSpace(content) || isJson || circuitServicesAccesor.Service == null)
                 return response;
 
-            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<ToastMessagesService>();
+            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<ToastsService>();
             content = content.Replace("\"", string.Empty);
-            toastMessagesService.ShowToast(content, response.IsSuccessStatusCode ? ToastLevel.Success : ToastLevel.Error);
+            toastMessagesService.ShowToast(content, !response.IsSuccessStatusCode);
 
             return response;
         }

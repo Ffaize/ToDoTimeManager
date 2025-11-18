@@ -1,28 +1,25 @@
 ﻿@page "/"
 @attribute [Authorize]
 @using ToDoTimeManager.WebUI.Components.Shared
-@using ToDoTimeManager.WebUI.Components.Toasts
 @using ToDoTimeManager.WebUI.Services.Implementations
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
-
-<ToastComponent Toast="new ToastMessage() {Id= Guid.NewGuid(), Level= ToastLevel.Success, Message=text}"/>
 <Loader IsLoading="false"/>
 Welcome to your new app.
 
 @code {
-    [Inject] public ToastMessagesService ToastService { get; set; } = null!;
+    [Inject] public ToastsService ToastService { get; set; } = null!;
     string text = "ksjdcnvk";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            ToastService.ShowToast("test message", ToastLevel.Success);
+            ToastService.ShowToast("test message", false);
             await Task.Delay(5_000);
-            ToastService.ShowToast("error message", ToastLevel.Error);
+            ToastService.ShowToast("error message", true);
         }
         await base.OnAfterRenderAsync(firstRender);
     }

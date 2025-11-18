@@ -1,0 +1,11 @@
+﻿@using System.Timers
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
+@using ToDoTimeManager.WebUI.Services.Implementations
+
+<div class="custom-toast @(ToastModel.IsError ? "error" : "success")">
+    <EnvelopeIcon IconSize="35" IconColor="#ffffff" />
+    <p class="toast-message">@ToastModel.Message</p>
+    <button class="toast-close-button" @onclick="HideToastFromButton">
+        <CloseIcon IconSize="35" IconStyle="i-white" />
+    </button>
+</div>

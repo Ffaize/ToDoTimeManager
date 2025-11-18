@@ -14,7 +14,7 @@ public partial class AuthPage
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private UserService UserService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
-    [Inject] private ToastMessagesService ToastMessagesService { get; set; } = null!;
+    [Inject] private ToastsService ToastsService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
@@ -43,7 +43,7 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(LoginUser.LoginParameter) || string.IsNullOrWhiteSpace(LoginUser.Password))
             {
-                ToastMessagesService.ShowToast(Localizer["PleaseEnterCredentials"], ToastLevel.Error);
+                ToastsService.ShowToast(Localizer["PleaseEnterCredentials"], true);
                 return;
             }
 
@@ -71,25 +71,25 @@ public partial class AuthPage
         {
             if (string.IsNullOrWhiteSpace(RegisterUser.Email) || string.IsNullOrWhiteSpace(RegisterUser.Password) || string.IsNullOrWhiteSpace(RegisterUser.UserName) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
-                ToastMessagesService.ShowToast(Localizer["PleaseEnterAllCredentials"], ToastLevel.Error);
+                ToastsService.ShowToast(Localizer["PleaseEnterAllCredentials"], true);
                 return;
             }
 
             if (!RegisterUser.Password.Equals(ConfirmPassword))
             {
 
-                ToastMessagesService.ShowToast(Localizer["PasswordsDontMatch"], ToastLevel.Error);
+                ToastsService.ShowToast(Localizer["PasswordsDontMatch"], true);
                 return;
             }
 
             var creationResult = await UserService.Create(RegisterUser);
             if (creationResult)
             {
-                ToastMessagesService.ShowToast(Localizer["RegistrationSuccessful"]);
+                ToastsService.ShowToast(Localizer["RegistrationSuccessful"], false);
                 ChangeState();
             }
             else
-                ToastMessagesService.ShowToast(Localizer["RegistrationFailed"], ToastLevel.Error);
+                ToastsService.ShowToast(Localizer["RegistrationFailed"], true);
 
         }
         catch (Exception ex)
