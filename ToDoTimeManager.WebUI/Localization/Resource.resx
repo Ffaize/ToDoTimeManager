@@ -159,4 +159,7 @@
   <data name="Authorization" xml:space="preserve">
     <value>Authorization</value>
   </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
 </root>

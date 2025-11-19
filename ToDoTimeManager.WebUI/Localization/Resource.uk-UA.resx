@@ -159,4 +159,7 @@
   <data name="Authorization" xml:space="preserve">
     <value>Авторизація</value>
   </data>
+  <data name="Home" xml:space="preserve">
+    <value>Головна</value>
+  </data>
 </root>
