@@ -24,5 +24,6 @@
     --border-radius-container: 1rem;
     --shadow-card: 0 0 10px rgba(0, 0, 0, 0.3);
     --shadow-card-big: 0 0 20px rgba(0, 0, 0, 0.3);
+    --shadow-card-very-big: 0 0 50px rgba(0, 0, 0, 0.6);
     --shadow-button: 0 0 10px rgba(0, 0, 0, 0.3);
 }

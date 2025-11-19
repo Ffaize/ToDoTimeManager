@@ -16,7 +16,6 @@ public partial class AuthPage
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private ToastsService ToastsService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
     private LoginUser LoginUser { get; set; } = new();
     private User RegisterUser { get; set; } = new() { Id = Guid.NewGuid(), UserRole = UserRole.User};
@@ -27,19 +26,21 @@ public partial class AuthPage
     public string LoginPasswordName => "LoginPassword";
     public string RegisterPasswordName => "RegisterPassword";
     public string ConfirmPasswordName => "ConfirmPassword";
-    public bool IsLoading { get; set; }
 
+    #region BaseForComponent
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+    public bool IsLoading { get; set; }
     public void ShowLoader()
     {
         IsLoading = true;
         InvokeAsync(StateHasChanged);
     }
-
     public void HideLoader()
     {
         IsLoading = false;
         InvokeAsync(StateHasChanged);
     }
+    #endregion
 
     protected override void OnInitialized()
     {

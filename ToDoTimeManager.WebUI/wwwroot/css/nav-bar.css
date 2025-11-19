@@ -20,11 +20,12 @@
 }
 
 .navbar-brand {
-    font-size: clamp(24px, 25px, 36px) !important;
+    font-size: clamp(24px, 25px, 26px) !important;
 }
 
 .nav-item-icon {
     height: 30px;
+    width: 30px;
     margin-bottom: 1px;
 }
 
@@ -35,7 +36,13 @@
 .nav-link {
     justify-content: flex-start;
     gap: 15px;
+    transform: scale(1);
+    transition: transform 0.3s ease-in-out;
 }
+
+    .nav-link:hover {
+        transform: scale(1.04) 
+    }
 
 .nav-item-text {
     width: fit-content !important;

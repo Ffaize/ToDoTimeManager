@@ -162,4 +162,7 @@
   <data name="Home" xml:space="preserve">
     <value>Головна</value>
   </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профіль</value>
+  </data>
 </root>

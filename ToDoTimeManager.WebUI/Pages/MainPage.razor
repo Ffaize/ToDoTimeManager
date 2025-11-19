@@ -1,23 +1,9 @@
-﻿@page "/"
-@attribute [Authorize]
+﻿@using Microsoft.Extensions.Localization
 @using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Localization
 @using ToDoTimeManager.WebUI.Services.Implementations
 
-<PageTitle>Index</PageTitle>
-
-<h1>Hello, world!</h1>
-<Loader IsLoading="false"/>
-Welcome to your new app.
-
-@code {
-    [Inject] public ToastsService ToastService { get; set; } = null!;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-}
+@page "/"
+@attribute [Authorize]
+<PageTitle>@Localizer["Home"] - TaskForge</PageTitle>
+<Loader IsLoading="IsLoading"/>
