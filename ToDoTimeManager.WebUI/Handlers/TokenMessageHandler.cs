@@ -6,6 +6,7 @@ using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
+using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Handlers;
 
@@ -28,13 +29,13 @@ public class TokenMessageHandler : DelegatingHandler
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            if (response.StatusCode != HttpStatusCode.Unauthorized || tokens.Value == null) return response;
-            var refreshExpiry = tokens.Value.RefreshTokenExpiresAt;
+            if (response.StatusCode != HttpStatusCode.Unauthorized || tokens == null) return response;
+            var refreshExpiry = tokens.RefreshTokenExpiresAt;
             if (refreshExpiry < DateTime.UtcNow)
                 throw new UnauthorizedAccessException("Refresh token expired");
 
             var authService = _circuitServicesAccesor.Service?.GetRequiredService<AuthService>();
-            var tokenModel = await authService?.RefreshToken(tokens.Value)!;
+            var tokenModel = await authService?.RefreshToken(tokens)!;
             if (tokenModel != null) await _authenticationStateProvider?.MarkUserAsAuthenticated(tokenModel)!;
             await ConfigureRequest(request);
 
@@ -50,13 +51,13 @@ public class TokenMessageHandler : DelegatingHandler
         }
     }
 
-    private async Task<ProtectedBrowserStorageResult<TokenModel>> ConfigureRequest(HttpRequestMessage request)
+    private async Task<TokenModel?> ConfigureRequest(HttpRequestMessage request)
     {
         var localStorage = _circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
-        if (localStorage == null) return new ProtectedBrowserStorageResult<TokenModel>();
-        var tokens = await localStorage.GetAsync<TokenModel>(nameof(TokenModel));
-        if (!tokens.Success) return tokens;
-        var token = tokens.Value?.AccessToken;
+        if (localStorage == null) return null;
+        var tokens = await localStorage.GetTokenAsync();
+        if (tokens is null) return null;
+        var token = tokens.AccessToken;
         if (!string.IsNullOrWhiteSpace(token))
         {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

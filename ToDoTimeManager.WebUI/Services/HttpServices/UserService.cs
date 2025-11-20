@@ -9,7 +9,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
         public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger) : base(httpClientFactory)
         {
             _logger = logger;
-            ApiControllerName = "User";
+            ApiControllerName = "Users";
         }
 
         public async Task<List<User>?> GetAllUsers()

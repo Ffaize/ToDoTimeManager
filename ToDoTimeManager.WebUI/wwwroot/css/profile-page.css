@@ -1,0 +1,9 @@
+﻿.profile-banner-container {
+    background: url(../images/Auth_background.png);
+    height: 250px;
+    width: 100%;
+    background-size: cover;
+    background-repeat: repeat;
+    border: 5px solid var(--midnight-green);
+    border-radius: var(--border-radius-container);
+}

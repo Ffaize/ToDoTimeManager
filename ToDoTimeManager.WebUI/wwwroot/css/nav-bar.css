@@ -1,5 +1,6 @@
 ﻿.navbar {
     background-color: var(--dark-slate-gray) !important;
+    border-top-right-radius: var(--border-radius-container);
 }
 
 .navbar-toggler-icon {
@@ -9,6 +10,7 @@
 .nav-scrollable {
     background-color: var(--feldgrau) !important;
     position: relative;
+    border-bottom-right-radius: var(--border-radius-container);
 }
 
 .nav-bar-culture-selector {
@@ -31,6 +33,7 @@
 
 .sidebar {
     width: 15vw !important;
+    border-radius: 0 var(--border-radius-container) var(--border-radius-container) 0;
 }
 
 .nav-link {
@@ -73,7 +76,18 @@
 @media(max-width: 640px) {
     .sidebar {
         width: 100vw !important;
+        border-radius: 0 0 var(--border-radius-container) var(--border-radius-container);
     }
+
+    .navbar {
+        border-top-right-radius: unset;
+    }
+
+    .nav-scrollable {
+        border-bottom-left-radius: var(--border-radius-container);
+    }
+
+    
 }
 
 @media (min-width: 641px) {
