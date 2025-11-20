@@ -10,7 +10,12 @@ h1:focus {
 }
 
 .content {
-    padding: 25px !important;
+    padding: 15px !important;
+}
+@media(max-width: 641px) {
+    .content {
+        padding: 10px !important;
+    }
 }
 
 a, .btn-link {

@@ -69,4 +69,12 @@ public partial class ProfilePage
         HideLoader();
         StateHasChanged();
     }
+
+    private string GetFirstLetters()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentUser.UserName))
+            return string.Empty;
+        var names = CurrentUser.UserName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return names.Length == 1 ? names[0][..1].ToUpper() : (names[0][..1] + names[1][..1]).ToUpper();
+    }
 }

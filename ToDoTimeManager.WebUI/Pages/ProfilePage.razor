@@ -4,11 +4,23 @@
 @using ToDoTimeManager.WebUI.Localization
 @attribute [Authorize]
 <PageTitle>@Localizer["Profile"] - TaskForge</PageTitle>
-<Loader IsLoading="IsLoading"/>
+<Loader IsLoading="IsLoading" />
+
 
 <div class="profile-banner-container"></div>
 <div class="rounded-logo">
+    <span>@GetFirstLetters()</span>
 </div>
-
-
-
+<div class="profile-username">@CurrentUser.UserName</div>
+<div class="profile-email">@CurrentUser.Email</div>
+<div class="profile-action-buttons-container">
+    <button class="secondary-button">
+        Edit
+    </button>
+    <button class="secondary-button">
+        Logout
+    </button>
+    <button class="secondary-button">
+        Delete
+    </button>
+</div>

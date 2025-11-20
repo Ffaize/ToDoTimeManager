@@ -31,6 +31,6 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
 
     private static bool IsJsonResponse(string response)
     {
-        return response.TrimStart().StartsWith("{") || response.TrimStart().StartsWith("[");
+        return response.TrimStart().StartsWith("{") || response.TrimStart().StartsWith("[") || response.Contains("true")|| response.Contains("false");
     }
 }
