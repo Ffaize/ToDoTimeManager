@@ -16,6 +16,7 @@ public partial class ProfilePage
 {
 
     [Inject] private UserService UserService { get; set; } = null!;
+    [Inject] private StatisticService StatisticService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private ILogger<ProfilePage> Logger { get; set; } = null!;
@@ -23,6 +24,7 @@ public partial class ProfilePage
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
     private User? CurrentUser { get; set; } = new() {Id = Guid.Empty};
+    private List<ToDoCountStatisticsOfAllTime> ToDoStatistic { get; set; } = [];
     public bool IsButtonsDisabled => CurrentUser?.Id == Guid.Empty || IsLoading;
     public bool IsUserEditModalVisible { get; set; }
     public bool IsLogOutConfirmationVisible { get; set; }
@@ -54,12 +56,12 @@ public partial class ProfilePage
     {
         if (firstRender)
         {
-            await FetchUserData();
+            await FetchData();
         }
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task FetchUserData()
+    private async Task FetchData()
     {
         ShowLoader();
         var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
@@ -74,6 +76,9 @@ public partial class ProfilePage
         var user = await UserService.GetUserById(Guid.Parse(userId));
         if (user is not null)
             CurrentUser = user;
+
+        if (CurrentUser != null)
+            ToDoStatistic = await StatisticService.GetToDoCountStatisticsOfAllTimeByUserId(CurrentUser.Id);
         HideLoader();
         StateHasChanged();
     }
@@ -99,7 +104,7 @@ public partial class ProfilePage
         ShowLoader();
         var update = await UserService.Update(user);
         if (update)
-            await FetchUserData();
+            await FetchData();
         HideLoader();
         StateHasChanged();
     }

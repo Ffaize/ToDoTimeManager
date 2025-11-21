@@ -1,4 +1,6 @@
-﻿using ToDoTimeManager.WebApi.Entities;
+﻿using Dapper;
+using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 
@@ -51,6 +53,24 @@ public class ToDosDataController : IToDosDataController
         {
             _logger.LogError(e, e.Message);
             return [];
+        }
+    }
+
+    public async Task<int> GetToDosCountByUserIdAndStatus(Guid userId, ToDoStatus status)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", userId);
+            parameters.Add("ToDoStatus", status);
+
+            var result = await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetCountByUserIdAndStatus", parameters);
+            return result.Count;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return 0;
         }
     }
 
