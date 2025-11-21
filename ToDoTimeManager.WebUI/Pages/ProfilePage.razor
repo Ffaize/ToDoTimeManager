@@ -2,6 +2,7 @@
 @using Microsoft.Extensions.Localization
 @using ToDoTimeManager.WebUI.Components.Modals
 @using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
 @attribute [Authorize]
 <PageTitle>@Localizer["Profile"] - TaskForge</PageTitle>
@@ -10,7 +11,17 @@
 <UserEditModal Show="IsUserEditModalVisible"
                ResultChanged="UserModalStateChanged"
                User="CurrentUser"
-               Title="@Localizer["UserEdit"]"/>
+               Title="@Localizer["UserEdit"]" />
+
+<ConfirmationModal Show="IsLogOutConfirmationVisible"
+                   ConfirmText="@Localizer["ConfirmLogOut"]"
+                   Title="@Localizer["Confirmation"]"
+                   ResultChanged="LogOutModalStateChanged" />
+
+<ConfirmationModal Show="IsDeleteConfirmationVisible"
+                   ConfirmText="@Localizer["ConfirmDelete"]"
+                   Title="@Localizer["Confirmation"]"
+                   ResultChanged="DeleteModalStateChanged" />
 
 
 
@@ -22,12 +33,33 @@
 <div class="profile-email">@CurrentUser?.Email</div>
 <div class="profile-action-buttons-container">
     <button class="secondary-button" disabled="@IsButtonsDisabled" @onclick="() => ShowModal(nameof(IsUserEditModalVisible))">
+        <EditIcon IconSize="25" IconStyle="i-profile" />
         @Localizer["Edit"]
     </button>
-    <button class="secondary-button" disabled="@IsButtonsDisabled">
+    <button class="secondary-button" disabled="@IsButtonsDisabled" @onclick="() => ShowModal(nameof(IsLogOutConfirmationVisible))">
+        <LogoutIcon IconSize="25" IconStyle="i-profile"/>
         @Localizer["LogOut"]
     </button>
-    <button class="secondary-button" disabled="@IsButtonsDisabled">
+    <button class="secondary-button" disabled="@IsButtonsDisabled" @onclick="() => ShowModal(nameof(IsDeleteConfirmationVisible))">
+        <DeleteIcon IconSize="25" IconStyle="i-profile" />
         @Localizer["DeleteAccount"]
     </button>
+</div>
+
+<div class="tasks-statistic-container">
+    <div class="new-tasks-block">
+
+    </div>
+    <div class="in-progress-tasks-block">
+
+    </div>
+    <div class="completed-tasks-block">
+
+    </div>
+    <div class="on-hold-tasks-block">
+
+    </div>
+    <div class="cancelled-tasks-block">
+
+    </div>
 </div>

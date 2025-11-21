@@ -24,12 +24,16 @@ public partial class ProfilePage
 
     private User? CurrentUser { get; set; } = new() {Id = Guid.Empty};
     public bool IsButtonsDisabled => CurrentUser?.Id == Guid.Empty || IsLoading;
-    public bool IsUserEditModalVisible { get; set; } = false;
+    public bool IsUserEditModalVisible { get; set; }
+    public bool IsLogOutConfirmationVisible { get; set; }
+    public bool IsDeleteConfirmationVisible { get; set; }
+
 
     #region BaseForComponent
 
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     public bool IsLoading { get; set; }
+
 
     public void ShowLoader()
     {
@@ -104,7 +108,6 @@ public partial class ProfilePage
     {
         try
         {
-
             var prop = GetType().GetProperty(nameOfBoolProp);
             prop?.SetValue(this, true);
         }
@@ -112,5 +115,38 @@ public partial class ProfilePage
         {
             Logger.LogError(ex.Message, ex);
         }
+    }
+
+    private void LogOutModalStateChanged(ModalResult obj)
+    {
+        IsLogOutConfirmationVisible = obj.Show;
+        StateHasChanged();
+        if (obj.Value is true)
+            _ = AuthStateProvider.MarkUserAsLoggedOut();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void DeleteModalStateChanged(ModalResult obj)
+    {
+        IsDeleteConfirmationVisible = obj.Show;
+        StateHasChanged();
+        if (obj.Value is true)
+            _ = DeleteUser();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteUser()
+    {
+        ShowLoader();
+        if (CurrentUser is null || CurrentUser.Id == Guid.Empty)
+        {
+            HideLoader();
+            return;
+        }
+        var delete = await UserService.Delete(CurrentUser.Id);
+        if (delete)
+            await AuthStateProvider.MarkUserAsLoggedOut();
+        HideLoader();
+        StateHasChanged();
     }
 }

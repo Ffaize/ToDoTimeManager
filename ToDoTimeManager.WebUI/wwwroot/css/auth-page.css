@@ -157,3 +157,9 @@
         text-align: center;
     }
 }
+
+.confirm-text {
+    align-self: center;
+    font-size: 20px;
+    padding: 20px 0;
+}

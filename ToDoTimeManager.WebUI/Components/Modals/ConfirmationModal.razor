@@ -1,0 +1,67 @@
+﻿@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.Models
+@using ToDoTimeManager.WebUI.Localization
+<div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
+
+<div class="modal-window" hidden="@(!Show)">
+    <div class="modal-window-header">
+        @Title
+    </div>
+    <div class="modal-content">
+        <div class="confirm-text">
+            @ConfirmText
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="secondary-button" @onclick="OnCancelClicked">
+            @Localizer["Cancel"]
+        </button>
+        <button class="primary-button" @onclick="OnConfirmClicked">
+            @Localizer["Confirm"]
+        </button>
+    </div>
+</div>
+@code {
+    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string ConfirmText { get; set; } = string.Empty;
+
+    #region BaseForComponent
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+    public bool IsLoading { get; set; }
+    public void ShowLoader()
+    {
+        IsLoading = true;
+        InvokeAsync(StateHasChanged);
+    }
+    public void HideLoader()
+    {
+        IsLoading = false;
+        InvokeAsync(StateHasChanged);
+    }
+    #endregion
+
+    private async Task Close(bool result)
+    {
+        Show = false;
+        ResultChanged?.Invoke(new ModalResult(Show, false, result));
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnOverlayClick()
+    {
+        _ = Close(false);
+    }
+
+    private void OnCancelClicked()
+    {
+        _ = Close(false);
+    }
+
+    private void OnConfirmClicked()
+    {
+        _ = Close(true);
+    }
+
+}

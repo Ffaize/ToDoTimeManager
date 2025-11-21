@@ -183,4 +183,16 @@
   <data name="DeleteAccount" xml:space="preserve">
     <value>Delete account</value>
   </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ConfirmLogOut" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete your account?</value>
+  </data>
 </root>

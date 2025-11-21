@@ -206,3 +206,9 @@ button:active {
         transform: translateY(-50px);
     }
 }
+
+.secondary-button svg {
+    margin-bottom: 4px;
+    color: var(--midnight-green);
+    fill: var(--midnight-green)
+}

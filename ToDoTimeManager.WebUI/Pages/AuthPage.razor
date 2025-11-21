@@ -6,7 +6,7 @@
 
 @page "/auth"
 <PageTitle>@Localizer["Authorization"] - TaskForge</PageTitle>
-<Loader IsLoading="IsLoading"/>
+<Loader IsLoading="IsLoading" />
 
 <div class="auth-page">
     <div class="auth-content-block">
@@ -32,16 +32,16 @@
                                 <button class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(LoginPasswordName)">
                                     @if (IsPasswordVisible(@PasswordInputsTypes["LoginPassword"]))
                                     {
-                                        <EyeSlashIcon IconSize="20"/>
+                                        <EyeSlashIcon IconSize="20" />
                                     }
                                     else
                                     {
-                                        <EyeFillIcon IconSize="20"/>
+                                        <EyeFillIcon IconSize="20" />
                                     }
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="auth-button-container">
                             <button class="secondary-button" @onclick="ChangeState">@Localizer["GoToRegistration"]</button>
                             <button class="primary-button" @onclick="Login">@Localizer["SignIn"]</button>
@@ -54,17 +54,17 @@
                     <div class="register-component">
                         <PersonPlusFillIcon IconSize="35" IconColor="#F2FAF6" />
                         <h2>@Localizer["Register"]</h2>
-                        
+
                         <div style="width: 100%;">
                             <h4>@Localizer["UserName"]</h4>
                             <InputText @bind-Value="@RegisterUser.UserName" placeholder="@Localizer["Enter..."]" />
                         </div>
-                        
+
                         <div style="width: 100%;">
                             <h4>@Localizer["Email"]</h4>
                             <InputText @bind-Value="@RegisterUser.Email" placeholder="@Localizer["Enter..."]" />
                         </div>
-                        
+
                         <div style="width: 100%;">
                             <h4>@Localizer["Password"]</h4>
                             <div class="password-container">
@@ -72,16 +72,16 @@
                                 <button class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(RegisterPasswordName)">
                                     @if (IsPasswordVisible(@PasswordInputsTypes["RegisterPassword"]))
                                     {
-                                        <EyeSlashIcon IconSize="20"/>
+                                        <EyeSlashIcon IconSize="20" />
                                     }
                                     else
                                     {
-                                        <EyeFillIcon IconSize="20"/>
+                                        <EyeFillIcon IconSize="20" />
                                     }
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div style="width: 100%;">
                             <h4>@Localizer["ConfirmPassword"]</h4>
                             <div class="password-container">
@@ -89,11 +89,11 @@
                                 <button type="button" class="eye-toggle secondary-button" @onclick="() => TogglePasswordVisibility(ConfirmPasswordName)">
                                     @if (IsPasswordVisible(@PasswordInputsTypes["ConfirmPassword"]))
                                     {
-                                        <EyeSlashIcon IconSize="20"/>
+                                        <EyeSlashIcon IconSize="20" />
                                     }
                                     else
                                     {
-                                        <EyeFillIcon IconSize="20"/>
+                                        <EyeFillIcon IconSize="20" />
                                     }
                                 </button>
                             </div>
@@ -103,7 +103,7 @@
                             <button class="secondary-button" @onclick="ChangeState">@Localizer["GoToSignIn"]</button>
                             <button class="primary-button" @onclick="Register">@Localizer["Register"]</button>
                         </div>
-                        </div>
+                    </div>
                 }
             </div>
 
