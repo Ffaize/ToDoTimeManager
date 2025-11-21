@@ -1,26 +1,33 @@
 ﻿@page "/profile"
 @using Microsoft.Extensions.Localization
+@using ToDoTimeManager.WebUI.Components.Modals
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Localization
 @attribute [Authorize]
 <PageTitle>@Localizer["Profile"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
 
+<UserEditModal Show="IsUserEditModalVisible"
+               ResultChanged="UserModalStateChanged"
+               User="CurrentUser"
+               Title="@Localizer["UserEdit"]"/>
+
+
 
 <div class="profile-banner-container"></div>
 <div class="rounded-logo">
     <span>@GetFirstLetters()</span>
 </div>
-<div class="profile-username">@CurrentUser.UserName</div>
-<div class="profile-email">@CurrentUser.Email</div>
+<div class="profile-username">@CurrentUser?.UserName</div>
+<div class="profile-email">@CurrentUser?.Email</div>
 <div class="profile-action-buttons-container">
-    <button class="secondary-button">
-        Edit
+    <button class="secondary-button" disabled="@IsButtonsDisabled" @onclick="() => ShowModal(nameof(IsUserEditModalVisible))">
+        @Localizer["Edit"]
     </button>
-    <button class="secondary-button">
-        Logout
+    <button class="secondary-button" disabled="@IsButtonsDisabled">
+        @Localizer["LogOut"]
     </button>
-    <button class="secondary-button">
-        Delete
+    <button class="secondary-button" disabled="@IsButtonsDisabled">
+        @Localizer["DeleteAccount"]
     </button>
 </div>

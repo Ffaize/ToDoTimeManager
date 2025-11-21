@@ -6,7 +6,6 @@
 	@UserRole BIT
 AS
 	BEGIN
-		SET NOCOUNT ON;
 		UPDATE dbo.Users
 		SET 
 			UserName = @UserName,

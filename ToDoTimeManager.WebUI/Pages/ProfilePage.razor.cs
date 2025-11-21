@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
+using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
@@ -17,10 +18,13 @@ public partial class ProfilePage
     [Inject] private UserService UserService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
+    [Inject] private ILogger<ProfilePage> Logger { get; set; } = null!;
 
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
-    private User CurrentUser { get; set; } = new() {Id = Guid.Empty};
+    private User? CurrentUser { get; set; } = new() {Id = Guid.Empty};
+    public bool IsButtonsDisabled => CurrentUser?.Id == Guid.Empty || IsLoading;
+    public bool IsUserEditModalVisible { get; set; } = false;
 
     #region BaseForComponent
 
@@ -72,9 +76,41 @@ public partial class ProfilePage
 
     private string GetFirstLetters()
     {
-        if (string.IsNullOrWhiteSpace(CurrentUser.UserName))
+        if (string.IsNullOrWhiteSpace(CurrentUser?.UserName))
             return string.Empty;
         var names = CurrentUser.UserName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return names.Length == 1 ? names[0][..1].ToUpper() : (names[0][..1] + names[1][..1]).ToUpper();
+    }
+
+    private void UserModalStateChanged(ModalResult res)
+    {
+        IsUserEditModalVisible = res.Show;
+        StateHasChanged();
+        if (res.Value is User user) _ = EditUser(user);
+        StateHasChanged();
+    }
+
+    private async Task EditUser(User user)
+    {
+        ShowLoader();
+        var update = await UserService.Update(user);
+        if (update)
+            await FetchUserData();
+        HideLoader();
+        StateHasChanged();
+    }
+
+    private void ShowModal(string nameOfBoolProp)
+    {
+        try
+        {
+
+            var prop = GetType().GetProperty(nameOfBoolProp);
+            prop?.SetValue(this, true);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message, ex);
+        }
     }
 }

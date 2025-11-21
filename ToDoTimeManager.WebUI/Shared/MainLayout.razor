@@ -12,10 +12,10 @@
     <Authorized>
         <div class="page">
             <div class="sidebar">
-                <NavMenu />
+                <NavMenu CollapseNavMenu="ColapseNavMenu" CollapseNavMenuChanged="OnCollapseNavMenuChanged" />
             </div>
 
-            <main>
+            <main @onclick="HideNavMenu">
                 <article class="content px-4">
                     <div class="page-container">
                         @Body
@@ -38,6 +38,7 @@
 
 @code {
     private bool _navigated;
+    public bool ColapseNavMenu { get; set; }
 
     private RenderFragment NavigateToAuth() => builder =>
     {
@@ -48,5 +49,18 @@
             NavigationManager.NavigateTo("/auth");
         });
     };
+
+    private void HideNavMenu()
+    {
+        ColapseNavMenu = true;
+        StateHasChanged();
+    }
+
+    private void OnCollapseNavMenuChanged(bool obj)
+    {
+        ColapseNavMenu = obj;
+        StateHasChanged();
+    }
+
 }
 

@@ -34,20 +34,15 @@
 
 @code {
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
-    private bool _collapseNavMenu = true;
 
-    private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+    [Parameter] public bool CollapseNavMenu { get; set; }
+    [Parameter] public EventCallback<bool> CollapseNavMenuChanged { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
+    private string? NavMenuCssClass => CollapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
-        _collapseNavMenu = !_collapseNavMenu;
+        CollapseNavMenu = !CollapseNavMenu;
+        StateHasChanged();
     }
 }
