@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebUI.Components.Modals;
@@ -153,5 +154,11 @@ public partial class ProfilePage
             await AuthStateProvider.MarkUserAsLoggedOut();
         HideLoader();
         StateHasChanged();
+    }
+
+    private int GetCountOfStatistic(ToDoStatus status)
+    {
+        var result = ToDoStatistic.FirstOrDefault(x => x.ToDoStatus == status);
+        return result?.Count ?? 0;
     }
 }
