@@ -80,7 +80,7 @@ public class UsersController : ControllerBase
             return BadRequest("User has invalid credentials");
 
 
-        var newUser = await _usersService.CreateUser(user); 
+        var newUser = await _usersService.CreateUser(user);
 
         return newUser ? Ok(newUser) : BadRequest("User could not be created");
     }

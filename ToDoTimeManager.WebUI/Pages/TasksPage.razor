@@ -1,0 +1,72 @@
+﻿@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
+@using ToDoTimeManager.WebUI.Localization
+@page "/tasks"
+@page "/tasks/{Filter}"
+@attribute [Authorize]
+<PageTitle>@Localizer["Tasks"] - TaskForge</PageTitle>
+<Loader IsLoading="IsLoading" />
+
+
+<div class="action-buttons-header">
+    <div class="task-title">@Localizer["Tasks"]</div>
+    <div class="buttons-container">
+        <select @bind="Filter">
+            @foreach (var value in Enum.GetValues<ToDoFilter>())
+            {
+                <option>
+                    @Enum.GetName(value)
+                </option>
+            }
+        </select>
+        <button class="primary-button">
+            logTime
+        </button>
+        <button class="primary-button">
+            Create new task
+        </button>
+    </div>
+
+</div>
+<Divider/>
+<div class="tasks-container">
+    <div class="tasks-colums-sticky-info">
+        <div class="info-number">
+            NumberedId
+        </div>
+        <div class="info-title">
+            Title
+        </div>
+        <div class="info-status">
+            Status
+        </div>
+        <div class="info-creted-at">
+            CreatedAt
+        </div>
+        <div class="info-due-date">
+            DueDate
+        </div>
+    </div>
+    @foreach (var toDo in FilteredToDos)
+    {
+        <div class="to-do">
+            <div class="to-do-number">
+                @toDo.NumberedId
+            </div>
+            <div class="to-do-title">
+                @toDo.Title
+            </div>
+            <div class="to-do-status">
+                @Enum.GetName(toDo.Status)
+            </div>
+            <div class="to-do-creted-at">
+                @toDo.CreatedAt
+            </div>
+            <div class="to-do-due-date">
+                @toDo.DueDate
+            </div>
+        </div>
+    }
+</div>

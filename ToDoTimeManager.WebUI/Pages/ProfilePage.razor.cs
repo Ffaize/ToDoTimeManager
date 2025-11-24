@@ -24,7 +24,7 @@ public partial class ProfilePage
 
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
-    private User? CurrentUser { get; set; } = new() {Id = Guid.Empty};
+    private User? CurrentUser { get; set; } = new() { Id = Guid.Empty };
     private List<ToDoCountStatisticsOfAllTime> ToDoStatistic { get; set; } = [];
     public bool IsButtonsDisabled => CurrentUser?.Id == Guid.Empty || IsLoading;
     public bool IsUserEditModalVisible { get; set; }
@@ -71,7 +71,7 @@ public partial class ProfilePage
         var (userId, role) =
                 JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
 
-        if(userId is null)
+        if (userId is null)
             return;
 
         var user = await UserService.GetUserById(Guid.Parse(userId));

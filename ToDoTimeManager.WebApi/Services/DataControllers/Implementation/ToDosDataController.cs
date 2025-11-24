@@ -47,7 +47,7 @@ public class ToDosDataController : IToDosDataController
     {
         try
         {
-            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByUserId", "AssignedTo", userId);
+            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByAssignedTo", "AssignedTo", userId);
         }
         catch (Exception e)
         {

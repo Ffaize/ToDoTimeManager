@@ -1,5 +1,4 @@
-﻿using System;
-using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+﻿using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.Implementations;
 
 namespace ToDoTimeManager.WebUI.Handlers;
@@ -31,6 +30,6 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
 
     private static bool IsJsonResponse(string response)
     {
-        return response.TrimStart().StartsWith("{") || response.TrimStart().StartsWith("[") || response.Contains("true")|| response.Contains("false");
+        return response.TrimStart().StartsWith("{") || response.TrimStart().StartsWith("[") || response.Contains("true") || response.Contains("false");
     }
 }

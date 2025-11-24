@@ -1,0 +1,84 @@
+﻿.action-buttons-header {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.buttons-container * {
+    max-width: 300px;
+}
+
+.task-title {
+    align-self: start;
+    font-size: 35px;
+    font-weight: 600;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+
+@media(max-width: 1000px) {
+    .task-title {
+        display: none !important;
+    }
+}
+
+@media(max-width: 700px) {
+    .buttons-container {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+
+    .buttons-container * {
+        max-width: unset;
+    }
+}
+
+.buttons-container {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 20px;
+    width: 100%;
+}
+
+.tasks-container {
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px
+}
+
+.to-do {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    background: var(--feldgrau);
+    color: var(--white-color);
+    border-radius: var(--border-radius-container);
+    border: 3px solid transparent;
+    transition: border 0.5s;
+}
+.to-do:hover {
+    border: 3px solid var(--midnight-green)
+}
+    .to-do * {
+        width: 25%;
+    }
+
+    .tasks-colums-sticky-info {
+        position: sticky;
+        display: flex;
+        flex-direction: row;
+        padding: 30px 20px;
+        background: var(--midnight-green);
+        color: var(--white-color);
+        border-radius: var(--border-radius-container);
+    }
+.tasks-colums-sticky-info * {
+    width: 25%;
+}

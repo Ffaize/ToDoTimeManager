@@ -195,4 +195,22 @@
   <data name="ConfirmDelete" xml:space="preserve">
     <value>Ви впевнені, що хочете видалити свій обліковий запис?</value>
   </data>
+  <data name="New" xml:space="preserve">
+    <value>Нові</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>В процесі</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Виконані</value>
+  </data>
+  <data name="OnHold" xml:space="preserve">
+    <value> На утриманні</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Скасовані</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>Задачі</value>
+  </data>
 </root>

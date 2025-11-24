@@ -6,6 +6,6 @@
 	SET NOCOUNT ON;
 		SELECT *
 		FROM ToDos
-		WHERE UserId = @UserId
-		  AND ToDoStatus = @ToDoStatus;
+		WHERE [AssignedTo] = @UserId
+		  AND [Status] = @ToDoStatus;
 	END

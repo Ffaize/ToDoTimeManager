@@ -212,3 +212,10 @@ button:active {
     color: var(--midnight-green);
     fill: var(--midnight-green)
 }
+
+.divider {
+    width: 100%;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.5);
+    margin: 20px 0;
+}

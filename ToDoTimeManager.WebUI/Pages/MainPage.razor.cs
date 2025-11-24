@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ToDoTimeManager.WebUI.Components;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.Implementations;
 

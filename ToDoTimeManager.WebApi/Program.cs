@@ -42,6 +42,7 @@ public class Program
         builder.Services.AddScoped<IToDosService, ToDosService>();
         builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IStatisticService, StatisticService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
 

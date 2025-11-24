@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace ToDoTimeManager.Shared.Models;
+﻿namespace ToDoTimeManager.Shared.Models;
 
 public class LoginUser
 {
