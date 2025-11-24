@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Enums;
+﻿using System.Globalization;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.Shared.Models;
 
@@ -9,7 +10,9 @@ public class ToDo
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime?   DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
+    public string DisplayDueDate => DueDate != null ? ((DateTime)DueDate).ToLocalTime().ToString(CultureInfo.CurrentUICulture) : "-";
+
     public ToDoStatus Status { get; set; }
     public Guid? AssignedTo { get; set; }
 }

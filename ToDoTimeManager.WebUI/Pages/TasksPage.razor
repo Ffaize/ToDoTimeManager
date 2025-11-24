@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Localization
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
@@ -13,19 +14,22 @@
 <div class="action-buttons-header">
     <div class="task-title">@Localizer["Tasks"]</div>
     <div class="buttons-container">
+        <InputText @bind-Value="FilterText" placeholder="@Localizer["Filter..."]"/>
         <select @bind="Filter">
             @foreach (var value in Enum.GetValues<ToDoFilter>())
             {
-                <option>
-                    @Enum.GetName(value)
+                <option value="@value">
+                    @Localizer[Enum.GetName(value) ?? string.Empty]
                 </option>
             }
         </select>
         <button class="primary-button">
-            logTime
+            <HistoryIcon IconSize="25" IconStyle="i-profile" />
+            @Localizer["LogTime"]
         </button>
         <button class="primary-button">
-            Create new task
+            <AddIcon IconSize="25" IconStyle="i-profile"/>
+            @Localizer["CreateNewTask"]
         </button>
     </div>
 
@@ -33,22 +37,28 @@
 <Divider/>
 <div class="tasks-container">
     <div class="tasks-colums-sticky-info">
-        <div class="info-number">
-            NumberedId
+        <div class="to-do-number">
+            @Localizer["Number"]
         </div>
-        <div class="info-title">
-            Title
+        <div class="to-do-title">
+            @Localizer["Title"]
         </div>
-        <div class="info-status">
-            Status
+        <div class="to-do-status">
+            @Localizer["Status"]
         </div>
-        <div class="info-creted-at">
-            CreatedAt
+        <div class="to-do-creted-at">
+            @Localizer["CreatedAt"]
         </div>
-        <div class="info-due-date">
-            DueDate
+        <div class="to-do-due-date">
+            @Localizer["DueDate"]
         </div>
     </div>
+    @if (!FilteredToDos.Any())
+    {
+        <div class="no-tasks-message">
+            @Localizer["NoTasksFound"]
+        </div>
+    }
     @foreach (var toDo in FilteredToDos)
     {
         <div class="to-do">
@@ -59,13 +69,63 @@
                 @toDo.Title
             </div>
             <div class="to-do-status">
-                @Enum.GetName(toDo.Status)
+                @{
+                    var status = Enum.GetName(toDo.Status) ?? string.Empty;
+                }
+                @Localizer[status += "Status"]
             </div>
             <div class="to-do-creted-at">
-                @toDo.CreatedAt
+                @toDo.CreatedAt.ToLocalTime().ToString(CultureInfo.CurrentUICulture)
             </div>
             <div class="to-do-due-date">
-                @toDo.DueDate
+                @toDo.DisplayDueDate
+            </div>
+        </div>
+        
+        <div class="to-do-min-width" style="display: none;">
+            <div class="to-do-min-width-row">
+                <div class="row-name">
+                    @Localizer["Number"]
+                </div>
+                <div class="row-value">
+                    @toDo.NumberedId
+                </div>
+            </div>
+            
+            <div class="to-do-min-width-row">
+                <div class="row-name">
+                    @Localizer["Title"]
+                </div>
+                <div class="row-value">
+                    @toDo.Title
+                </div>
+            </div>
+            
+            <div class="to-do-min-width-row">
+                <div class="row-name">
+                    @Localizer["Status"]
+                </div>
+                <div class="row-value">
+                    @Localizer[status += "Status"]
+                </div>
+            </div>
+            
+            <div class="to-do-min-width-row">
+                <div class="row-name">
+                    @Localizer["CreatedAt"]
+                </div>
+                <div class="row-value">
+                    @toDo.CreatedAt.ToLocalTime().ToString(CultureInfo.CurrentUICulture)
+                </div>
+            </div>
+            
+            <div class="to-do-min-width-row">
+                <div class="row-name">
+                    @Localizer["DueDate"]
+                </div>
+                <div class="row-value">
+                    @toDo.DisplayDueDate
+                </div>
             </div>
         </div>
     }

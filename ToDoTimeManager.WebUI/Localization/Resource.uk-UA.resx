@@ -213,4 +213,61 @@
   <data name="Tasks" xml:space="preserve">
     <value>Задачі</value>
   </data>
+  <data name="Filter..." xml:space="preserve">
+    <value>Фільтр...</value>
+  </data>
+  <data name="AllTime" xml:space="preserve">
+    <value>Весь час</value>
+  </data>
+  <data name="DayAgo" xml:space="preserve">
+    <value>День тому</value>
+  </data>
+  <data name="WeekAgo" xml:space="preserve">
+    <value>Тиждень тому</value>
+  </data>
+  <data name="MonthAgo" xml:space="preserve">
+    <value>Місяць тому</value>
+  </data>
+  <data name="YearAgo" xml:space="preserve">
+    <value>Рік тому</value>
+  </data>
+  <data name="LogTime" xml:space="preserve">
+    <value>Записати час</value>
+  </data>
+  <data name="CreateNewTask" xml:space="preserve">
+    <value>Створити задачу</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Створено в</value>
+  </data>
+  <data name="DueDate" xml:space="preserve">
+    <value>Зробити до</value>
+  </data>
+  <data name="NewStatus" xml:space="preserve">
+    <value>Нова</value>
+  </data>
+  <data name="InProgressStatus" xml:space="preserve">
+    <value>В процесі</value>
+  </data>
+  <data name="CompletedStatus" xml:space="preserve">
+    <value>Виконана</value>
+  </data>
+  <data name="OnHoldStatus" xml:space="preserve">
+    <value> На утриманні</value>
+  </data>
+  <data name="CancelledStatus" xml:space="preserve">
+    <value>Скасована</value>
+  </data>
+  <data name="NoTasksFound" xml:space="preserve">
+    <value>Задач не знайдено</value>
+  </data>
 </root>

@@ -2,10 +2,10 @@
 
 public enum ToDoFilter
 {
-    All,
-    Day,
-    Week,
-    Month,
-    Year
+    AllTime,
+    DayAgo,
+    WeekAgo,
+    MonthAgo,
+    YearAgo
 
 }

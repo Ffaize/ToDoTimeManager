@@ -208,9 +208,17 @@ button:active {
 }
 
 .secondary-button svg {
-    margin-bottom: 4px;
+    margin-bottom: 3px;
+    margin-right: 5px;
     color: var(--midnight-green);
     fill: var(--midnight-green)
+}
+
+.primary-button svg {
+    margin-bottom: 3px;
+    margin-right: 5px;
+    color: var(--white-color);
+    fill: var(--white-color)
 }
 
 .divider {

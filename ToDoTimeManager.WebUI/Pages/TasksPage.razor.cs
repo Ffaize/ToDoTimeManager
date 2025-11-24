@@ -14,7 +14,30 @@ public partial class TasksPage
 {
     [Inject] private ToDosService ToDosService { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
-    [Parameter] public ToDoFilter Filter { get; set; } = ToDoFilter.All;
+
+    [Parameter]
+    public ToDoFilter Filter
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            FilterData();
+        }
+    } = ToDoFilter.AllTime;
+
+    public string FilterText
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            FilterData();
+        }
+    } = string.Empty;
+
     private List<ToDo> AllToDos { get; set; } = [];
     private List<ToDo> FilteredToDos { get; set; } = [];
 
@@ -22,6 +45,7 @@ public partial class TasksPage
 
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     public bool IsLoading { get; set; }
+
 
     public void ShowLoader()
     {
@@ -44,7 +68,8 @@ public partial class TasksPage
         {
             await FetchData();
 
-            FilteredToDos = new List<ToDo>
+
+            AllToDos = new List<ToDo>
 {
     new ToDo { Id = Guid.NewGuid(), NumberedId = 1, Title = "Buy groceries", Description = "Milk, bread, eggs", CreatedAt = DateTime.UtcNow.AddDays(-3), DueDate = DateTime.UtcNow.AddDays(2), Status = ToDoStatus.InProgress, AssignedTo = Guid.NewGuid() },
     new ToDo { Id = Guid.NewGuid(), NumberedId = 2, Title = "Fix laptop", Description = "Replace thermal paste", CreatedAt = DateTime.UtcNow.AddDays(-10), DueDate = DateTime.UtcNow.AddDays(1), Status = ToDoStatus.Completed, AssignedTo = null },
@@ -67,9 +92,39 @@ public partial class TasksPage
     new ToDo { Id = Guid.NewGuid(), NumberedId = 19, Title = "Create toast service", Description = "Reusable component", CreatedAt = DateTime.UtcNow.AddDays(-4), DueDate = null, Status = ToDoStatus.OnHold, AssignedTo = null },
     new ToDo { Id = Guid.NewGuid(), NumberedId = 20, Title = "Backup database", Description = "Full backup to external drive", CreatedAt = DateTime.UtcNow.AddDays(-13), DueDate = DateTime.UtcNow.AddDays(2), Status = ToDoStatus.InProgress, AssignedTo = Guid.NewGuid() }
 };
+
+            FilterData();
             StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void FilterData()
+    {
+        FilteredToDos = [..AllToDos];
+        if(!string.IsNullOrWhiteSpace(FilterText))
+            FilteredToDos = AllToDos.Where(toDo => Localizer[GetNameWithStatus(toDo)].Value!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) || 
+                                                   toDo.Title!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) || 
+                                                   toDo.NumberedId.ToString().Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        if(Filter == ToDoFilter.AllTime)
+            return;
+        var dateLimit = Filter switch
+        {
+            ToDoFilter.DayAgo => DateTime.UtcNow.AddDays(-1),
+            ToDoFilter.WeekAgo => DateTime.UtcNow.AddDays(-7),
+            ToDoFilter.MonthAgo => DateTime.UtcNow.AddMonths(-1),
+            ToDoFilter.YearAgo => DateTime.UtcNow.AddYears(-1),
+            _ => DateTime.MinValue
+        };
+        FilteredToDos = FilteredToDos.Where(toDo => toDo.CreatedAt >= dateLimit).ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetNameWithStatus(ToDo toDo)
+    {
+        var status = Enum.GetName(toDo.Status) ?? string.Empty;
+        return status += "Status";
     }
 
     private async Task FetchData()

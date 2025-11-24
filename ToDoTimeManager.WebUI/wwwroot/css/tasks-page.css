@@ -8,6 +8,10 @@
     max-width: 300px;
 }
 
+.buttons-container input {
+    height: 50px;
+}
+
 .task-title {
     align-self: start;
     font-size: 35px;
@@ -17,22 +21,52 @@
     text-align: center;
 }
 
-@media(max-width: 1000px) {
+@media(max-width: 1200px) {
     .task-title {
         display: none !important;
     }
 }
 
-@media(max-width: 700px) {
+@media(max-width: 1000px) {
+    .buttons-container {
+        flex-direction: unset;
+        flex-wrap: wrap;
+        align-self: center;
+    }
+
+        .buttons-container * {
+            max-width: 48%;
+        }
+}
+
+@media(max-width: 900px) {
+    .tasks-colums-sticky-info {
+        display: none !important;
+    }
+
+    .to-do {
+        display: none !important;
+    }
+
+    .to-do-min-width {
+        display: block !important;
+    }
+}
+
+@media(max-width: 790px) {
     .buttons-container {
         flex-direction: column !important;
         gap: 10px !important;
     }
 
 
-    .buttons-container * {
-        max-width: unset;
-    }
+        .buttons-container * {
+            max-width: unset;
+        }
+}
+
+.to-do-due-date, .to-do-creted-at, .to-do-status, .to-do-number {
+    max-width: 200px;
 }
 
 .buttons-container {
@@ -62,23 +96,72 @@
     border-radius: var(--border-radius-container);
     border: 3px solid transparent;
     transition: border 0.5s;
+    gap: 10px;
 }
-.to-do:hover {
-    border: 3px solid var(--midnight-green)
-}
-    .to-do * {
-        width: 25%;
+
+    .to-do:hover {
+        border: 3px solid var(--midnight-green)
     }
 
-    .tasks-colums-sticky-info {
-        position: sticky;
-        display: flex;
-        flex-direction: row;
-        padding: 30px 20px;
-        background: var(--midnight-green);
-        color: var(--white-color);
-        border-radius: var(--border-radius-container);
+    .to-do * {
+        flex: 1;
+        border-right: 3px solid var(--midnight-green)
     }
-.tasks-colums-sticky-info * {
-    width: 25%;
+
+    .to-do .to-do-due-date {
+        border-right: none !important;
+    }
+
+.tasks-colums-sticky-info {
+    position: sticky;
+    top: 10px;
+    display: flex;
+    flex-direction: row;
+    padding: 30px 20px;
+    background: var(--midnight-green);
+    color: var(--white-color);
+    border-radius: var(--border-radius-container);
+    gap: 10px;
+}
+
+    .tasks-colums-sticky-info * {
+        flex: 1;
+    }
+
+
+.to-do-min-width {
+    padding: 20px;
+    background: var(--feldgrau);
+    color: var(--white-color);
+    border-radius: var(--border-radius-container);
+    border: 3px solid transparent;
+    transition: border 0.5s;
+}
+
+    .to-do-min-width:hover {
+        border: 3px solid var(--midnight-green)
+    }
+
+.to-do-min-width-row {
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+.row-name {
+    align-self: start;
+    width: -webkit-fill-available;
+}
+
+.row-value {
+    text-align: end;
+    width: -webkit-fill-available;
+}
+
+.no-tasks-message {
+    width: 100%;
+    text-align: center;
+    font-size: larger;
+    color: rgba(0,0,0,0.6)
 }
