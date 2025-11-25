@@ -1,0 +1,10 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
+@using ToDoTimeManager.WebUI.Localization
+@page "/taskDetails/{TaskId:guid}"
+@attribute [Authorize]
+<PageTitle>@Localizer["Tasks"] - TaskForge</PageTitle>
+<Loader IsLoading="IsLoading" />

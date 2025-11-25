@@ -5,7 +5,6 @@
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
 @page "/tasks"
-@page "/tasks/{Filter}"
 @attribute [Authorize]
 <PageTitle>@Localizer["Tasks"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
@@ -61,7 +60,7 @@
     }
     @foreach (var toDo in FilteredToDos)
     {
-        <div class="to-do">
+        <div class="to-do" @onclick="() => GoToTaskDetailPage(toDo.Id)">
             <div class="to-do-number">
                 @toDo.NumberedId
             </div>
@@ -82,7 +81,7 @@
             </div>
         </div>
         
-        <div class="to-do-min-width" style="display: none;">
+        <div class="to-do-min-width" @onclick="() => GoToTaskDetailPage(toDo.Id)" style="display: none;">
             <div class="to-do-min-width-row">
                 <div class="row-name">
                     @Localizer["Number"]
@@ -106,7 +105,7 @@
                     @Localizer["Status"]
                 </div>
                 <div class="row-value">
-                    @Localizer[status += "Status"]
+                    @Localizer[status]
                 </div>
             </div>
             
