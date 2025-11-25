@@ -13,6 +13,6 @@ public class ToDo
     public DateTime? DueDate { get; set; }
     public string DisplayDueDate => DueDate != null ? ((DateTime)DueDate).ToLocalTime().ToString(CultureInfo.CurrentUICulture) : "-";
 
-    public ToDoStatus Status { get; set; }
+    public ToDoStatus Status { get; set; } = ToDoStatus.New;
     public Guid? AssignedTo { get; set; }
 }

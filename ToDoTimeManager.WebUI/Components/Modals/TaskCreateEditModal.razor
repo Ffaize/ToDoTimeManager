@@ -1,0 +1,112 @@
+﻿@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.Shared.Models
+@using ToDoTimeManager.WebUI.Localization
+<div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
+<div class="modal-window" hidden="@(!Show)">
+    <div class="modal-window-header">
+        @Title
+    </div>
+    <div class="modal-content">
+        <div style="width: 100%;">
+            <h4>@Localizer["TaskTitle"]</h4>
+            <InputText @bind-Value="@InternalTask.Title" placeholder="@Localizer["Enter..."]" />
+        </div>
+        <div style="width: 100%;">
+            <h4>@Localizer["TaskDescription"]</h4>
+            <InputText @bind-Value="@InternalTask.Description" placeholder="@Localizer["Enter..."]" />
+        </div>
+        <div style="width: 100%;">
+            <h4>@Localizer["Status"]</h4>
+            <select @bind="InternalTask.Status" disabled="@(!IsEditMode)">
+                @foreach (var status in Enum.GetValues<ToDoStatus>())
+                {
+                    <option value="@status">
+                        @{
+                            var name = Enum.GetName(status) ?? string.Empty;
+                        }
+                        @Localizer[name += "Status"]
+                    </option>
+                }
+            </select>
+        </div>
+        <div style="width: 100%;">
+            <h4>@Localizer["DueDate"]</h4>
+            <InputDate @bind-Value="@InternalTask.DueDate" placeholder="@Localizer["Enter..."]" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="secondary-button" @onclick="OnCancelClicked">
+            @Localizer["Cancel"]
+        </button>
+        <button class="primary-button" @onclick="OnConfirmClicked">
+            @Localizer["Save"]
+        </button>
+    </div>
+</div>
+@code {
+    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public ToDo? Task { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    private ToDo InternalTask { get; set; } = new();
+
+    #region BaseForComponent
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+    public bool IsLoading { get; set; }
+    public void ShowLoader()
+    {
+        IsLoading = true;
+        InvokeAsync(StateHasChanged);
+    }
+    public void HideLoader()
+    {
+        IsLoading = false;
+        InvokeAsync(StateHasChanged);
+    }
+    #endregion
+
+
+    protected override void OnParametersSet()
+    {
+        if (Task is not null)
+        {
+            InternalTask = new ToDo()
+            {
+                Id = Task.Id,
+                Title = Task.Title,
+                Description = Task.Description,
+                CreatedAt = Task.CreatedAt,
+                DueDate = Task.DueDate,
+                Status = Task.Status,
+                AssignedTo = Task.AssignedTo
+            };
+        }
+
+        base.OnParametersSet();
+    }
+
+    private async Task Close(object? result)
+    {
+        Show = false;
+        ResultChanged?.Invoke(new ModalResult(Show, true, result));
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnOverlayClick()
+    {
+        _ = Close(null);
+    }
+
+    private void OnCancelClicked()
+    {
+        _ = Close(null);
+    }
+
+    private void OnConfirmClicked()
+    {
+        _ = Close(InternalTask);
+    }
+
+}

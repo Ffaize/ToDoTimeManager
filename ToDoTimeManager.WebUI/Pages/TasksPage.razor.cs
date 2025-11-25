@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
+using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
+using ToDoTimeManager.WebUI.Services.Implementations;
 using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
@@ -13,6 +16,8 @@ namespace ToDoTimeManager.WebUI.Pages;
 public partial class TasksPage
 {
     [Inject] private ToDosService ToDosService { get; set; } = null!;
+    [Inject] private ToastsService ToastsService { get; set; } = null!;
+    [Inject] private ILogger<TasksPage> Logger { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
@@ -40,6 +45,7 @@ public partial class TasksPage
 
     private List<ToDo> AllToDos { get; set; } = [];
     private List<ToDo> FilteredToDos { get; set; } = [];
+    public bool IsTaskCreateModalVisible { get; set; }
 
     #region BaseForComponent
 
@@ -119,5 +125,55 @@ public partial class TasksPage
     private void GoToTaskDetailPage(Guid toDoId)
     {
         NavigationManager.NavigateTo($"/taskDetails/{toDoId}");
+    }
+
+    private void OnTaskCreateChanged(ModalResult obj)
+    {
+        IsTaskCreateModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var newToDo = (ToDo)obj.Value;
+            _ = CreateToDo(newToDo);
+        }
+        StateHasChanged();
+    }
+
+    private void ShowModal(string nameOfBoolProp)
+    {
+        try
+        {
+            var prop = GetType().GetProperty(nameOfBoolProp);
+            prop?.SetValue(this, true);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex.Message, ex);
+        }
+    }
+
+    private async Task CreateToDo(ToDo newToDo)
+    {
+        ShowLoader();
+        newToDo.Id = Guid.NewGuid();
+        newToDo.CreatedAt = DateTime.UtcNow;
+        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
+        if (accessToken is null)
+            return;
+        var (userId, role) =
+            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
+        newToDo.AssignedTo = Guid.Parse((ReadOnlySpan<char>)userId);
+
+        var createdToDo = await ToDosService.CreateToDo(newToDo);
+        if(!createdToDo)
+        {
+            HideLoader();
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+        await ToastsService.ShowToast(Localizer["TaskCreated"], false);
+        await FetchData();
+        FilterData();
+        HideLoader();
+        await InvokeAsync(StateHasChanged);
     }
 }

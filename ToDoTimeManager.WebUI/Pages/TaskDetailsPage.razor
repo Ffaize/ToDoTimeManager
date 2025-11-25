@@ -6,5 +6,20 @@
 @using ToDoTimeManager.WebUI.Localization
 @page "/taskDetails/{TaskId:guid}"
 @attribute [Authorize]
-<PageTitle>@Localizer["Tasks"] - TaskForge</PageTitle>
+<PageTitle>@Localizer["TaskDetails"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
+
+<div class="action-buttons-header">
+    <div class="task-title">@Localizer["TasksNumber"]: @Task.NumberedId</div>
+    <div class="buttons-container">
+        <button class="primary-button">
+            <HistoryIcon IconSize="25" IconStyle="i-profile" />
+            @Localizer["LogTime"]
+        </button>
+        <button class="primary-button">
+            <EditIcon IconSize="25" IconStyle="i-profile" />
+            @Localizer["EditTask"]
+        </button>
+    </div>
+
+</div>

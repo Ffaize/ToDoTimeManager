@@ -17,6 +17,7 @@ public partial class ProfilePage
 {
 
     [Inject] private UserService UserService { get; set; } = null!;
+    [Inject] private ToastsService ToastsService { get; set; } = null!;
     [Inject] private StatisticService StatisticService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
@@ -105,7 +106,10 @@ public partial class ProfilePage
         ShowLoader();
         var update = await UserService.Update(user);
         if (update)
+        {
+            await ToastsService.ShowToast(Localizer["UserUpdated"], false);
             await FetchData();
+        }
         HideLoader();
         StateHasChanged();
     }

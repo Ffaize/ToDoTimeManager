@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[sp_ToDos_Create]
 	@Id UNIQUEIDENTIFIER,
+	@NumberedId INT,
 	@Title NVARCHAR(100),
 	@Description NVARCHAR(MAX),
 	@CreatedAt DATETIME,

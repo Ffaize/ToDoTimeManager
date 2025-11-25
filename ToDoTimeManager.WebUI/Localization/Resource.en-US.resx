@@ -270,4 +270,28 @@
   <data name="NoTasksFound" xml:space="preserve">
     <value>No tasks found</value>
   </data>
+  <data name="TasksNumber" xml:space="preserve">
+    <value>Tasks number</value>
+  </data>
+  <data name="TaskDetails" xml:space="preserve">
+    <value>Task details</value>
+  </data>
+  <data name="TaskTitle" xml:space="preserve">
+    <value>Task title</value>
+  </data>
+  <data name="TaskDescription" xml:space="preserve">
+    <value>Task description</value>
+  </data>
+  <data name="TaskCreate" xml:space="preserve">
+    <value>Task create</value>
+  </data>
+  <data name="EditTask" xml:space="preserve">
+    <value>Edit task</value>
+  </data>
+  <data name="TaskCreated" xml:space="preserve">
+    <value>Task created</value>
+  </data>
+  <data name="UserUpdated" xml:space="preserve">
+    <value>User updated</value>
+  </data>
 </root>

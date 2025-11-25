@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 @using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.WebUI.Components.Modals
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
@@ -8,6 +9,12 @@
 @attribute [Authorize]
 <PageTitle>@Localizer["Tasks"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
+
+<TaskCreateEditModal Title="@Localizer["TaskCreate"]"
+                     IsEditMode="false"
+                     Show="IsTaskCreateModalVisible"
+                     ResultChanged="OnTaskCreateChanged"
+                     Task="null"/>
 
 
 <div class="action-buttons-header">
@@ -26,7 +33,7 @@
             <HistoryIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["LogTime"]
         </button>
-        <button class="primary-button">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsTaskCreateModalVisible))">
             <AddIcon IconSize="25" IconStyle="i-profile"/>
             @Localizer["CreateNewTask"]
         </button>

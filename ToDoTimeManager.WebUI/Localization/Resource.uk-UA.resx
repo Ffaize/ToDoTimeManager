@@ -270,4 +270,28 @@
   <data name="NoTasksFound" xml:space="preserve">
     <value>Задач не знайдено</value>
   </data>
+  <data name="TasksNumber" xml:space="preserve">
+    <value>Номер завдання</value>
+  </data>
+  <data name="TaskDetails" xml:space="preserve">
+    <value>Деталі завдання</value>
+  </data>
+  <data name="TaskTitle" xml:space="preserve">
+    <value>Заголовок задачі</value>
+  </data>
+  <data name="TaskDescription" xml:space="preserve">
+    <value>Опис задачі</value>
+  </data>
+  <data name="TaskCreate" xml:space="preserve">
+    <value>Зробити задачу</value>
+  </data>
+  <data name="EditTask" xml:space="preserve">
+    <value>Редагувати задачу</value>
+  </data>
+  <data name="TaskCreated" xml:space="preserve">
+    <value>Задача створена</value>
+  </data>
+  <data name="UserUpdated" xml:space="preserve">
+    <value>Користувача редаговано</value>
+  </data>
 </root>
