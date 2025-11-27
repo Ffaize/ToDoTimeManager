@@ -6,6 +6,7 @@
     background-repeat: repeat;
     border: 5px solid var(--midnight-green);
     border-radius: var(--border-radius-container);
+    filter: contrast(0.8);
 }
 
 .rounded-logo {
@@ -37,6 +38,7 @@
     justify-self: center;
     transform: translateY(-50px);
     font-size: 2.5rem;
+    color: var(--white-color)
 }
 .profile-email {
     align-self: center;
@@ -44,6 +46,7 @@
     transform: translateY(-50px);
     width: fit-content;
     font-size: 1.3rem;
+    color: var(--white-color)
 }
 
 .profile-action-buttons-container {

@@ -19,7 +19,10 @@
     align-content: center;
     justify-content: center;
     text-align: center;
+    color: var(--white-color)
 }
+
+
 
 @media(max-width: 1200px) {
     .task-title {

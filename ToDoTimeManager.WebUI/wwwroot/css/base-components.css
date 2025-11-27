@@ -5,10 +5,21 @@
     width: 100%;
     font-size: 20px;
     padding: 5px;
+    background: var(--battleship-gray);
+    color: var(--white-color);
 }
 
-input:disabled {
-    color: rgba(255, 255, 255, 0.7) !important
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+    input:disabled {
+        color: rgba(255, 255, 255, 0.5) !important;
+        background: rgba(255, 255, 255, 0.5) !important;
+    }
+
+input::placeholder {
+    color: rgba(255, 255, 255,0.7)
 }
 
     input:focus {
@@ -29,7 +40,14 @@ textarea {
     padding: 5px;
     max-height: 30vh;
     min-height: 45px;
+    background: var(--battleship-gray);
+    color: var(--white-color);
+    -moz-appearance: textfield;
 }
+
+textarea::placeholder {
+        color: rgba(255, 255, 255,0.7)
+    }
 
 @media(max-height: 700px) {
     textarea {
@@ -77,7 +95,7 @@ select {
     height: 50px;
     font-size: large;
     border-radius: var(--border-radius-box);
-    border: 2px solid var(--feldgrau);
+    border: 2px solid var(--dark-slate-gray);
     background: var(--midnight-green);
     color: var(--light-text-color);
     box-shadow: var(--shadow-button)
@@ -92,7 +110,7 @@ select {
     border-radius: var(--border-radius-box);
     border: 2px solid var(--midnight-green);
     background: transparent;
-    color: var(--dark-text-color);
+    color: var(--white-color);
     box-shadow: var(--shadow-button)
 }
 
@@ -240,14 +258,22 @@ button:active {
 .secondary-button svg {
     margin-bottom: 3px;
     margin-right: 5px;
-    color: var(--midnight-green);
-    fill: var(--midnight-green)
+    color: var(--white-color);
+    fill: var(--white-color)
 }
 
 .primary-button svg {
     margin-bottom: 3px;
     margin-right: 5px;
     color: var(--white-color);
+    fill: var(--white-color)
+}
+
+.primary-button svg * {
+    fill: var(--white-color)
+}
+
+.secondary-button svg * {
     fill: var(--white-color)
 }
 

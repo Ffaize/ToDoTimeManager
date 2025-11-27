@@ -1,6 +1,7 @@
 ﻿.task-details-title {
     min-width: fit-content;
     margin-left: 15px;
+    color: var(--white-color)
 }
 
 @media(max-width: 1200px) and (min-width: 790px) {
