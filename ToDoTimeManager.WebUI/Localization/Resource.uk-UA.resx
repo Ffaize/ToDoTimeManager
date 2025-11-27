@@ -294,4 +294,22 @@
   <data name="UserUpdated" xml:space="preserve">
     <value>Користувача редаговано</value>
   </data>
+  <data name="TaskEdit" xml:space="preserve">
+    <value>Редагувати завдання</value>
+  </data>
+  <data name="HoursSpent" xml:space="preserve">
+    <value>Витрачено часу</value>
+  </data>
+  <data name="LogDescription" xml:space="preserve">
+    <value>Опис запису</value>
+  </data>
+  <data name="TimeLog" xml:space="preserve">
+    <value>Записати час</value>
+  </data>
+  <data name="TaskWithThatNumberWereNotFound" xml:space="preserve">
+    <value>Задача з таким номером не була знайдена</value>
+  </data>
+  <data name="TimeLogCreated" xml:space="preserve">
+    <value>Час записано</value>
+  </data>
 </root>

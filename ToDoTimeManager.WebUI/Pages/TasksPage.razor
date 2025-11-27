@@ -16,6 +16,12 @@
                      ResultChanged="OnTaskCreateChanged"
                      Task="null"/>
 
+<LogTimeModal Title="@Localizer["TimeLog"]"
+              Show="IsLogTimeModalVisible"
+              ResultChanged="OnLogTimeCreate"
+              Task="null"
+              IsFromTaskDescription="false"/>
+
 
 <div class="action-buttons-header">
     <div class="task-title">@Localizer["Tasks"]</div>
@@ -29,7 +35,7 @@
                 </option>
             }
         </select>
-        <button class="primary-button">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible))">
             <HistoryIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["LogTime"]
         </button>

@@ -1,5 +1,92 @@
-﻿<h3>LogTimeModal</h3>
-
+﻿@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.Shared.Models
+@using ToDoTimeManager.WebUI.Localization
+<div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
+<div class="modal-window" hidden="@(!Show)">
+    <div class="modal-window-header">
+        @Title
+    </div>
+    <div class="modal-content">
+        <div style="width: 100%;">
+            <h4>@Localizer["TasksNumber"]</h4>
+            <InputNumber @bind-Value="@TaskNumber" placeholder="@Localizer["Enter..."]" disabled="@IsFromTaskDescription"/>
+        </div>
+        <div style="width: 100%;">
+            <h4>@Localizer["HoursSpent"]</h4>
+            <InputNumber @bind-Value="@HoursSpent" placeholder="@Localizer["Enter..."]"/>
+        </div>
+        <div style="width: 100%;">
+            <h4>@Localizer["LogDescription"]</h4>
+            <InputTextArea @bind-Value="@TimeLog.LogDescription" placeholder="@Localizer["Enter..."]"/>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="secondary-button" @onclick="OnCancelClicked">
+            @Localizer["Cancel"]
+        </button>
+        <button class="primary-button" @onclick="OnConfirmClicked">
+            @Localizer["Save"]
+        </button>
+    </div>
+</div>
 @code {
+    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public ToDo? Task { get; set; }
+    [Parameter] public bool IsFromTaskDescription { get; set; }
+    private TimeLog TimeLog { get; set; } = new();
+    public int TaskNumber { get; set; }
+
+    #region BaseForComponent
+    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+    public bool IsLoading { get; set; }
+    public float HoursSpent { get; set; }
+
+    public void ShowLoader()
+    {
+        IsLoading = true;
+        InvokeAsync(StateHasChanged);
+    }
+    public void HideLoader()
+    {
+        IsLoading = false;
+        InvokeAsync(StateHasChanged);
+    }
+    #endregion
+
+
+    protected override void OnParametersSet()
+    {
+        if (Task is not null && IsFromTaskDescription)
+        {
+            TaskNumber = Task.NumberedId;
+        }
+
+        base.OnParametersSet();
+    }
+
+    private async Task Close(object? result)
+    {
+        Show = false;
+        ResultChanged?.Invoke(new ModalResult(Show, true, result, TaskNumber));
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnOverlayClick()
+    {
+        _ = Close(null);
+    }
+
+    private void OnCancelClicked()
+    {
+        _ = Close(null);
+    }
+
+    private void OnConfirmClicked()
+    {
+        _ = Close(TimeLog);
+    }
 
 }

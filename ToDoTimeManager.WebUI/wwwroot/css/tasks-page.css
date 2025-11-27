@@ -80,7 +80,7 @@
 
 .tasks-container {
     width: 100%;
-    height: 100%;
+    height: fit-content;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -97,6 +97,7 @@
     border: 3px solid transparent;
     transition: border 0.5s;
     gap: 10px;
+    box-shadow: var(--shadow-card)
 }
 
     .to-do:hover {
@@ -136,6 +137,7 @@
     border-radius: var(--border-radius-container);
     border: 3px solid transparent;
     transition: border 0.5s;
+    box-shadow: var(--shadow-card)
 }
 
     .to-do-min-width:hover {

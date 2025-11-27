@@ -271,7 +271,7 @@
     <value>No tasks found</value>
   </data>
   <data name="TasksNumber" xml:space="preserve">
-    <value>Tasks number</value>
+    <value>Task number</value>
   </data>
   <data name="TaskDetails" xml:space="preserve">
     <value>Task details</value>
@@ -293,5 +293,23 @@
   </data>
   <data name="UserUpdated" xml:space="preserve">
     <value>User updated</value>
+  </data>
+  <data name="TaskEdit" xml:space="preserve">
+    <value>Task editing</value>
+  </data>
+  <data name="HoursSpent" xml:space="preserve">
+    <value>Hours spent</value>
+  </data>
+  <data name="LogDescription" xml:space="preserve">
+    <value>Log description</value>
+  </data>
+  <data name="TimeLog" xml:space="preserve">
+    <value>Time log</value>
+  </data>
+  <data name="TaskWithThatNumberWereNotFound" xml:space="preserve">
+    <value>Task with that number were not found</value>
+  </data>
+  <data name="TimeLogCreated" xml:space="preserve">
+    <value>Time loged</value>
   </data>
 </root>

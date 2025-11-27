@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 @using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.WebUI.Components.Modals
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
@@ -9,17 +10,49 @@
 <PageTitle>@Localizer["TaskDetails"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
 
-<div class="action-buttons-header">
-    <div class="task-title">@Localizer["TasksNumber"]: @Task.NumberedId</div>
-    <div class="buttons-container">
-        <button class="primary-button">
+
+<TaskCreateEditModal Title="@Localizer["TaskEdit"]"
+                     IsEditMode="true"
+                     Show="IsTaskEditModalVisible"
+                     ResultChanged="OnTaskCreateChanged"
+                     Task="Task"/>
+
+<LogTimeModal Title="@Localizer["TimeLog"]"
+              Show="IsLogTimeModalVisible"
+              ResultChanged="OnLogTimeCreate"
+              Task="Task"
+              IsFromTaskDescription="true" />
+
+<div class="action-buttons-header task-details-header">
+    <div class="task-title task-details-title">№ @Task.NumberedId</div>
+    <div class="buttons-container task-details-button-container">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible))">
             <HistoryIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["LogTime"]
         </button>
-        <button class="primary-button">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsTaskEditModalVisible))">
             <EditIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["EditTask"]
         </button>
     </div>
+</div>
 
+<div class="task-details-container">
+    <div class="task-details-title-low">№ @Task.NumberedId</div>
+    <div class="task-details-task-title">
+        @(Task.Title ?? "-")
+    </div>
+    
+    <div class="task-details-description">
+        @(Task.Description ?? "-")
+    </div>
+    
+    <div class="task-details-info-properties">
+        <div class="task-details-info">
+            @Localizer["Status"]: @Enum.GetName(Task.Status)
+        </div>
+        <div class="task-details-info">
+            @Localizer["DueDate"]: @Task.DisplayDueDate
+        </div>
+    </div>
 </div>

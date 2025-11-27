@@ -34,6 +34,7 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<StatisticService>();
         builder.Services.AddScoped<ToDosService>();
+        builder.Services.AddScoped<TimeLogsService>();
 
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 

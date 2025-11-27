@@ -21,7 +21,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex.Message, ex);
+                _logger.LogError(ex.Message, ex);
                 return null;
             }
         }
@@ -36,7 +36,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex.Message, ex);
+                _logger.LogError(ex.Message, ex);
                 return null;
             }
         }

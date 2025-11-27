@@ -16,13 +16,15 @@
     width: 600px;
     max-width: 90%;
     z-index: 1001;
+    box-shadow: var(--shadow-card-very-big);
+    border-radius: var(--border-radius-container)
 }
 
 .modal-window-header {
     background: var(--midnight-green);
     color: var(--white-color);
     padding: 10px 20px;
-    font-size: 20px;
+    font-size: 23px;
     border-top-left-radius: var(--border-radius-container);
     border-top-right-radius: var(--border-radius-container);
 }
@@ -39,6 +41,7 @@
 .modal-content h4 {
     margin-left: 3px;
     margin-bottom: 2px;
+    font-size: 20px;
 }
 
 .modal-footer {

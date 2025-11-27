@@ -295,6 +295,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hours spent.
+        /// </summary>
+        public static string HoursSpent {
+            get {
+                return ResourceManager.GetString("HoursSpent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In progress.
         /// </summary>
         public static string InProgress {
@@ -309,6 +318,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string InProgressStatus {
             get {
                 return ResourceManager.GetString("InProgressStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log description.
+        /// </summary>
+        public static string LogDescription {
+            get {
+                return ResourceManager.GetString("LogDescription", resourceCulture);
             }
         }
         
@@ -511,6 +529,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task editing.
+        /// </summary>
+        public static string TaskEdit {
+            get {
+                return ResourceManager.GetString("TaskEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tasks.
         /// </summary>
         public static string Tasks {
@@ -520,7 +547,7 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tasks number.
+        ///   Looks up a localized string similar to Task number.
         /// </summary>
         public static string TasksNumber {
             get {
@@ -534,6 +561,33 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string TaskTitle {
             get {
                 return ResourceManager.GetString("TaskTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task with that number were not found.
+        /// </summary>
+        public static string TaskWithThatNumberWereNotFound {
+            get {
+                return ResourceManager.GetString("TaskWithThatNumberWereNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time log.
+        /// </summary>
+        public static string TimeLog {
+            get {
+                return ResourceManager.GetString("TimeLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time loged.
+        /// </summary>
+        public static string TimeLogCreated {
+            get {
+                return ResourceManager.GetString("TimeLogCreated", resourceCulture);
             }
         }
         

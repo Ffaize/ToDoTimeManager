@@ -7,11 +7,41 @@
     padding: 5px;
 }
 
+input:disabled {
+    color: rgba(255, 255, 255, 0.7) !important
+}
+
     input:focus {
         border: 2px solid var(--chestnut);
     }
 
     input:focus-visible {
+        border: 2px solid var(--chestnut);
+        outline: unset;
+    }
+
+textarea {
+    border-radius: var(--border-radius-box);
+    border: 2px solid var(--feldgrau);
+    height: 40px;
+    width: 100%;
+    font-size: 20px;
+    padding: 5px;
+    max-height: 30vh;
+    min-height: 45px;
+}
+
+@media(max-height: 700px) {
+    textarea {
+        max-height: 20vh;
+    }
+}
+
+    textarea:focus {
+        border: 2px solid var(--chestnut);
+    }
+
+    textarea:focus-visible {
         border: 2px solid var(--chestnut);
         outline: unset;
     }
@@ -50,6 +80,7 @@ select {
     border: 2px solid var(--feldgrau);
     background: var(--midnight-green);
     color: var(--light-text-color);
+    box-shadow: var(--shadow-button)
 }
 
 
@@ -62,6 +93,7 @@ select {
     border: 2px solid var(--midnight-green);
     background: transparent;
     color: var(--dark-text-color);
+    box-shadow: var(--shadow-button)
 }
 
 button:active {
@@ -125,28 +157,27 @@ button:active {
     }
 }
 
-    .custom-toast svg {
-        align-content: center;
-        justify-content: center;
-        align-self: center;
-    }
+.custom-toast svg {
+    align-content: center;
+    justify-content: center;
+    align-self: center;
+}
 
-    .custom-toast .toast-message {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        text-wrap-mode: wrap;
-        line-height: 38px;
-        font-size: clamp(16px,20px,23px);
-        color: var(--white-color);
-        font-weight: 550;
+.custom-toast .toast-message {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    text-wrap-mode: wrap;
+    line-height: 38px;
+    font-size: clamp(16px,20px,23px);
+    color: var(--white-color);
+    font-weight: 550;
+}
 
-    }
 
-
-    .i-white {
-        fill: var(--white-color);
-    }
+.i-white {
+    fill: var(--white-color);
+}
 
 .success {
     background: var(--success-color)
@@ -156,18 +187,16 @@ button:active {
         background: #227338;
     }
 
-    .error {
-        background: var(--error-color)
-    }
+.error {
+    background: var(--error-color)
+}
 
-        .error .toast-close-button {
-            background: #ad2a2a;
-        }
+    .error .toast-close-button {
+        background: #ad2a2a;
+    }
 
 .toast-close-button {
     border-radius: var(--border-radius-box);
-   
-    
     border: 2px solid transparent;
 }
 
@@ -195,6 +224,7 @@ button:active {
         transform: translateY(0);
     }
 }
+
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -220,6 +250,8 @@ button:active {
     color: var(--white-color);
     fill: var(--white-color)
 }
+
+
 
 .divider {
     width: 100%;

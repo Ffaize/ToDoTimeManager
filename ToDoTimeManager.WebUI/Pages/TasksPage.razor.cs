@@ -16,12 +16,13 @@ namespace ToDoTimeManager.WebUI.Pages;
 public partial class TasksPage
 {
     [Inject] private ToDosService ToDosService { get; set; } = null!;
+    [Inject] private TimeLogsService TimeLogsService { get; set; } = null!;
     [Inject] private ToastsService ToastsService { get; set; } = null!;
     [Inject] private ILogger<TasksPage> Logger { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    
+
     public ToDoFilter Filter
     {
         get;
@@ -46,6 +47,8 @@ public partial class TasksPage
     private List<ToDo> AllToDos { get; set; } = [];
     private List<ToDo> FilteredToDos { get; set; } = [];
     public bool IsTaskCreateModalVisible { get; set; }
+    public bool IsLogTimeModalVisible { get; set; }
+
 
     #region BaseForComponent
 
@@ -81,13 +84,13 @@ public partial class TasksPage
 
     private void FilterData()
     {
-        FilteredToDos = [..AllToDos];
-        if(!string.IsNullOrWhiteSpace(FilterText))
-            FilteredToDos = AllToDos.Where(toDo => Localizer[GetNameWithStatus(toDo)].Value!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) || 
-                                                   toDo.Title!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) || 
+        FilteredToDos = [.. AllToDos];
+        if (!string.IsNullOrWhiteSpace(FilterText))
+            FilteredToDos = AllToDos.Where(toDo => Localizer[GetNameWithStatus(toDo)].Value!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
+                                                   toDo.Title!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
                                                    toDo.NumberedId.ToString().Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        if(Filter == ToDoFilter.AllTime)
+        if (Filter == ToDoFilter.AllTime)
             return;
         var dateLimit = Filter switch
         {
@@ -164,13 +167,56 @@ public partial class TasksPage
         newToDo.AssignedTo = Guid.Parse((ReadOnlySpan<char>)userId);
 
         var createdToDo = await ToDosService.CreateToDo(newToDo);
-        if(!createdToDo)
+        if (!createdToDo)
         {
             HideLoader();
             await InvokeAsync(StateHasChanged);
             return;
         }
         await ToastsService.ShowToast(Localizer["TaskCreated"], false);
+        await FetchData();
+        FilterData();
+        HideLoader();
+        GoToTaskDetailPage(newToDo.Id);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnLogTimeCreate(ModalResult obj)
+    {
+        IsLogTimeModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var timeLog = (TimeLog)obj.Value;
+            var task = AllToDos.FirstOrDefault(x => x.NumberedId == (int)(obj.AdditionalValue ?? 0));
+            if (task is null)
+            {
+                ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).Wait();
+                return;
+            }
+            _ = CreateTimeLog(timeLog);
+        }
+        StateHasChanged();
+    }
+
+    private async Task CreateTimeLog(TimeLog timeLog)
+    {
+        ShowLoader();
+        timeLog.Id = Guid.NewGuid();
+        timeLog.LogDate = DateTime.UtcNow;
+        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
+        if (accessToken is null)
+            return;
+        var (userId, role) =
+            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
+        timeLog.UserId = Guid.Parse((ReadOnlySpan<char>)userId);
+        var createdTimeLog = await TimeLogsService.CreateTimeLog(timeLog);
+        if (!createdTimeLog)
+        {
+            HideLoader();
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+        await ToastsService.ShowToast(Localizer["TimeLogCreated"], false);
         await FetchData();
         FilterData();
         HideLoader();
