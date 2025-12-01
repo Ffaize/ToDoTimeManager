@@ -322,6 +322,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log date.
+        /// </summary>
+        public static string LogDate {
+            get {
+                return ResourceManager.GetString("LogDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log description.
         /// </summary>
         public static string LogDescription {

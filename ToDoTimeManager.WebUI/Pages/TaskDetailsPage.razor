@@ -15,7 +15,7 @@
                      IsEditMode="true"
                      Show="IsTaskEditModalVisible"
                      ResultChanged="OnTaskCreateChanged"
-                     Task="Task"/>
+                     Task="Task" />
 
 <LogTimeModal Title="@Localizer["TimeLog"]"
               Show="IsLogTimeModalVisible"
@@ -42,11 +42,12 @@
     <div class="task-details-task-title">
         @(Task.Title ?? "-")
     </div>
-    
+    <Divider />
+
     <div class="task-details-description">
         @(Task.Description ?? "-")
     </div>
-    
+
     <div class="task-details-info-properties">
         <div class="task-details-info">
             @{
@@ -62,3 +63,65 @@
         </div>
     </div>
 </div>
+
+@if (TimeSpent.Any())
+{
+    <div class="time-log-container time-log-example">
+        <div class="hours-spent-column">
+            @Localizer["SpentTime"]
+        </div>
+        <div>
+            @Localizer["LogDescription"]
+        </div>
+        <div class="log-date-column">
+            @Localizer["LogDate"]
+        </div>
+    </div>
+
+    @foreach (var timeLog in TimeSpent.OrderByDescending(x => x.LogDate))
+    {
+        <div class="time-log-container">
+            <div class="hours-spent-column">
+                @timeLog.HoursSpent
+            </div>
+            <div>
+                @timeLog.LogDescription
+            </div>
+            <div class="log-date-column">
+                @timeLog.LogDate.ToLocalTime()
+            </div>
+        </div>
+
+
+        <div class="time-log-min-width" style="display: none;">
+            <div class="time-log-min-width-row">
+                <div class="row-name">
+                    @Localizer["SpentTime"]
+                </div>
+                <div class="row-value">
+                    @timeLog.HoursSpent
+                </div>
+            </div>
+
+            <div class="time-log-min-width-row">
+                <div class="row-name">
+                    @Localizer["LogDescription"]
+                </div>
+                <div class="row-value">
+                    @timeLog.LogDescription
+                </div>
+            </div>
+
+            <div class="time-log-min-width-row">
+                <div class="row-name">
+                    @Localizer["LogDate"]
+                </div>
+                <div class="row-value">
+                    @timeLog.LogDate.ToLocalTime()
+                </div>
+            </div>
+        </div>
+    }
+}
+
+

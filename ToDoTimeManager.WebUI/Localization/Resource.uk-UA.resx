@@ -312,4 +312,7 @@
   <data name="TimeLogCreated" xml:space="preserve">
     <value>Час записано</value>
   </data>
+  <data name="LogDate" xml:space="preserve">
+    <value> Дата запису</value>
+  </data>
 </root>

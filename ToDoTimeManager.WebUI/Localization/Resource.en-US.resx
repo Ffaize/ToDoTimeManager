@@ -315,4 +315,7 @@
   <data name="SpentTime" xml:space="preserve">
     <value>Spent time</value>
   </data>
+  <data name="LogDate" xml:space="preserve">
+    <value>Log date</value>
+  </data>
 </root>

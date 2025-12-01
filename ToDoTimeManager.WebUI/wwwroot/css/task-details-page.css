@@ -52,11 +52,15 @@
     box-shadow: var(--shadow-card)
 }
 
-.task-details-task-title {
-    color: var(--white-color);
-    font-size: 20px;
-    font-weight: bold;
+.task-details-container .divider {
+    margin: unset !important;
 }
+
+    .task-details-task-title {
+        color: var(--white-color);
+        font-size: 20px;
+        font-weight: bold;
+    }
 
 .task-details-description {
     color: var(--white-color);
@@ -80,4 +84,77 @@
 .task-details-info {
     display: flex;
     flex-direction: row;
+}
+
+.time-log-container {
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    height: fit-content;
+    padding: 10px;
+    border-radius: var(--border-radius-box);
+    margin-top: 10px;
+    color: var(--white-color);
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 10px;
+
+}
+
+.time-log-container * {
+    flex: 1;
+    border-right: 2px solid var(--midnight-green)
+}
+
+.time-log-container *:last-child {
+    border: none !important;
+}
+
+.time-log-example {
+    position: sticky;
+    top: 10px;
+    background: var(--feldgrau);
+    padding: 15px 10px;
+    margin-top: 30px;
+}
+
+.hours-spent-column {
+    max-width: 100px;
+} 
+
+.log-date-column {
+    max-width: 200px;
+}
+
+.time-log-min-width {
+    color: var(--white-color);
+    border-radius: var(--border-radius-box);
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    height: fit-content;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.time-log-min-width:first-child {
+    margin-top: 20px;
+}
+
+    .time-log-min-width-row {
+        display: flex;
+        flex-direction: row;
+    }
+
+@media(max-width: 900px) {
+    .time-log-example {
+        display: none !important;
+    }
+
+    .time-log-container {
+        display: none !important;
+    }
+
+    .time-log-min-width {
+        display: block !important;
+    }
 }
