@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Utils;
 
@@ -90,5 +92,22 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
         var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
         if (localStorage != null) await localStorage.RemoveTokenAsync();
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
+    }
+
+    public async Task<(Guid, UserRole)?> GetUserIdAndRoleAsync()
+    {
+        var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
+        if (localStorage != null)
+        {
+            var accessToken = (await localStorage.GetTokenAsync())?.AccessToken;
+            if (accessToken is null)
+                return null;
+            var (userId, role) =
+                JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
+            if (userId is null || role is null)
+                return null;
+            return (Guid.Parse(userId), Enum.Parse<UserRole>(role));
+        }
+        return null;
     }
 }

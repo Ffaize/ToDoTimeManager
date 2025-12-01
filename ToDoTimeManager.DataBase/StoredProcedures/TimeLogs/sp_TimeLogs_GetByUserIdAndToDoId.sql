@@ -10,4 +10,4 @@ AS
 		[LogDescription],
 		[LogDate]
 		FROM [dbo].[TimeLogs]
-		WHERE UserId = @UserId AND ToDoId = @ToDoId
+		WHERE [UserId] = @UserId AND [ToDoId] = @ToDoId

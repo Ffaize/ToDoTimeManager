@@ -484,6 +484,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Spent time.
+        /// </summary>
+        public static string SpentTime {
+            get {
+                return ResourceManager.GetString("SpentTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string Status {

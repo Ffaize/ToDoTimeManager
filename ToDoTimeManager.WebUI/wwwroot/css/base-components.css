@@ -9,9 +9,6 @@
     color: var(--white-color);
 }
 
-input[type="number"] {
-    -moz-appearance: textfield;
-}
 
     input:disabled {
         color: rgba(255, 255, 255, 0.5) !important;

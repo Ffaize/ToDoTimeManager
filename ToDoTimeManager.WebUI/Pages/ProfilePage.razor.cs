@@ -66,18 +66,14 @@ public partial class ProfilePage
     private async Task FetchData()
     {
         ShowLoader();
-        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
-        if (accessToken is null)
-            return;
-        var (userId, role) =
-                JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
+        var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
 
-        if (userId is null)
-            return;
-
-        var user = await UserService.GetUserById(Guid.Parse(userId));
-        if (user is not null)
-            CurrentUser = user;
+        if (userIdAndRoleAsync != null)
+        {
+            var user = await UserService.GetUserById(userIdAndRoleAsync.Value.Item1);
+            if (user is not null)
+                CurrentUser = user;
+        }
 
         if (CurrentUser != null)
             ToDoStatistic = await StatisticService.GetToDoCountStatisticsOfAllTimeByUserId(CurrentUser.Id);

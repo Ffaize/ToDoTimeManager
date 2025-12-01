@@ -60,7 +60,7 @@ public class TimeLogsController : ControllerBase
             return BadRequest("Invalid user ID");
         if (toDoId == Guid.Empty)
             return BadRequest("Invalid to-do ID");
-        var timeLogs = await _timeLogsService.GetTimeLogsByUserIdAndToDoId(userId, toDoId);
+        var timeLogs = await _timeLogsService.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
         return Ok(timeLogs);
     }
 

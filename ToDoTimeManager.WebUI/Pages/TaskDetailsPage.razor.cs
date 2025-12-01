@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Models;
@@ -18,12 +20,17 @@ public partial class TaskDetailsPage
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private TimeLogsService TimeLogsService { get; set; } = null!;
     [Inject] private ToastsService ToastsService { get; set; } = null!;
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+
+    private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
     [Parameter] public Guid TaskId { get; set; }
 
     private ToDo Task { get; set; } = new();
     public bool IsTaskEditModalVisible { get; set; }
     public bool IsLogTimeModalVisible { get; set; }
+    public List<TimeLog> TimeSpent { get; set; } = [];
+
 
 
     #region BaseForComponent
@@ -105,7 +112,14 @@ public partial class TaskDetailsPage
             ShowLoader();
             var task =  await ToDosService.GetToDoById(TaskId);
             if (task is not null)
+            {
                 Task = task;
+                var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
+                if (userIdAndRoleAsync != null)
+                    TimeSpent = await TimeLogsService.GetTimeLogsByUserIdAndToDoId(userIdAndRoleAsync.Value.Item1,
+                        TaskId);
+            }
+
         }
         catch (Exception ex)
         {
@@ -134,12 +148,9 @@ public partial class TaskDetailsPage
         ShowLoader();
         timeLog.Id = Guid.NewGuid();
         timeLog.LogDate = DateTime.UtcNow;
-        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
-        if (accessToken is null)
-            return;
-        var (userId, role) =
-            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
-        timeLog.UserId = Guid.Parse((ReadOnlySpan<char>)userId);
+        var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
+        if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
+        timeLog.ToDoId = TaskId;
         var createdTimeLog = await TimeLogsService.CreateTimeLog(timeLog);
         if (!createdTimeLog)
         {
@@ -151,5 +162,11 @@ public partial class TaskDetailsPage
         await FetchData();
         HideLoader();
         await InvokeAsync(StateHasChanged);
+    }
+
+    private string GetTimeSpent()
+    {
+        var totalTime = TimeSpent.Aggregate(TimeSpan.Zero, (current, log) => current + log.HoursSpent);
+        return $"{(int)totalTime.TotalHours}h {totalTime.Minutes}m";
     }
 }

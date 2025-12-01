@@ -312,4 +312,7 @@
   <data name="TimeLogCreated" xml:space="preserve">
     <value>Time loged</value>
   </data>
+  <data name="SpentTime" xml:space="preserve">
+    <value>Spent time</value>
+  </data>
 </root>

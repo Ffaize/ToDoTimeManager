@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,10 @@ public partial class TasksPage
     [Inject] private ILogger<TasksPage> Logger { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+
+    private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
 
     public ToDoFilter Filter
@@ -193,6 +198,8 @@ public partial class TasksPage
                 ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).Wait();
                 return;
             }
+
+            timeLog.ToDoId = task.Id;
             _ = CreateTimeLog(timeLog);
         }
         StateHasChanged();
@@ -203,12 +210,8 @@ public partial class TasksPage
         ShowLoader();
         timeLog.Id = Guid.NewGuid();
         timeLog.LogDate = DateTime.UtcNow;
-        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
-        if (accessToken is null)
-            return;
-        var (userId, role) =
-            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
-        timeLog.UserId = Guid.Parse((ReadOnlySpan<char>)userId);
+        var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
+        if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
         var createdTimeLog = await TimeLogsService.CreateTimeLog(timeLog);
         if (!createdTimeLog)
         {

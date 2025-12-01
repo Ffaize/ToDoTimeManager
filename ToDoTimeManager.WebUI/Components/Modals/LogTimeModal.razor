@@ -42,7 +42,7 @@
     #region BaseForComponent
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     public bool IsLoading { get; set; }
-    public float HoursSpent { get; set; }
+    public double HoursSpent { get; set; }
 
     public void ShowLoader()
     {
@@ -86,6 +86,7 @@
 
     private void OnConfirmClicked()
     {
+        TimeLog.HoursSpent = TimeSpan.FromHours(HoursSpent);
         _ = Close(TimeLog);
     }
 

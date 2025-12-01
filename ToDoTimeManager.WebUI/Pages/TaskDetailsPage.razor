@@ -49,10 +49,16 @@
     
     <div class="task-details-info-properties">
         <div class="task-details-info">
-            @Localizer["Status"]: @Enum.GetName(Task.Status)
+            @{
+                var status = Enum.GetName(Task.Status) ?? string.Empty;
+            }
+            @Localizer["Status"]: @Localizer[status += "Status"]
         </div>
         <div class="task-details-info">
             @Localizer["DueDate"]: @Task.DisplayDueDate
+        </div>
+        <div class="task-details-info">
+            @Localizer["SpentTime"]: @GetTimeSpent()
         </div>
     </div>
 </div>
