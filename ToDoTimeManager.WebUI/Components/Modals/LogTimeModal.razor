@@ -36,6 +36,8 @@
     [Parameter] public string Title { get; set; } = string.Empty;
     [Parameter] public ToDo? Task { get; set; }
     [Parameter] public bool IsFromTaskDescription { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public TimeLog? ExistingTimeLog { get; set; }
     private TimeLog TimeLog { get; set; } = new();
     public int TaskNumber { get; set; }
 
@@ -62,6 +64,17 @@
         if (Task is not null && IsFromTaskDescription)
         {
             TaskNumber = Task.NumberedId;
+        }
+
+        else if (Task is not null && IsEditMode && ExistingTimeLog is not null)
+        {
+            TaskNumber = Task.NumberedId;
+            HoursSpent = ExistingTimeLog.HoursSpent.TotalHours;
+            TimeLog.LogDescription = ExistingTimeLog.LogDescription;
+        }
+        else
+        {
+            TimeLog = new TimeLog();
         }
 
         base.OnParametersSet();

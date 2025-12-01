@@ -21,16 +21,18 @@
               Show="IsLogTimeModalVisible"
               ResultChanged="OnLogTimeCreate"
               Task="Task"
-              IsFromTaskDescription="true" />
+              IsFromTaskDescription="true" 
+              ExistingTimeLog="EditableTimeLog"
+              IsEditMode="IsEditLogMode"/>
 
 <div class="action-buttons-header task-details-header">
     <div class="task-title task-details-title">№ @Task.NumberedId</div>
     <div class="buttons-container task-details-button-container">
-        <button class="primary-button" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible))">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible), false)">
             <HistoryIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["LogTime"]
         </button>
-        <button class="primary-button" @onclick="() => ShowModal(nameof(IsTaskEditModalVisible))">
+        <button class="primary-button" @onclick="() => ShowModal(nameof(IsTaskEditModalVisible), false)">
             <EditIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["EditTask"]
         </button>
@@ -76,6 +78,10 @@
         <div class="log-date-column">
             @Localizer["LogDate"]
         </div>
+        <div class="action-column">
+        </div>
+        <div class="action-column">
+        </div>
     </div>
 
     @foreach (var timeLog in TimeSpent.OrderByDescending(x => x.LogDate))
@@ -89,6 +95,12 @@
             </div>
             <div class="log-date-column">
                 @timeLog.LogDate.ToLocalTime()
+            </div>
+            <div class="action-column" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible), true, timeLog)">
+                <EditIcon IconSize="20"/>
+            </div>
+            <div class="action-column">
+                <DeleteIcon IconSize="20"/>
             </div>
         </div>
 

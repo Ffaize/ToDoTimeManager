@@ -318,4 +318,7 @@
   <data name="LogDate" xml:space="preserve">
     <value>Log date</value>
   </data>
+  <data name="TimeLogUpdated" xml:space="preserve">
+    <value>Time log updated</value>
+  </data>
 </root>

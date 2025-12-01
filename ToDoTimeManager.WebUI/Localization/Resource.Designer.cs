@@ -610,6 +610,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time log updated.
+        /// </summary>
+        public static string TimeLogUpdated {
+            get {
+                return ResourceManager.GetString("TimeLogUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title.
         /// </summary>
         public static string Title {

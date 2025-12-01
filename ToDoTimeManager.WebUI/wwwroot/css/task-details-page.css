@@ -136,9 +136,21 @@
     margin-top: 10px;
 }
 
-.time-log-min-width:first-child {
-    margin-top: 20px;
+.action-column {
+    max-width: 32px;
 }
+
+.action-column:hover {
+    cursor: pointer;
+}
+
+    .action-column * {
+        fill: var(--white-color)
+    }
+
+.time-log-min-width:first-child {
+        margin-top: 20px;
+    }
 
     .time-log-min-width-row {
         display: flex;

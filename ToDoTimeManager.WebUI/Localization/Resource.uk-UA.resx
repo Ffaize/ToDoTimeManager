@@ -315,4 +315,7 @@
   <data name="LogDate" xml:space="preserve">
     <value> Дата запису</value>
   </data>
+  <data name="TimeLogUpdated" xml:space="preserve">
+    <value>Запис часу оновлено</value>
+  </data>
 </root>
