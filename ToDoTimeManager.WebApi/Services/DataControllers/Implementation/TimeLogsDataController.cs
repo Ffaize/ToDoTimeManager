@@ -113,7 +113,7 @@ public class TimeLogsDataController : ITimeLogsDataController
     {
         try
         {
-            return await _dbAccessService.DeleteRecordById("sp_TimeLogs_Delete", timeLogId) >= 1;
+            return await _dbAccessService.DeleteRecordById("sp_TimeLogs_DeleteById", timeLogId) >= 1;
         }
         catch (Exception e)
         {

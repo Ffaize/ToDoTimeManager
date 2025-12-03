@@ -82,8 +82,8 @@ public class TimeLogsController : ControllerBase
             return BadRequest("Time log was null");
         if (timeLog.Id == Guid.Empty || timeLog.UserId == Guid.Empty || timeLog.ToDoId == Guid.Empty)
             return BadRequest("Time log has invalid data");
-        var updatedTimeLog = await _timeLogsService.UpdateTimeLog(timeLog);
-        return updatedTimeLog ? Ok(updatedTimeLog) : BadRequest("Time log could not be updated");
+        var updateTimeLog = await _timeLogsService.UpdateTimeLog(timeLog);
+        return updateTimeLog ? Ok(updateTimeLog) : BadRequest("Time log could not be updated");
     }
 
     [HttpDelete("Delete/{id}")]

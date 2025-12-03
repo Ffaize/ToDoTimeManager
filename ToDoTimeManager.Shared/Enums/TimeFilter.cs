@@ -1,6 +1,6 @@
 ﻿namespace ToDoTimeManager.Shared.Enums;
 
-public enum ToDoFilter
+public enum TimeFilter
 {
     AllTime,
     DayAgo,

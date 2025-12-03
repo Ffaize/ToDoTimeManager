@@ -28,9 +28,11 @@ public partial class TaskDetailsPage
 
     private ToDo Task { get; set; } = new();
     public bool IsTaskEditModalVisible { get; set; }
-    public bool IsLogTimeModalVisible { get; set; }
+    public bool IsLogTimeEditModalVisible { get; set; }
     public List<TimeLog> TimeSpent { get; set; } = [];
-    public bool IsEditLogMode { get; set; }
+    public TimeLog? EditableTimeLog { get; set; } = null;
+    public bool IsLogTimeModalVisible { get; set; }
+    public bool IsDeleteTimeLogModalVisible { get; set; }
 
 
 
@@ -39,7 +41,7 @@ public partial class TaskDetailsPage
 
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     public bool IsLoading { get; set; }
-    public TimeLog? EditableTimeLog { get; set; }
+
 
     public void ShowLoader()
     {
@@ -95,7 +97,7 @@ public partial class TaskDetailsPage
         }
     }
 
-    private void ShowModal(string nameOfBoolProp, bool isEditMode, object? additional = null)
+    private void ShowModal(string nameOfBoolProp, object? additional = null)
     {
         try
         {
@@ -103,8 +105,8 @@ public partial class TaskDetailsPage
             if (additional is not null)
             {
                 EditableTimeLog = (TimeLog)additional;
-                IsEditLogMode = isEditMode;
             }
+            InvokeAsync(StateHasChanged);
 
             var prop = GetType().GetProperty(nameOfBoolProp);
             prop?.SetValue(this, true);
@@ -124,7 +126,7 @@ public partial class TaskDetailsPage
         try
         {
             ShowLoader();
-            var task =  await ToDosService.GetToDoById(TaskId);
+            var task = await ToDosService.GetToDoById(TaskId);
             if (task is not null)
             {
                 Task = task;
@@ -152,12 +154,12 @@ public partial class TaskDetailsPage
         if (obj.Value is not null)
         {
             var timeLog = (TimeLog)obj.Value;
-            _ = ChangeTimeLog(timeLog);
+            _ = CreateTimeLog(timeLog);
         }
         StateHasChanged();
     }
 
-    private async Task ChangeTimeLog(TimeLog timeLog)
+    private async Task CreateTimeLog(TimeLog timeLog)
     {
         ShowLoader();
         timeLog.Id = Guid.NewGuid();
@@ -166,28 +168,15 @@ public partial class TaskDetailsPage
         if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
         timeLog.ToDoId = TaskId;
 
-        if (!IsEditLogMode)
+        var createdTimeLog = await TimeLogsService.CreateTimeLog(timeLog);
+        if (!createdTimeLog)
         {
-            var createdTimeLog = await TimeLogsService.CreateTimeLog(timeLog);
-            if (!createdTimeLog)
-            {
-                HideLoader();
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
-            await ToastsService.ShowToast(Localizer["TimeLogCreated"], false);
+            HideLoader();
+            await InvokeAsync(StateHasChanged);
+            return;
         }
-        else
-        {
-            var updateTimeLog = await TimeLogsService.UpdateTimeLog(timeLog);
-            if (!updateTimeLog)
-            {
-                HideLoader();
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
-            await ToastsService.ShowToast(Localizer["TimeLogUpdated"], false);
-        }
+        await ToastsService.ShowToast(Localizer["TimeLogCreated"], false);
+
 
         await FetchData();
         HideLoader();
@@ -198,5 +187,77 @@ public partial class TaskDetailsPage
     {
         var totalTime = TimeSpent.Aggregate(TimeSpan.Zero, (current, log) => current + log.HoursSpent);
         return $"{(int)totalTime.TotalHours}h {totalTime.Minutes}m";
+    }
+
+    private void OnLogTimeEdit(ModalResult obj)
+    {
+        IsLogTimeEditModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var timeLog = (TimeLog)obj.Value;
+            _ = UpdateTimeLog(timeLog);
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateTimeLog(TimeLog timeLog)
+    {
+        ShowLoader();
+        if (EditableTimeLog != null)
+        {
+            timeLog.Id = EditableTimeLog.Id;
+            timeLog.LogDate = EditableTimeLog.LogDate;
+            var description = timeLog.LogDescription;
+            var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
+            if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
+            timeLog.ToDoId = TaskId;
+            if(timeLog.LogDescription != null && !timeLog.LogDescription.Equals(description)) timeLog.LogDescription = description;
+            var updateTimeLog = await TimeLogsService.UpdateTimeLog(timeLog);
+            EditableTimeLog = null;
+            if (!updateTimeLog)
+            {
+                HideLoader();
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
+
+        await ToastsService.ShowToast(Localizer["TimeLogUpdated"], false);
+
+        await FetchData();
+        HideLoader();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnDeleteProcesed(ModalResult obj)
+    {
+        IsDeleteTimeLogModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var res = (bool)obj.Value;
+            if(res)
+                _ = DeleteTimeLog();
+        }
+        StateHasChanged();
+    }
+
+    private async Task DeleteTimeLog()
+    {
+        ShowLoader();
+        if (EditableTimeLog != null)
+        {
+            var deleteTimeLog = await TimeLogsService.DeleteTimeLog(EditableTimeLog.Id);
+            EditableTimeLog = null;
+            if (!deleteTimeLog)
+            {
+                HideLoader();
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
+        await ToastsService.ShowToast(Localizer["TimeLogDeleted"], false);
+        await FetchData();
+        HideLoader();
+        await InvokeAsync(StateHasChanged);
     }
 }

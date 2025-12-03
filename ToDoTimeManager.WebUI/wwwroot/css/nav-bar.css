@@ -28,6 +28,7 @@
 .nav-item-icon {
     height: 30px;
     width: 30px;
+    fill: var(--white-color);
     margin-bottom: 1px;
 }
 

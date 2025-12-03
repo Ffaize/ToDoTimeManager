@@ -321,4 +321,25 @@
   <data name="TimeLogUpdated" xml:space="preserve">
     <value>Time log updated</value>
   </data>
+  <data name="TimeLogEdit" xml:space="preserve">
+    <value>Time log edit</value>
+  </data>
+  <data name="DeleteTimeLog" xml:space="preserve">
+    <value>Delete time log</value>
+  </data>
+  <data name="TimeLogDeleted" xml:space="preserve">
+    <value>Time log deleted</value>
+  </data>
+  <data name="DeleteTimeLogConfirm" xml:space="preserve">
+    <value>Do you really want to delete time log?</value>
+  </data>
+  <data name="TimeLogs" xml:space="preserve">
+    <value>Time logs</value>
+  </data>
+  <data name="NoTimeLogsFound" xml:space="preserve">
+    <value>No time logs found</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

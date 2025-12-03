@@ -196,11 +196,38 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete account.
         /// </summary>
         public static string DeleteAccount {
             get {
                 return ResourceManager.GetString("DeleteAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete time log.
+        /// </summary>
+        public static string DeleteTimeLog {
+            get {
+                return ResourceManager.GetString("DeleteTimeLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to delete time log?.
+        /// </summary>
+        public static string DeleteTimeLogConfirm {
+            get {
+                return ResourceManager.GetString("DeleteTimeLogConfirm", resourceCulture);
             }
         }
         
@@ -390,6 +417,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string NoTasksFound {
             get {
                 return ResourceManager.GetString("NoTasksFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No time logs found.
+        /// </summary>
+        public static string NoTimeLogsFound {
+            get {
+                return ResourceManager.GetString("NoTimeLogsFound", resourceCulture);
             }
         }
         
@@ -606,6 +642,33 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string TimeLogCreated {
             get {
                 return ResourceManager.GetString("TimeLogCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time log deleted.
+        /// </summary>
+        public static string TimeLogDeleted {
+            get {
+                return ResourceManager.GetString("TimeLogDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time log edit.
+        /// </summary>
+        public static string TimeLogEdit {
+            get {
+                return ResourceManager.GetString("TimeLogEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time logs.
+        /// </summary>
+        public static string TimeLogs {
+            get {
+                return ResourceManager.GetString("TimeLogs", resourceCulture);
             }
         }
         

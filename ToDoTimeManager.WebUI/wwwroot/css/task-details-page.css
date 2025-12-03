@@ -170,3 +170,11 @@
         display: block !important;
     }
 }
+
+.log-time-action-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+}

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
@@ -14,7 +14,7 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
-public partial class TasksPage
+public partial class TimeLogsPage
 {
     [Inject] private ToDosService ToDosService { get; set; } = null!;
     [Inject] private TimeLogsService TimeLogsService { get; set; } = null!;
@@ -27,7 +27,8 @@ public partial class TasksPage
 
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
-
+    public bool IsLogTimeEditModalVisible { get; set; }
+    public bool IsDeleteTimeLogModalVisible { get; set; }
     public TimeFilter Filter
     {
         get;
@@ -49,17 +50,18 @@ public partial class TasksPage
         }
     } = string.Empty;
 
-    private List<ToDo> AllToDos { get; set; } = [];
-    private List<ToDo> FilteredToDos { get; set; } = [];
-    public bool IsTaskCreateModalVisible { get; set; }
     public bool IsLogTimeModalVisible { get; set; }
+    private List<TimeLog> AllLogs { get; set; } = [];
+    private List<TimeLog> FilteredLogs { get; set; } = [];
+    private List<ToDo> AllToDos { get; set; } = [];
+    private  TimeLog? EditableTimeLog { get; set; } = null;
 
+    private ToDo? TaskCurrent =>
+        AllToDos.FirstOrDefault(x => EditableTimeLog != null && x.Id == EditableTimeLog.ToDoId);
 
     #region BaseForComponent
-
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
     public bool IsLoading { get; set; }
-
 
     public void ShowLoader()
     {
@@ -89,11 +91,12 @@ public partial class TasksPage
 
     private void FilterData()
     {
-        FilteredToDos = [.. AllToDos];
+        FilteredLogs = [.. AllLogs];
         if (!string.IsNullOrWhiteSpace(FilterText))
-            FilteredToDos = AllToDos.Where(toDo => Localizer[GetNameWithStatus(toDo)].Value!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
-                                                   toDo.Title!.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
-                                                   toDo.NumberedId.ToString().Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
+            FilteredLogs = AllLogs.Where(timeLog => 
+                (timeLog.LogDescription != null && (timeLog.LogDescription.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
+                                                    timeLog.HoursSpent.ToString().Contains(FilterText, StringComparison.OrdinalIgnoreCase))) ||
+                                                GetTaskNumber(timeLog).Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (Filter == TimeFilter.AllTime)
             return;
@@ -105,14 +108,8 @@ public partial class TasksPage
             TimeFilter.YearAgo => DateTime.UtcNow.AddYears(-1),
             _ => DateTime.MinValue
         };
-        FilteredToDos = FilteredToDos.Where(toDo => toDo.CreatedAt >= dateLimit).ToList();
+        FilteredLogs = FilteredLogs.Where(toDo => toDo.LogDate >= dateLimit).ToList();
         InvokeAsync(StateHasChanged);
-    }
-
-    private string GetNameWithStatus(ToDo toDo)
-    {
-        var status = Enum.GetName(toDo.Status) ?? string.Empty;
-        return status += "Status";
     }
 
     private async Task FetchData()
@@ -122,30 +119,21 @@ public partial class TasksPage
         if (userCredentials is null)
             return;
         AllToDos = await ToDosService.GetToDosByUserId(userCredentials.Value.Item1);
+        AllLogs = await TimeLogsService.GetTimeLogsByUserId(userCredentials.Value.Item1);
         HideLoader();
         await InvokeAsync(StateHasChanged);
     }
-
-    private void GoToTaskDetailPage(Guid toDoId)
-    {
-        NavigationManager.NavigateTo($"/taskDetails/{toDoId}");
-    }
-
-    private void OnTaskCreateChanged(ModalResult obj)
-    {
-        IsTaskCreateModalVisible = obj.Show;
-        if (obj.Value is not null)
-        {
-            var newToDo = (ToDo)obj.Value;
-            _ = CreateToDo(newToDo);
-        }
-        StateHasChanged();
-    }
-
-    private void ShowModal(string nameOfBoolProp)
+    private void ShowModal(string nameOfBoolProp, object? additional = null)
     {
         try
         {
+
+            if (additional is not null)
+            {
+                EditableTimeLog = (TimeLog)additional;
+            }
+            InvokeAsync(StateHasChanged);
+
             var prop = GetType().GetProperty(nameOfBoolProp);
             prop?.SetValue(this, true);
         }
@@ -153,33 +141,10 @@ public partial class TasksPage
         {
             Logger.LogError(ex.Message, ex);
         }
-    }
-
-    private async Task CreateToDo(ToDo newToDo)
-    {
-        ShowLoader();
-        newToDo.Id = Guid.NewGuid();
-        newToDo.CreatedAt = DateTime.UtcNow;
-        var accessToken = (await ProtectedLocalStorage.GetTokenAsync())?.AccessToken;
-        if (accessToken is null)
-            return;
-        var (userId, role) =
-            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
-        newToDo.AssignedTo = Guid.Parse((ReadOnlySpan<char>)userId);
-
-        var createdToDo = await ToDosService.CreateToDo(newToDo);
-        if (!createdToDo)
+        finally
         {
-            HideLoader();
-            await InvokeAsync(StateHasChanged);
-            return;
+            InvokeAsync(StateHasChanged);
         }
-        await ToastsService.ShowToast(Localizer["TaskCreated"], false);
-        await FetchData();
-        FilterData();
-        HideLoader();
-        GoToTaskDetailPage(newToDo.Id);
-        await InvokeAsync(StateHasChanged);
     }
 
     private void OnLogTimeCreate(ModalResult obj)
@@ -220,5 +185,83 @@ public partial class TasksPage
         FilterData();
         HideLoader();
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnLogTimeEdit(ModalResult obj)
+    {
+        IsLogTimeEditModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var timeLog = (TimeLog)obj.Value;
+            _ = UpdateTimeLog(timeLog);
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateTimeLog(TimeLog timeLog)
+    {
+        ShowLoader();
+        if (EditableTimeLog != null)
+        {
+            timeLog.Id = EditableTimeLog.Id;
+            timeLog.LogDate = EditableTimeLog.LogDate;
+            var description = timeLog.LogDescription;
+            var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
+            if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
+            if (TaskCurrent != null) timeLog.ToDoId = TaskCurrent.Id;
+            if (timeLog.LogDescription != null && !timeLog.LogDescription.Equals(description)) timeLog.LogDescription = description;
+            var updateTimeLog = await TimeLogsService.UpdateTimeLog(timeLog);
+            EditableTimeLog = null;
+            if (!updateTimeLog)
+            {
+                HideLoader();
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
+
+        await ToastsService.ShowToast(Localizer["TimeLogUpdated"], false);
+
+        await FetchData();
+        HideLoader();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnDeleteProcesed(ModalResult obj)
+    {
+        IsDeleteTimeLogModalVisible = obj.Show;
+        if (obj.Value is not null)
+        {
+            var res = (bool)obj.Value;
+            if (res)
+                _ = DeleteTimeLog();
+        }
+        StateHasChanged();
+    }
+
+    private async Task DeleteTimeLog()
+    {
+        ShowLoader();
+        if (EditableTimeLog != null)
+        {
+            var deleteTimeLog = await TimeLogsService.DeleteTimeLog(EditableTimeLog.Id);
+            EditableTimeLog = null;
+            if (!deleteTimeLog)
+            {
+                HideLoader();
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
+        await ToastsService.ShowToast(Localizer["TimeLogDeleted"], false);
+        await FetchData();
+        HideLoader();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string GetTaskNumber(TimeLog timeLog)
+    {
+        var task = AllToDos.FirstOrDefault(x => x.Id == timeLog.ToDoId);
+        return task != null ? $"#{task.NumberedId}" : Localizer["TaskNotFound"].Value;
     }
 }

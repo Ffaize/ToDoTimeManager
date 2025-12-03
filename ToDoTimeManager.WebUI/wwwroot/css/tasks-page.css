@@ -18,6 +18,7 @@
     font-weight: 600;
     align-content: center;
     justify-content: center;
+    min-width: fit-content;
     text-align: center;
     color: var(--white-color)
 }

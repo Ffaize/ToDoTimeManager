@@ -1,38 +1,32 @@
-﻿@using System.Globalization
+﻿@page "/timeLogs"
 @using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
 @using ToDoTimeManager.WebUI.Components.Modals
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
-@page "/taskDetails/{TaskId:guid}"
 @attribute [Authorize]
-<PageTitle>@Localizer["TaskDetails"] - TaskForge</PageTitle>
+<PageTitle>@Localizer["TimeLogs"] - TaskForge</PageTitle>
 <Loader IsLoading="IsLoading" />
-
-
-<TaskCreateEditModal Title="@Localizer["TaskEdit"]"
-                     IsEditMode="true"
-                     Show="IsTaskEditModalVisible"
-                     ResultChanged="OnTaskCreateChanged"
-                     Task="Task" />
 
 <LogTimeModal Title="@Localizer["TimeLog"]"
               Show="IsLogTimeModalVisible"
               ResultChanged="OnLogTimeCreate"
-              Task="Task"
-              BlockTaskNumberInput="true"
+              Task="null"
+              BlockTaskNumberInput="false"
               ExistingTimeLog="null"
-              IsEditMode="false" />
+              IsEditMode="false"/>
+
 @if (EditableTimeLog != null)
 {
     <LogTimeModal Title="@Localizer["TimeLogEdit"]"
                   Show="IsLogTimeEditModalVisible"
                   ResultChanged="OnLogTimeEdit"
-                  Task="Task"
+                  Task="@TaskCurrent"
                   BlockTaskNumberInput="true"
                   ExistingTimeLog="EditableTimeLog"
                   IsEditMode="true" />
+
     <ConfirmationModal Title="@Localizer["DeleteTimeLog"]"
                        Show="IsDeleteTimeLogModalVisible"
                        ResultChanged="OnDeleteProcesed"
@@ -41,54 +35,35 @@
 
 
 
-
-
-<div class="action-buttons-header task-details-header">
-    <div class="task-title task-details-title">№ @Task.NumberedId</div>
-    <div class="buttons-container task-details-button-container">
+<div class="action-buttons-header">
+    <div class="task-title">@Localizer["TimeLogs"]</div>
+    <div class="buttons-container">
+        <InputText @bind-Value="FilterText" placeholder="@Localizer["Filter..."]"/>
+        <select @bind="Filter">
+            @foreach (var value in Enum.GetValues<TimeFilter>())
+            {
+                <option value="@value">
+                    @Localizer[Enum.GetName(value) ?? string.Empty]
+                </option>
+            }
+        </select>
         <button class="primary-button" @onclick="() => ShowModal(nameof(IsLogTimeModalVisible))">
             <HistoryIcon IconSize="25" IconStyle="i-profile" />
             @Localizer["LogTime"]
         </button>
-        <button class="primary-button" @onclick="() => ShowModal(nameof(IsTaskEditModalVisible))">
-            <EditIcon IconSize="25" IconStyle="i-profile" />
-            @Localizer["EditTask"]
-        </button>
     </div>
+
 </div>
+<Divider />
 
-<div class="task-details-container">
-    <div class="task-details-title-low">№ @Task.NumberedId</div>
-    <div class="task-details-task-title">
-        @(Task.Title ?? "-")
-    </div>
-    <Divider />
-
-    <div class="task-details-description">
-        @(Task.Description ?? "-")
-    </div>
-
-    <div class="task-details-info-properties">
-        <div class="task-details-info">
-            @{
-                var status = Enum.GetName(Task.Status) ?? string.Empty;
-            }
-            @Localizer["Status"]: @Localizer[status += "Status"]
-        </div>
-        <div class="task-details-info">
-            @Localizer["DueDate"]: @Task.DisplayDueDate
-        </div>
-        <div class="task-details-info">
-            @Localizer["SpentTime"]: @GetTimeSpent()
-        </div>
-    </div>
-</div>
-
-@if (TimeSpent.Any())
+@if (FilteredLogs.Any())
 {
     <div class="time-log-container time-log-example">
         <div class="hours-spent-column">
             @Localizer["SpentTime"]
+        </div>
+        <div class="hours-spent-column">
+            @Localizer["TasksNumber"]
         </div>
         <div>
             @Localizer["LogDescription"]
@@ -102,11 +77,14 @@
         </div>
     </div>
 
-    @foreach (var timeLog in TimeSpent.OrderByDescending(x => x.LogDate))
+    @foreach (var timeLog in FilteredLogs.OrderByDescending(x => x.LogDate))
     {
         <div class="time-log-container">
             <div class="hours-spent-column">
                 @timeLog.HoursSpent
+            </div>
+            <div class="hours-spent-column">
+                @GetTaskNumber(timeLog)
             </div>
             <div>
                 @timeLog.LogDescription
@@ -115,10 +93,10 @@
                 @timeLog.LogDate.ToLocalTime()
             </div>
             <div class="action-column" @onclick="() => ShowModal(nameof(IsLogTimeEditModalVisible), timeLog)">
-                <EditIcon IconSize="20" />
+                <EditIcon IconSize="20"/>
             </div>
             <div class="action-column" @onclick="() => ShowModal(nameof(IsDeleteTimeLogModalVisible), timeLog)">
-                <DeleteIcon IconSize="20" />
+                <DeleteIcon IconSize="20"/>
             </div>
         </div>
 
@@ -130,6 +108,15 @@
                 </div>
                 <div class="row-value">
                     @timeLog.HoursSpent
+                </div>
+            </div>
+            
+            <div class="time-log-min-width-row">
+                <div class="row-name">
+                    @Localizer["TasksNumber"]
+                </div>
+                <div class="row-value">
+                    @GetTaskNumber(timeLog)
                 </div>
             </div>
 
@@ -150,7 +137,6 @@
                     @timeLog.LogDate.ToLocalTime()
                 </div>
             </div>
-            
             <div class="time-log-min-width-row" style="margin-top: 10px">
                 <div class="row-name" style="padding-right: 5px;">
                     <div class="log-time-action-button secondary-button" @onclick="() => ShowModal(nameof(IsLogTimeEditModalVisible), timeLog)">
@@ -167,6 +153,12 @@
             </div>
         </div>
     }
+}
+else
+{
+    <div class="no-tasks-message">
+        @Localizer["NoTimeLogsFound"]
+    </div>
 }
 
 
