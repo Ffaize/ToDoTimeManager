@@ -1,0 +1,26 @@
+﻿.main-page-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+    .main-page-statistic-container {
+        width: calc(50% - 10px);
+        background: var(--feldgrau);
+        border: 3px solid var(--midnight-green);
+        border-radius: var(--border-radius-box);
+        height: calc(50% - 10px)
+    }
+
+@media(max-width: 1000px) {
+    .main-page-container {
+        flex-direction: column !important;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+    .main-page-statistic-container {
+        width: 100%;
+        min-height: 300px;
+    }
+}
