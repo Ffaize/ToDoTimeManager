@@ -10,7 +10,8 @@
         background: var(--feldgrau);
         border: 3px solid var(--midnight-green);
         border-radius: var(--border-radius-box);
-        height: calc(50% - 10px)
+        height: calc(50% - 10px);
+        padding: 10px;
     }
 
 @media(max-width: 1000px) {
@@ -23,4 +24,63 @@
         width: 100%;
         min-height: 300px;
     }
+}
+.main-page-statistic-container .action-buttons-header {
+    justify-content: end;
+}
+.main-page-statistic-container .action-buttons-header select {
+    max-width: 200px;
+    background: var(--midnight-green);
+}
+
+.statistic-content {
+    width: 100%;
+    height: calc(100% - 40px);
+    display: flex;
+    flex-direction: row;
+}
+
+.left-time-loged-count {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-evenly;
+}
+
+.left-time-loged-count span {
+    color: var(--white-color);
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+    .left-time-loged-count .time {
+        height: 60%;
+        text-align: center;
+        align-content: center;
+        background: var(--midnight-green);
+        border-radius: var(--border-radius-container);
+        font-size: 30px;
+        padding: 5px;
+    }
+
+.right-last-logs-container {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 20px;
+    padding-top: 20px;
+    z-index: 5;
+    overflow: auto;
+}
+
+.main-page-time-log {
+    min-height: 60px;
+    width: 100%;
+    background: var(--midnight-green);
+    z-index: 10;
 }

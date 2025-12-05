@@ -26,5 +26,21 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
                 return [];
             }
         }
+
+        public async Task<MainPageStatisticModel> GetMainPageStatistic(MainPageStatisticRequest filter)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(Url("GetMainPageStatistic"), filter);
+                response.EnsureSuccessStatusCode();
+                var result = await response.Content.ReadFromJsonAsync<MainPageStatisticModel>();
+                return result ?? new MainPageStatisticModel();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching main page statistics for user {UserId} with filter {TimeFilter}", filter.UserId, filter.TimeFilter);
+                return new MainPageStatisticModel();
+            }
+        }
     }
 }

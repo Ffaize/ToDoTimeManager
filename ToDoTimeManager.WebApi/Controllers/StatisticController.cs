@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers
@@ -24,6 +25,15 @@ namespace ToDoTimeManager.WebApi.Controllers
                 return BadRequest("Invalid user ID");
             var statistics = await _statisticService.GetToDoCountStatisticsOfAllTimeByUserId(userId);
             return Ok(statistics);
+        }
+
+        [HttpPost("GetMainPageStatistic")]
+        public async Task<IActionResult> GetMainPageStatistic([FromBody] MainPageStatisticRequest filter)
+        {
+            if (filter.UserId == Guid.Empty)
+                return BadRequest("Invalid user ID");
+            var statistic = await _statisticService.GetMainPageStatistic(filter);
+            return Ok(statistic);
         }
     }
 }

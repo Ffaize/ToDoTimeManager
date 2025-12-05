@@ -28,7 +28,7 @@ public class TimeLogEntity
     public DateTime LogDate { get; set; }
     public string? LogDescription { get; set; }
 
-    public TimeLog? ToTimeLog()
+    public TimeLog ToTimeLog()
     {
         return new TimeLog
         {

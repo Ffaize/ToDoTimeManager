@@ -97,17 +97,14 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
     public async Task<(Guid, UserRole)?> GetUserIdAndRoleAsync()
     {
         var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
-        if (localStorage != null)
-        {
-            var accessToken = (await localStorage.GetTokenAsync())?.AccessToken;
-            if (accessToken is null)
-                return null;
-            var (userId, role) =
-                JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
-            if (userId is null || role is null)
-                return null;
-            return (Guid.Parse(userId), Enum.Parse<UserRole>(role));
-        }
-        return null;
+        if (localStorage == null) return null;
+        var accessToken = (await localStorage.GetTokenAsync())?.AccessToken;
+        if (accessToken is null)
+            return null;
+        var (userId, role) =
+            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
+        if (userId is null || role is null)
+            return null;
+        return (Guid.Parse(userId), Enum.Parse<UserRole>(role));
     }
 }

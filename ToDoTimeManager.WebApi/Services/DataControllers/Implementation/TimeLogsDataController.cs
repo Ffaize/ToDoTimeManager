@@ -121,4 +121,20 @@ public class TimeLogsDataController : ITimeLogsDataController
             return false;
         }
     }
+
+    public async Task<List<TimeLogEntity>> GetTimeLogsByUserIdAndTime(Guid filterUserId, int getFilterDaysAgo)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", filterUserId);
+            parameters.Add("DaysAgo", getFilterDaysAgo);
+            return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndTime", parameters);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
 }

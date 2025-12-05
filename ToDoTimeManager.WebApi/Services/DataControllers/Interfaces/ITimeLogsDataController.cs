@@ -13,4 +13,5 @@ public interface ITimeLogsDataController
     Task<bool> UpdateTimeLog(TimeLogEntity updatedTimeLog);
     Task<bool> DeleteTimeLog(Guid timeLogId);
 
+    Task<List<TimeLogEntity>> GetTimeLogsByUserIdAndTime(Guid filterUserId, int getFilterDaysAgo);
 }

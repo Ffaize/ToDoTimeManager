@@ -11,7 +11,34 @@
 
 <div class="main-page-container">
     <div class="main-page-statistic-container">
+        <div class="action-buttons-header">
+            <select @bind="TimeFilter">
+                @foreach (var value in Enum.GetValues<TimeFilter>())
+                {
+                    <option value="@value">
+                        @Localizer[Enum.GetName(value) ?? string.Empty]
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="statistic-content" style="margin-top: 7px;">
+            <div class="left-time-loged-count">
+                <span>@Localizer["TimeLogged"]</span>
+                <span class="time">@GetTimeSpent()</span>                
+            </div>
+            <div class="right-last-logs-container">
+                @if (MainPageStatistic.TimeLogsForGivenTime.Any())
+                {
+                    @foreach (var timeLog in MainPageStatistic.TimeLogsForGivenTime)
+                    {
+                        <div class="main-page-time-log">
 
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
     </div>
 
     <div class="main-page-statistic-container">
