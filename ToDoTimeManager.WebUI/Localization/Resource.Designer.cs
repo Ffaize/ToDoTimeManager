@@ -664,11 +664,29 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total time logged.
+        /// </summary>
+        public static string TimeLogged {
+            get {
+                return ResourceManager.GetString("TimeLogged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time logs.
         /// </summary>
         public static string TimeLogs {
             get {
                 return ResourceManager.GetString("TimeLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time logs by dates in this month.
+        /// </summary>
+        public static string TimeLogsByDataes {
+            get {
+                return ResourceManager.GetString("TimeLogsByDataes", resourceCulture);
             }
         }
         

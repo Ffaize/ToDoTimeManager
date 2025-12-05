@@ -34,10 +34,12 @@ public class StatisticService : IStatisticService
     public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequest filter)
     {
         var timeLogsForFilterTime = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
+        var timeLogsForThisMonth = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, DateTime.Now.Day);
 
         return new MainPageStatisticModel()
         {
-            TimeLogsForGivenTime = timeLogsForFilterTime.Select(x => x.ToTimeLog()).ToList()
+            TimeLogsForGivenTime = timeLogsForFilterTime.Select(x => x.ToTimeLog()).ToList(),
+            TimeLogsForThisMonth = timeLogsForThisMonth.Select(x => x.ToTimeLog()).ToList()
         };
     }
 
@@ -49,7 +51,7 @@ public class StatisticService : IStatisticService
             TimeFilter.WeekAgo => 7,
             TimeFilter.MonthAgo => 30,
             TimeFilter.YearAgo => 365,
-            _ => int.MaxValue
+            _ => -1
         };
     }
 }

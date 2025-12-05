@@ -22,7 +22,10 @@
             </select>
         </div>
         <div class="statistic-content" style="margin-top: 7px;">
-            <div class="left-time-loged-count">
+            <div class="at-all-logged-time">
+                @Localizer["TimeLogged"]
+            </div>
+            @*             <div class="left-time-loged-count">
                 <span>@Localizer["TimeLogged"]</span>
                 <span class="time">@GetTimeSpent()</span>                
             </div>
@@ -32,17 +35,38 @@
                     @foreach (var timeLog in MainPageStatistic.TimeLogsForGivenTime)
                     {
                         <div class="main-page-time-log">
-
+                            <div class="time-column">
+                                @GetTimeSpent(timeLog.HoursSpent)
+                            </div>
+                            <div class="time-description">
+                                @timeLog.LogDescription
+                            </div>
                         </div>
                     }
                 }
+                else
+                {
+                    <div class="no-time-logs-text">
+                        @Localizer["NoTimeLogsFound"]
+                    </div>
+                }
 
-            </div>
+            </div> *@
         </div>
     </div>
 
     <div class="main-page-statistic-container">
-
+        <div class="card-name">
+            @Localizer["TimeLogsByDataes"]
+        </div>
+        <div class="statistic-content-calendar">
+            @for (var i = 1; i < 32; i++)
+            {
+                <div class="calendar-day @GetTimeLogBackground(i) @(currentDay == i ? "current-day" : string.Empty)">
+                    @i
+                </div>
+            }
+        </div>
     </div>
     <div class="main-page-statistic-container">
 

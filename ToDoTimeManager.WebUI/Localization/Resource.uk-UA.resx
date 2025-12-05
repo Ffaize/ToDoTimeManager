@@ -342,4 +342,10 @@
   <data name="Delete" xml:space="preserve">
     <value>Видалити</value>
   </data>
+  <data name="TimeLogged" xml:space="preserve">
+    <value>Всього записано часу</value>
+  </data>
+  <data name="TimeLogsByDataes" xml:space="preserve">
+    <value>Записи часу по дням цього місяця</value>
+  </data>
 </root>

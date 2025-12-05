@@ -342,4 +342,10 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="TimeLogged" xml:space="preserve">
+    <value>Total time logged</value>
+  </data>
+  <data name="TimeLogsByDataes" xml:space="preserve">
+    <value>Time logs by dates in this month</value>
+  </data>
 </root>

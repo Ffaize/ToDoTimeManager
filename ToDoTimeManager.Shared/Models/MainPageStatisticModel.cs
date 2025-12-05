@@ -9,6 +9,6 @@ namespace ToDoTimeManager.Shared.Models
     public class MainPageStatisticModel
     {
         public List<TimeLog> TimeLogsForGivenTime { get; set; } = [];
-        public List<TimeLog> TimeLogsForMonth { get; set; } = [];
+        public List<TimeLog> TimeLogsForThisMonth { get; set; } = [];
     }
 }
