@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
-using System;
-using Microsoft.AspNetCore.Components.Rendering;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Localization;
@@ -16,12 +14,12 @@ public partial class MainPage
     [Inject] public ToastsService ToastService { get; set; } = null!;
     [Inject] public NavigationManager NavigationManager { get; set; } = null!;
     [Inject] public StatisticService StatisticService { get; set; } = null!;
-    [Inject] public ILogger<MainPage>  Logger{ get; set; } = null!;
+    [Inject] public ILogger<MainPage> Logger { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
-    private int currentDay => DateTime.Now.Day; 
+    private static int CurrentDay => DateTime.Now.Day;
 
 
     #region BaseForComponent
@@ -87,14 +85,9 @@ public partial class MainPage
         }
     }
 
-    private string GetTimeSpent(TimeSpan timeSpent)
-    {
-        return $"{(int)timeSpent.TotalHours}h {timeSpent.Minutes}m";
-    }
-
     private string GetTimeSpent()
     {
-        if (MainPageStatistic.TimeLogsForGivenTime is {Count: < 1})
+        if (MainPageStatistic.TimeLogsForGivenTime is { Count: < 1 })
             return "0h 0m";
         var totalTime = MainPageStatistic.TimeLogsForGivenTime.Aggregate(TimeSpan.Zero, (current, log) => current + log.HoursSpent);
         return $"{(int)totalTime.TotalHours}h {totalTime.Minutes}m";
@@ -157,7 +150,7 @@ public partial class MainPage
         NavigationManager.NavigateTo($"/taskDetails/{taskId}");
     }
 
-    private string GetClassIfDueDateisToday(DateTime dueDate)
+    private static string GetClassIfDueDateisToday(DateTime dueDate)
     {
         return dueDate.ToUniversalTime().Date == DateTime.UtcNow.Date ? "border-blink-danger" : string.Empty;
     }

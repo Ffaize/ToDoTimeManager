@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
@@ -211,7 +208,7 @@ public partial class TaskDetailsPage
             var userIdAndRoleAsync = await AuthStateProvider.GetUserIdAndRoleAsync();
             if (userIdAndRoleAsync != null) timeLog.UserId = userIdAndRoleAsync.Value.Item1;
             timeLog.ToDoId = TaskId;
-            if(timeLog.LogDescription != null && !timeLog.LogDescription.Equals(description)) timeLog.LogDescription = description;
+            if (timeLog.LogDescription != null && !timeLog.LogDescription.Equals(description)) timeLog.LogDescription = description;
             var updateTimeLog = await TimeLogsService.UpdateTimeLog(timeLog);
             EditableTimeLog = null;
             if (!updateTimeLog)
@@ -235,7 +232,7 @@ public partial class TaskDetailsPage
         if (obj.Value is not null)
         {
             var res = (bool)obj.Value;
-            if(res)
+            if (res)
                 _ = DeleteTimeLog();
         }
         StateHasChanged();

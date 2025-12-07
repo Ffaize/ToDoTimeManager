@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
@@ -109,7 +108,7 @@ public partial class TasksPage
         InvokeAsync(StateHasChanged);
     }
 
-    private string GetNameWithStatus(ToDo toDo)
+    private static string GetNameWithStatus(ToDo toDo)
     {
         var status = Enum.GetName(toDo.Status) ?? string.Empty;
         return status += "Status";

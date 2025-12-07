@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
-using System.Threading.Tasks;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
@@ -54,7 +51,7 @@ public partial class TimeLogsPage
     private List<TimeLog> AllLogs { get; set; } = [];
     private List<TimeLog> FilteredLogs { get; set; } = [];
     private List<ToDo> AllToDos { get; set; } = [];
-    private  TimeLog? EditableTimeLog { get; set; } = null;
+    private TimeLog? EditableTimeLog { get; set; } = null;
 
     private ToDo? TaskCurrent =>
         AllToDos.FirstOrDefault(x => EditableTimeLog != null && x.Id == EditableTimeLog.ToDoId);
@@ -93,7 +90,7 @@ public partial class TimeLogsPage
     {
         FilteredLogs = [.. AllLogs];
         if (!string.IsNullOrWhiteSpace(FilterText))
-            FilteredLogs = AllLogs.Where(timeLog => 
+            FilteredLogs = AllLogs.Where(timeLog =>
                 (timeLog.LogDescription != null && (timeLog.LogDescription.Contains(FilterText, StringComparison.OrdinalIgnoreCase) ||
                                                     timeLog.HoursSpent.ToString().Contains(FilterText, StringComparison.OrdinalIgnoreCase))) ||
                                                 GetTaskNumber(timeLog).Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.DataProtection.XmlEncryption;
-using ToDoTimeManager.Shared.Enums;
+﻿using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -10,7 +9,7 @@ public class StatisticService : IStatisticService
 {
     private readonly IToDosDataController _toDosDataController;
     private readonly ITimeLogsDataController _timeLogsDataController;
-    public StatisticService(IToDosDataController toDosDataController,ITimeLogsDataController timeLogsDataController)
+    public StatisticService(IToDosDataController toDosDataController, ITimeLogsDataController timeLogsDataController)
     {
         _toDosDataController = toDosDataController;
         _timeLogsDataController = timeLogsDataController;

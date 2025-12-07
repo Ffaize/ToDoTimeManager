@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
