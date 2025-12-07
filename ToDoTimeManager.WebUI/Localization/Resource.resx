@@ -348,4 +348,19 @@
   <data name="TimeLogsByDataes" xml:space="preserve">
     <value>Time logs by dates in this month</value>
   </data>
+  <data name="AllSpentTime" xml:space="preserve">
+    <value>All spent time</value>
+  </data>
+  <data name="CountOfLogs" xml:space="preserve">
+    <value>Count of logs</value>
+  </data>
+  <data name="AverageTimeOfLogs" xml:space="preserve">
+    <value>Average time of logs</value>
+  </data>
+  <data name="AverageTimePerDay" xml:space="preserve">
+    <value>Average time per day</value>
+  </data>
+  <data name="UniqueTasks" xml:space="preserve">
+    <value>Unique tasks logged</value>
+  </data>
 </root>

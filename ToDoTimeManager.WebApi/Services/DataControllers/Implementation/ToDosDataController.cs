@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
@@ -110,6 +111,22 @@ public class ToDosDataController : IToDosDataController
         {
             _logger.LogError(e, e.Message);
             return false;
+        }
+    }
+
+    public async Task<List<ToDo>> GetToDosByNearestDueDateByUserId(Guid filterUserId)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", filterUserId);
+            var result = await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetByNearestDueDateByUserId", parameters);
+            return result.Select(x => x.ToToDo()).ToList();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
         }
     }
 }

@@ -1,0 +1,14 @@
+﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetByNearestDueDateByUserId]
+@UserId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM ToDos
+    WHERE AssignedTo = @UserId
+      AND DueDate IS NOT NULL
+      AND CAST(DueDate AS DATE) >= CAST(GETDATE() AS DATE)
+      AND CAST(DueDate AS DATE) <= DATEADD(DAY, 7, CAST(GETDATE() AS DATE))
+    ORDER BY DueDate ASC;
+END

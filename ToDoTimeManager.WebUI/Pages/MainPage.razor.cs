@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
 using System;
+using Microsoft.AspNetCore.Components.Rendering;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Localization;
@@ -116,5 +117,48 @@ public partial class MainPage
             > 0 => "bg-lightgreen",
             _ => "bg-lightgray"
         };
+    }
+
+    private string GetAverageTimeOfLogs()
+    {
+        if (MainPageStatistic.TimeLogsForGivenTime is { Count: < 1 })
+            return "0h 0m";
+        var totalTime = MainPageStatistic.TimeLogsForGivenTime.Aggregate(TimeSpan.Zero, (current, log) => current + log.HoursSpent);
+        var averageTime = TimeSpan.FromTicks(totalTime.Ticks / MainPageStatistic.TimeLogsForGivenTime.Count);
+        return $"{(int)averageTime.TotalHours}h {averageTime.Minutes}m";
+    }
+
+    private string GetAverageTimePerDay()
+    {
+        if (MainPageStatistic.TimeLogsForThisMonth is { Count: < 1 })
+            return "0h 0m";
+        var totalTime = MainPageStatistic.TimeLogsForThisMonth.Aggregate(TimeSpan.Zero, (current, log) => current + log.HoursSpent);
+        var daysWithLogs = MainPageStatistic.TimeLogsForThisMonth
+            .Select(x => x.LogDate.Day)
+            .Distinct()
+            .Count();
+        var averageTime = TimeSpan.FromTicks(totalTime.Ticks / daysWithLogs);
+        return $"{(int)averageTime.TotalHours}h {averageTime.Minutes}m";
+    }
+
+    private string GetCountOfUniqueTasks()
+    {
+        if (MainPageStatistic.TimeLogsForGivenTime is { Count: < 1 })
+            return "0";
+        var uniqueTasksCount = MainPageStatistic.TimeLogsForGivenTime
+            .Select(x => x.ToDoId)
+            .Distinct()
+            .Count();
+        return uniqueTasksCount.ToString();
+    }
+
+    private async Task NavigateToTask(Guid taskId)
+    {
+        NavigationManager.NavigateTo($"/taskDetails/{taskId}");
+    }
+
+    private string GetClassIfDueDateisToday(DateTime dueDate)
+    {
+        return dueDate.ToUniversalTime().Date == DateTime.UtcNow.Date ? "border-blink-danger" : string.Empty;
     }
 }

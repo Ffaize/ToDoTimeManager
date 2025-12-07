@@ -1,13 +1,14 @@
 ﻿@using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
 @using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Localization
 @using ToDoTimeManager.WebUI.Services.Implementations
 
 @page "/"
 @attribute [Authorize]
 <PageTitle>@Localizer["Home"] - TaskForge</PageTitle>
-<Loader IsLoading="IsLoading"/>
+<Loader IsLoading="IsLoading" />
 
 <div class="main-page-container">
     <div class="main-page-statistic-container">
@@ -22,36 +23,48 @@
             </select>
         </div>
         <div class="statistic-content" style="margin-top: 7px;">
-            <div class="at-all-logged-time">
-                @Localizer["TimeLogged"]
+            <div class="time-log-min-width-row main-page-row">
+                <div class="row-name main-page-row-name">
+                    @Localizer["AllSpentTime"]
+                </div>
+                <div class="row-value main-page-row-value">
+                    @GetTimeSpent()
+                </div>
             </div>
-            @*             <div class="left-time-loged-count">
-                <span>@Localizer["TimeLogged"]</span>
-                <span class="time">@GetTimeSpent()</span>                
+            <div class="time-log-min-width-row main-page-row">
+                <div class="row-name main-page-row-name">
+                    @Localizer["CountOfLogs"]
+                </div>
+                <div class="row-value main-page-row-value">
+                    @MainPageStatistic.TimeLogsForGivenTime.Count
+                </div>
             </div>
-            <div class="right-last-logs-container">
-                @if (MainPageStatistic.TimeLogsForGivenTime.Any())
-                {
-                    @foreach (var timeLog in MainPageStatistic.TimeLogsForGivenTime)
-                    {
-                        <div class="main-page-time-log">
-                            <div class="time-column">
-                                @GetTimeSpent(timeLog.HoursSpent)
-                            </div>
-                            <div class="time-description">
-                                @timeLog.LogDescription
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="no-time-logs-text">
-                        @Localizer["NoTimeLogsFound"]
-                    </div>
-                }
+            <div class="time-log-min-width-row main-page-row">
+                <div class="row-name main-page-row-name">
+                    @Localizer["AverageTimeOfLogs"]
+                </div>
+                <div class="row-value main-page-row-value">
+                    @GetAverageTimeOfLogs()
+                </div>
+            </div>
+            <div class="time-log-min-width-row main-page-row">
+                <div class="row-name main-page-row-name">
+                    @Localizer["AverageTimePerDay"]
+                </div>
+                <div class="row-value main-page-row-value">
+                    @GetAverageTimePerDay()
+                </div>
+            </div>
+            <div class="time-log-min-width-row main-page-row">
+                <div class="row-name main-page-row-name">
+                    @Localizer["UniqueTasks"]
+                </div>
+                <div class="row-value main-page-row-value">
+                    @GetCountOfUniqueTasks()
+                </div>
+            </div>
 
-            </div> *@
+
         </div>
     </div>
 
@@ -69,9 +82,37 @@
         </div>
     </div>
     <div class="main-page-statistic-container">
-
+        <div class="due-date-container">
+            @foreach (var dueDate in MainPageStatistic.DueDateTasks)
+            {
+                <div class="due-date-row @GetClassIfDueDateisToday(dueDate.Key)">
+                    <div class="due-date-date">
+                        @dueDate.Key.ToLocalTime().ToShortDateString()
+                    </div>
+                    <div class="due-date-arrow-right">
+                        <ArrowLeftIcon IconSize="30" />
+                    </div>
+                    <div class="due-date-task" @onclick="() => NavigateToTask(dueDate.Value.Id)">
+                        <div class="due-date-task-number">
+                            #@dueDate.Value.NumberedId
+                        </div>
+                        <div class="due-date-task-title">
+                            @dueDate.Value.Title
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
     <div class="main-page-statistic-container">
-
+        <div class="statuses-container">
+            @foreach (var status in MainPageStatistic.ToDoStatuses)
+            {
+                <div class="task-block @(Enum.GetName(status.ToDoStatus)+"-css-class")">
+                    <h4>@Localizer[Enum.GetName(status.ToDoStatus) ?? string.Empty]</h4>
+                    <h1>@status.Count</h1>
+                </div>
+            }
+        </div>
     </div>
 </div>

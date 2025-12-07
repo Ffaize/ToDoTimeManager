@@ -5,14 +5,15 @@
     flex-wrap: wrap;
     gap: 20px;
 }
-    .main-page-statistic-container {
-        width: calc(50% - 10px);
-        background: var(--feldgrau);
-        border: 3px solid var(--midnight-green);
-        border-radius: var(--border-radius-box);
-        height: calc(50% - 10px);
-        padding: 10px;
-    }
+
+.main-page-statistic-container {
+    width: calc(50% - 10px);
+    background: var(--feldgrau);
+    border: 3px solid var(--midnight-green);
+    border-radius: var(--border-radius-box);
+    height: calc(50% - 10px);
+    padding: 10px;
+}
 
 @media(max-width: 1000px) {
     .main-page-container {
@@ -20,24 +21,75 @@
         flex-wrap: nowrap;
         gap: 10px;
     }
+
     .main-page-statistic-container {
         width: 100%;
         min-height: 300px;
     }
 }
+
 .main-page-statistic-container .action-buttons-header {
     justify-content: end;
 }
-.main-page-statistic-container .action-buttons-header select {
-    max-width: 200px;
-    background: var(--midnight-green);
-}
+
+    .main-page-statistic-container .action-buttons-header select {
+        max-width: 200px;
+        background: var(--midnight-green);
+    }
 
 .statistic-content {
     width: 100%;
-    height: calc(100% - 40px);
+    height: calc(100% - 50px);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    padding: 20px;
+    border: 3px solid var(--battleship-gray);
+    border-radius: var(--border-radius-container);
+    gap: 10px;
+}
+
+.main-page-row {
+    width: 100%;
+    height: calc(20% - 10px);
+    border: 3px solid var(--midnight-green);
+    border-radius: var(--border-radius-box);
+    align-content: center;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+    .main-page-row * {
+        width: 50% !important;
+        color: var(--white-color);
+        padding: 20px;
+        font-size: 20px;
+    }
+
+@media(max-width: 1500px) {
+    .main-page-row * {
+        font-size: 15px;
+    }
+}
+
+@media(max-width: 799px) {
+
+    .main-page-row {
+        height: fit-content;
+        padding: 0 20px;
+    }
+
+    .main-page-row-name {
+        padding: 0;
+    }
+
+    .main-page-row-value {
+        padding: 0;
+    }
+
+
+    .statistic-content {
+        overflow-y: auto;
+    }
 }
 
 .left-time-loged-count {
@@ -45,16 +97,15 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-
     justify-content: space-evenly;
 }
 
-.left-time-loged-count span {
-    color: var(--white-color);
-    text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-}
+    .left-time-loged-count span {
+        color: var(--white-color);
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+    }
 
     .left-time-loged-count .time {
         height: 60%;
@@ -92,8 +143,8 @@
     flex-wrap: wrap;
     padding: 5px;
     gap: 20px;
-
 }
+
 .no-time-logs-text {
     align-self: center;
     align-content: center;
@@ -107,6 +158,7 @@
     font-size: 22px;
     padding-left: 10px;
 }
+
 .statistic-content-calendar {
     padding: 10px;
     width: 100%;
@@ -114,8 +166,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    
-
 }
 
 .calendar-day {
@@ -126,6 +176,7 @@
     color: var(--white-color);
     border-radius: var(--border-radius-box);
     background: var(--battleship-gray);
+    min-width: 20px !important;
 }
 
 .current-day {
@@ -143,10 +194,145 @@
 .bg-mediumgreen {
     background: var(--dark-slate-gray);
 }
+
 .bg-lightgreen {
     background: var(--feldgrau);
 }
 
-.at-all-logged-time {
+@media(max-width: 385px) {
+    .calendar-day {
+        width: 27px !important;
+    }
+
+    .statistic-content-calendar {
+        height: calc(100% - 66px);
+    }
+}
+
+
+.due-date-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.due-date-row {
+    width: 100%;
+    height: 70px;
+    border-radius: var(--border-radius-box);
+    border: 3px solid var(--battleship-gray);
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    gap: 10px;
+}
+
+.due-date-date {
+    border-radius: var(--border-radius-box);
+    background: var(--midnight-green);
+    padding: 5px;
+    color: var(--white-color);
+    align-content: center;
+}
+
+.due-date-arrow-right {
+    align-content: center;
+    transform: rotateY(180deg)
+}
+
+    .due-date-arrow-right * {
+        fill: var(--white-color)
+    }
+
+.due-date-task {
+    width: calc(100% - 132px);
+    border-radius: var(--border-radius-box);
+    border: 2px solid var(--midnight-green);
+    display: flex;
+    flex-direction: row;
+    color: var(--white-color);
+    padding: 7px;
+    transition: border 0.5s;
+}
+    .due-date-task:hover {
+        border: 2px solid var(--chestnut);
+        cursor: pointer;
+    }
+
+    .due-date-task-number {
+        align-content: center;
+        padding-right: 7px;
+        border-right: 2px solid var(--midnight-green);
+    }
+.due-date-task-title {
+    align-content: center;
+    max-width: 30vw;
+    margin-left: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.border-blink-danger {
+    animation: blink 3s infinite ease-in-out !important;
+}
+
+
+@keyframes blink {
+    0% {
+        border-color: var(--battleship-gray);
+    }
+    50% {
+         border-color: var(--chestnut);
+    }
+    100% {
+        border-color: var(--battleship-gray);
+    }
+}
+
+
+.statuses-container {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 100%;
+}
+
+    .statuses-container .task-block {
+        width: calc(50% - 10px);
+        height: calc(50% - 10px);
+        box-shadow: none !important;
+    }
+.InProgress-css-class, .Cancelled-css-class {
+    margin-left: 10px;
+}
+
+.New-css-class, .Completed-css-class {
+    margin-left: 5px;
+}
+
+.InProgress-css-class, .New-css-class {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+@media(max-width: 800px) {
+    .statuses-container {
+        flex-direction: row;
+        overflow-y: auto;
+        gap: 10px
+    }
+
+    .statuses-container .task-block {
+        width: 100%;
+        height: 50%;
+    }
+
+    .InProgress-css-class, .Cancelled-css-class, .New-css-class, .Completed-css-class {
+        margin: 0 !important;
+    }
 
 }

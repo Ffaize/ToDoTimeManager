@@ -156,7 +156,9 @@ public partial class TimeLogsPage
             var task = AllToDos.FirstOrDefault(x => x.NumberedId == (int)(obj.AdditionalValue ?? 0));
             if (task is null)
             {
-                ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).Wait();
+                InvokeAsync(StateHasChanged);
+                ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).GetAwaiter().GetResult();
+                InvokeAsync(StateHasChanged);
                 return;
             }
 

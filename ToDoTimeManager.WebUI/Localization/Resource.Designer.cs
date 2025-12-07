@@ -61,6 +61,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All spent time.
+        /// </summary>
+        public static string AllSpentTime {
+            get {
+                return ResourceManager.GetString("AllSpentTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All time.
         /// </summary>
         public static string AllTime {
@@ -75,6 +84,24 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string Authorization {
             get {
                 return ResourceManager.GetString("Authorization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average time of logs.
+        /// </summary>
+        public static string AverageTimeOfLogs {
+            get {
+                return ResourceManager.GetString("AverageTimeOfLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average time per day.
+        /// </summary>
+        public static string AverageTimePerDay {
+            get {
+                return ResourceManager.GetString("AverageTimePerDay", resourceCulture);
             }
         }
         
@@ -165,6 +192,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string ConfirmPassword {
             get {
                 return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Count of logs.
+        /// </summary>
+        public static string CountOfLogs {
+            get {
+                return ResourceManager.GetString("CountOfLogs", resourceCulture);
             }
         }
         
@@ -705,6 +741,15 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unique tasks logged.
+        /// </summary>
+        public static string UniqueTasks {
+            get {
+                return ResourceManager.GetString("UniqueTasks", resourceCulture);
             }
         }
         

@@ -348,4 +348,19 @@
   <data name="TimeLogsByDataes" xml:space="preserve">
     <value>Записи часу по дням цього місяця</value>
   </data>
+  <data name="AllSpentTime" xml:space="preserve">
+    <value>Всього витрачено часу</value>
+  </data>
+  <data name="CountOfLogs" xml:space="preserve">
+    <value>Кількість записів</value>
+  </data>
+  <data name="AverageTimeOfLogs" xml:space="preserve">
+    <value>Середній час запису</value>
+  </data>
+  <data name="AverageTimePerDay" xml:space="preserve">
+    <value>Середній час за день</value>
+  </data>
+  <data name="UniqueTasks" xml:space="preserve">
+    <value>Записано в унікальних завдань</value>
+  </data>
 </root>

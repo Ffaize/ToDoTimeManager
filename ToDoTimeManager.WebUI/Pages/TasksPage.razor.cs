@@ -191,7 +191,7 @@ public partial class TasksPage
             var task = AllToDos.FirstOrDefault(x => x.NumberedId == (int)(obj.AdditionalValue ?? 0));
             if (task is null)
             {
-                ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).Wait();
+                ToastsService.ShowToast(Localizer["TaskWithThatNumberWereNotFound"].Value, true).GetAwaiter().GetResult();
                 return;
             }
 
