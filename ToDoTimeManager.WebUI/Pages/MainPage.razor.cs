@@ -152,6 +152,6 @@ public partial class MainPage
 
     private static string GetClassIfDueDateisToday(DateTime dueDate)
     {
-        return dueDate.ToUniversalTime().Date == DateTime.UtcNow.Date ? "border-blink-danger" : string.Empty;
+        return dueDate.ToLocalTime().Date == DateTime.Now.Date ? "border-blink-danger" : string.Empty;
     }
 }
