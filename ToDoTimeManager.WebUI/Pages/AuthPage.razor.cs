@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Localization;
 using ToDoTimeManager.WebUI.Services.HttpServices;
@@ -18,7 +19,7 @@ public partial class AuthPage
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
     private LoginUser LoginUser { get; set; } = new();
-    private User RegisterUser { get; set; } = new() { Id = Guid.NewGuid(), UserRole = UserRole.User };
+    private CreateUserRequestDto RegisterUser { get; set; } = new() { Id = Guid.NewGuid(), UserRole = UserRole.User };
     private string ConfirmPassword { get; set; } = string.Empty;
     private bool IsLogin { get; set; } = true;
     protected Dictionary<string, string> PasswordInputsTypes { get; set; } = new();

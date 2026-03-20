@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Localization;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Localization;
@@ -23,7 +24,7 @@ public partial class ProfilePage
 
     private CustomAuthStateProvider AuthStateProvider => (CustomAuthStateProvider)AuthenticationStateProvider;
 
-    private User? CurrentUser { get; set; } = new() { Id = Guid.Empty };
+    private UserResponseDto? CurrentUser { get; set; } = new() { Id = Guid.Empty };
     private List<ToDoCountStatisticsOfAllTime> ToDoStatistic { get; set; } = [];
     public bool IsButtonsDisabled => CurrentUser?.Id == Guid.Empty || IsLoading;
     public bool IsUserEditModalVisible { get; set; }
@@ -91,15 +92,15 @@ public partial class ProfilePage
     {
         IsUserEditModalVisible = res.Show;
         StateHasChanged();
-        if (res.Value is User user) _ = EditUser(user);
+        if (res.Value is UpdateUserRequestDto update) _ = EditUser(update);
         StateHasChanged();
     }
 
-    private async Task EditUser(User user)
+    private async Task EditUser(UpdateUserRequestDto update)
     {
         ShowLoader();
-        var update = await UserService.Update(user);
-        if (update)
+        var res = await UserService.Update(update);
+        if (res)
         {
             await ToastsService.ShowToast(Localizer["UserUpdated"], false);
             await FetchData();

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -312,7 +312,9 @@ public class DbAccessService : IDbAccessService
             await using var connection = new SqlConnection(GetConnectionString());
             var parameters = new DynamicParameters();
             parameters.Add(parameterName, value);
-            return await connection.QuerySingleOrDefaultAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            // Stored procedures can (by DB data or query logic) return multiple rows.
+            // For "GetOne..." operations we want to be resilient and return the first match.
+            return await connection.QueryFirstOrDefaultAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         catch (Exception e)
         {

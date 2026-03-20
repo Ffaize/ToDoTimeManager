@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.DTOs;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices
 {
@@ -98,7 +99,17 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(Url("Create"), timeLog);
+                var request = new TimeLogUpsertRequestDto
+                {
+                    Id = timeLog.Id,
+                    ToDoId = timeLog.ToDoId,
+                    UserId = timeLog.UserId,
+                    HoursSpent = timeLog.HoursSpent,
+                    LogDate = timeLog.LogDate,
+                    LogDescription = timeLog.LogDescription
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(Url("Create"), request);
                 response.EnsureSuccessStatusCode();
                 return true;
             }
@@ -114,7 +125,17 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync(Url("Update"), timeLog);
+                var request = new TimeLogUpsertRequestDto
+                {
+                    Id = timeLog.Id,
+                    ToDoId = timeLog.ToDoId,
+                    UserId = timeLog.UserId,
+                    HoursSpent = timeLog.HoursSpent,
+                    LogDate = timeLog.LogDate,
+                    LogDescription = timeLog.LogDescription
+                };
+
+                var response = await _httpClient.PutAsJsonAsync(Url("Update"), request);
                 response.EnsureSuccessStatusCode();
                 return true;
             }

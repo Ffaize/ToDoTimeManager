@@ -1,5 +1,5 @@
-﻿@using Microsoft.Extensions.Localization
-@using ToDoTimeManager.Shared.Models
+@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.Shared.DTOs
 @using ToDoTimeManager.WebUI.Localization
 <div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
 
@@ -29,13 +29,13 @@
 </div>
 @code {
 
-    [Parameter] public User? User { get; set; } = new() { Id = Guid.NewGuid() };
+    [Parameter] public UserResponseDto? User { get; set; } = new() { Id = Guid.NewGuid() };
     [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
     [Parameter] public bool Show { get; set; }
     [Parameter] public string Title { get; set; } = string.Empty;
     [Parameter] public bool IsPerformedByAdmin { get; set; }
 
-    private User InternalUser { get; set; } = new() { Id = Guid.Empty };
+    private UpdateUserRequestDto InternalUser { get; set; } = new() { Id = Guid.Empty };
 
     #region BaseForComponent
     [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
@@ -56,12 +56,11 @@
     {
         if (User is not null)
         {
-            InternalUser = new User
+            InternalUser = new UpdateUserRequestDto
             {
                 Id = User.Id,
-                UserName = User.UserName,
-                Email = User.Email,
-                Password = User.Password,
+                UserName = User.UserName ?? string.Empty,
+                Email = User.Email ?? string.Empty,
                 UserRole = User.UserRole
             };
         }

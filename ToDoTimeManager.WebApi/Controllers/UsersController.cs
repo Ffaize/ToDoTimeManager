@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -23,7 +25,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _usersService.GetAllUsers();
-        return Ok(users);
+        return Ok(users.Select(ToUserResponseDto));
     }
 
     [Authorize]
@@ -33,7 +35,7 @@ public class UsersController : ControllerBase
         if (id == Guid.Empty)
             return BadRequest("Invalid user ID");
         var user = await _usersService.GetUserById(id);
-        return user == null ? NotFound("User was not found") : Ok(user);
+        return user == null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
     [Authorize]
@@ -43,7 +45,7 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(userName))
             return BadRequest("Invalid username");
         var user = await _usersService.GetUserByUsername(userName);
-        return user is null ? NotFound("User was not found") : Ok(user);
+        return user is null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
     [Authorize]
@@ -53,7 +55,7 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(email))
             return BadRequest("Invalid email");
         var user = await _usersService.GetUserByEmail(email);
-        return user is null ? NotFound("User was not found") : Ok(user);
+        return user is null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
     [Authorize]
@@ -63,41 +65,48 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(loginParameter))
             return BadRequest("Invalid login parameter");
         var user = await _usersService.GetUserByLoginParameter(loginParameter);
-        return user is null ? NotFound("User was not found") : Ok(user);
+        return user is null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
     [AllowAnonymous]
     [HttpPost("Create")]
-    public async Task<IActionResult> CreateUser([FromBody] User? user)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestDto request)
     {
-        if (user is null)
-            return BadRequest("User was null");
+        var user = new User
+        {
+            Id = request.Id,
+            UserName = request.UserName,
+            Email = request.Email,
+            Password = request.Password,
+            UserRole = request.UserRole
+        };
 
-        if (user.Id == Guid.Empty || user.UserRole is null ||
-            string.IsNullOrWhiteSpace(user.Email) ||
-            string.IsNullOrWhiteSpace(user.Password) ||
-            string.IsNullOrWhiteSpace(user.UserName))
-            return BadRequest("User has invalid credentials");
-
-
-        var newUser = await _usersService.CreateUser(user);
-
-        return newUser ? Ok(newUser) : BadRequest("User could not be created");
+        var created = await _usersService.CreateUser(user);
+        return created ? Ok(created) : BadRequest("User could not be created");
     }
 
     [Authorize]
     [HttpPut("Update")]
-    public async Task<IActionResult> UpdateUser([FromBody] User? user)
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
     {
-        if (user is null)
-            return BadRequest("User was null");
-        if (user.Id == Guid.Empty || user.UserRole is null ||
-            string.IsNullOrWhiteSpace(user.Email) ||
-            string.IsNullOrWhiteSpace(user.Password) ||
-            string.IsNullOrWhiteSpace(user.UserName))
-            return BadRequest("User has invalid credentials");
-        var updatedUser = await _usersService.UpdateUser(user);
-        return updatedUser ? Ok(updatedUser) : BadRequest("User could not be updated");
+        var existingUser = await _usersService.GetUserById(request.Id);
+        if (existingUser is null)
+            return NotFound("User was not found");
+
+        var updatedUser = new User
+        {
+            Id = request.Id,
+            UserName = request.UserName,
+            Email = request.Email,
+            UserRole = request.UserRole,
+            Password = string.IsNullOrWhiteSpace(existingUser.Password) ? null : existingUser.Password
+        };
+
+        if (string.IsNullOrWhiteSpace(updatedUser.Password))
+            return BadRequest("User password is missing");
+
+        var res = await _usersService.UpdateUser(updatedUser);
+        return res ? Ok(res) : BadRequest("User could not be updated");
     }
 
     [Authorize]
@@ -111,4 +120,14 @@ public class UsersController : ControllerBase
     }
 
 
+    private static UserResponseDto ToUserResponseDto(User user)
+    {
+        return new UserResponseDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            UserRole = user.UserRole
+        };
+    }
 }

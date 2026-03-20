@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
@@ -65,23 +66,35 @@ public class TimeLogsController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> CreateTimeLog([FromBody] TimeLog? timeLog)
+    public async Task<IActionResult> CreateTimeLog([FromBody] TimeLogUpsertRequestDto request)
     {
-        if (timeLog is null)
-            return BadRequest("Time log was null");
-        if (timeLog.Id == Guid.Empty || timeLog.UserId == Guid.Empty || timeLog.ToDoId == Guid.Empty)
-            return BadRequest("Time log has invalid data");
+        var timeLog = new TimeLog
+        {
+            Id = request.Id,
+            ToDoId = request.ToDoId,
+            UserId = request.UserId,
+            HoursSpent = request.HoursSpent!.Value,
+            LogDate = request.LogDate!.Value,
+            LogDescription = request.LogDescription
+        };
+
         var newTimeLog = await _timeLogsService.CreateTimeLog(timeLog);
         return newTimeLog ? Ok(newTimeLog) : BadRequest("Time log could not be created");
     }
 
     [HttpPut("Update")]
-    public async Task<IActionResult> UpdateTimeLog([FromBody] TimeLog? timeLog)
+    public async Task<IActionResult> UpdateTimeLog([FromBody] TimeLogUpsertRequestDto request)
     {
-        if (timeLog is null)
-            return BadRequest("Time log was null");
-        if (timeLog.Id == Guid.Empty || timeLog.UserId == Guid.Empty || timeLog.ToDoId == Guid.Empty)
-            return BadRequest("Time log has invalid data");
+        var timeLog = new TimeLog
+        {
+            Id = request.Id,
+            ToDoId = request.ToDoId,
+            UserId = request.UserId,
+            HoursSpent = request.HoursSpent!.Value,
+            LogDate = request.LogDate!.Value,
+            LogDescription = request.LogDescription
+        };
+
         var updateTimeLog = await _timeLogsService.UpdateTimeLog(timeLog);
         return updateTimeLog ? Ok(updateTimeLog) : BadRequest("Time log could not be updated");
     }

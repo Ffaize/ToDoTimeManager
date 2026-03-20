@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.DTOs;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices
 {
@@ -64,7 +65,19 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(Url("Create"), toDo);
+                var request = new ToDoUpsertRequestDto
+                {
+                    Id = toDo.Id,
+                    NumberedId = toDo.NumberedId,
+                    Title = toDo.Title ?? string.Empty,
+                    Description = toDo.Description,
+                    CreatedAt = toDo.CreatedAt,
+                    DueDate = toDo.DueDate,
+                    Status = toDo.Status,
+                    AssignedTo = toDo.AssignedTo
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(Url("Create"), request);
                 response.EnsureSuccessStatusCode();
                 return true;
             }
@@ -79,7 +92,19 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync(Url("Update"), toDo);
+                var request = new ToDoUpsertRequestDto
+                {
+                    Id = toDo.Id,
+                    NumberedId = toDo.NumberedId,
+                    Title = toDo.Title ?? string.Empty,
+                    Description = toDo.Description,
+                    CreatedAt = toDo.CreatedAt,
+                    DueDate = toDo.DueDate,
+                    Status = toDo.Status,
+                    AssignedTo = toDo.AssignedTo
+                };
+
+                var response = await _httpClient.PutAsJsonAsync(Url("Update"), request);
                 response.EnsureSuccessStatusCode();
                 return true;
             }

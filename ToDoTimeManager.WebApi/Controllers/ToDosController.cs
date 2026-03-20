@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -45,23 +46,39 @@ public class ToDosController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> CreateToDo([FromBody] ToDo? toDo)
+    public async Task<IActionResult> CreateToDo([FromBody] ToDoUpsertRequestDto request)
     {
-        if (toDo is null)
-            return BadRequest("To-do was null");
-        if (toDo.Id == Guid.Empty || string.IsNullOrWhiteSpace(toDo.Title))
-            return BadRequest("To-do has invalid data");
+        var toDo = new ToDo
+        {
+            Id = request.Id,
+            NumberedId = request.NumberedId,
+            Title = request.Title,
+            Description = request.Description,
+            CreatedAt = request.CreatedAt!.Value,
+            DueDate = request.DueDate,
+            Status = request.Status!.Value,
+            AssignedTo = request.AssignedTo
+        };
+
         var newToDo = await _toDosService.CreateToDo(toDo);
         return newToDo ? Ok(newToDo) : BadRequest("To-do could not be created");
     }
 
     [HttpPut("Update")]
-    public async Task<IActionResult> UpdateToDo([FromBody] ToDo? toDo)
+    public async Task<IActionResult> UpdateToDo([FromBody] ToDoUpsertRequestDto request)
     {
-        if (toDo is null)
-            return BadRequest("To-do was null");
-        if (toDo.Id == Guid.Empty || string.IsNullOrWhiteSpace(toDo.Title))
-            return BadRequest("To-do has invalid data");
+        var toDo = new ToDo
+        {
+            Id = request.Id,
+            NumberedId = request.NumberedId,
+            Title = request.Title,
+            Description = request.Description,
+            CreatedAt = request.CreatedAt!.Value,
+            DueDate = request.DueDate,
+            Status = request.Status!.Value,
+            AssignedTo = request.AssignedTo
+        };
+
         var updatedToDo = await _toDosService.UpdateToDo(toDo);
         return updatedToDo ? Ok(updatedToDo) : BadRequest("To-do could not be updated");
     }

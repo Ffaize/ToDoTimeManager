@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices
 {
@@ -12,13 +13,13 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             ApiControllerName = "Users";
         }
 
-        public async Task<List<User>?> GetAllUsers()
+        public async Task<List<UserResponseDto>?> GetAllUsers()
         {
             try
             {
                 var response = await _httpClient.GetAsync(Url("GetAll"));
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<User>>();
+                return await response.Content.ReadFromJsonAsync<List<UserResponseDto>>();
             }
             catch (Exception ex)
             {
@@ -27,13 +28,13 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<User?> GetUserById(Guid id)
+        public async Task<UserResponseDto?> GetUserById(Guid id)
         {
             try
             {
                 var response = await _httpClient.GetAsync(Url($"GetById/{id}"));
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<User>();
+                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
             }
             catch (Exception ex)
             {
@@ -42,13 +43,13 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<User?> GetUserByUsername(string userName)
+        public async Task<UserResponseDto?> GetUserByUsername(string userName)
         {
             try
             {
                 var response = await _httpClient.GetAsync(Url($"GetByUsername/{userName}"));
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<User>();
+                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
             }
             catch (Exception ex)
             {
@@ -57,13 +58,13 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<UserResponseDto?> GetUserByEmail(string email)
         {
             try
             {
                 var response = await _httpClient.GetAsync(Url($"GetByEmail/{email}"));
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<User>();
+                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
             }
             catch (Exception ex)
             {
@@ -72,13 +73,13 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<User?> GetUserByLoginParameter(string loginParameter)
+        public async Task<UserResponseDto?> GetUserByLoginParameter(string loginParameter)
         {
             try
             {
                 var response = await _httpClient.GetAsync(Url($"GetByLoginParameter/{loginParameter}"));
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<User>();
+                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
             }
             catch (Exception ex)
             {
@@ -87,7 +88,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<bool> Create(User user)
+        public async Task<bool> Create(CreateUserRequestDto user)
         {
             try
             {
@@ -101,7 +102,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
                 return false;
             }
         }
-        public async Task<bool> Update(User user)
+        public async Task<bool> Update(UpdateUserRequestDto user)
         {
             try
             {
