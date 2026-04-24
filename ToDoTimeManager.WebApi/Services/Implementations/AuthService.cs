@@ -1,4 +1,8 @@
-﻿using ToDoTimeManager.Shared.Enums;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Shared.Utils;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -19,6 +23,31 @@ public class AuthService : IAuthService
         _passwordHelperService = passwordHelperService;
         _jwtGeneratorService = jwtGeneratorService;
         _configuration = configuration;
+    }
+
+    private (string? UserId, string? Role) ValidateAndReadToken(string token)
+    {
+        var key = _configuration["JwtSettings:Key"] ?? string.Empty;
+        var issuer = _configuration["JwtSettings:Issuer"];
+        var audience = _configuration["JwtSettings:Audience"];
+
+        var validationParams = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateLifetime = false,  // allow expired tokens to be refreshed
+            ClockSkew = TimeSpan.Zero
+        };
+
+        var handler = new JwtSecurityTokenHandler();
+        var principal = handler.ValidateToken(token, validationParams, out _);
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var role = principal.FindFirstValue(ClaimTypes.Role);
+        return (userId, role);
     }
 
     public TokenModel? AuthenticateUser(LoginUser loginUser, User user)
@@ -47,7 +76,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var (userId, userRole) = JwtTokenHelper.GetUserDataFromAccessToken(tokenModel.AccessToken!);
+            var (userId, userRole) = ValidateAndReadToken(tokenModel.AccessToken!);
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                 return null;
 

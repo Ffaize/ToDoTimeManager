@@ -28,9 +28,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IM
             stopwatch.Stop();
             logger.LogError(exception, $"An unhandled exception has occurred. Elapsed Time: {stopwatch.ElapsedMilliseconds} ms");
 
-            var problemDetails = CreateProblemDetails(StatusCodes.Status204NoContent, exception.Message);
+            var problemDetails = CreateProblemDetails(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
 
-            context.Response.StatusCode = StatusCodes.Status204NoContent;
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
