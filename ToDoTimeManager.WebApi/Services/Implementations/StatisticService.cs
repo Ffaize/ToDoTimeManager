@@ -38,7 +38,8 @@ public class StatisticService : IStatisticService
     public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequest filter)
     {
         var timeLogsForFilterTime = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
-        var timeLogsForThisMonth = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, DateTime.Now.Day);
+        var daysIntoCurrentMonth = (int)(DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays;
+        var timeLogsForThisMonth = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, daysIntoCurrentMonth);
         var toDosForNearestDueDate = await _toDosDataController.GetToDosByNearestDueDateByUserId(filter.UserId);
         var toDoCountStatisticsOfAllTimes = new List<ToDoCountStatisticsOfAllTime>();
         await GetCountOfStatusesByStatus(filter.UserId, ToDoStatus.New, toDoCountStatisticsOfAllTimes);

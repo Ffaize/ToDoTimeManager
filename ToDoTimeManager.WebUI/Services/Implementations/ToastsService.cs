@@ -80,5 +80,7 @@ public class ToastModel : IDisposable
     public void Dispose()
     {
         Timer?.Elapsed -= TimerOnElapsed;
+        Timer?.Stop();
+        Timer?.Dispose();
     }
 }

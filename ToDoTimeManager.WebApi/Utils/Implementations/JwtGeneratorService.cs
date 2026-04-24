@@ -32,7 +32,7 @@ public class JwtGeneratorService : IJwtGeneratorService
             issuer: _configuration["JwtSettings:Issuer"],
             audience: _configuration["JwtSettings:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(int.Parse(_configuration["JwtSettings:AccessTokenLifetime"] ?? "15")),
+            expires: DateTime.UtcNow.AddMinutes(int.Parse(_configuration["JwtSettings:AccessTokenLifetime"] ?? "15")),
             signingCredentials: creds);
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

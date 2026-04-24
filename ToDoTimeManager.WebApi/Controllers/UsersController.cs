@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
+using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -13,11 +15,13 @@ public class UsersController : ControllerBase
 {
     private readonly ILogger<UsersController> _logger;
     private readonly IUsersService _usersService;
+    private readonly IPasswordHelperService _passwordHelperService;
 
-    public UsersController(ILogger<UsersController> logger, IUsersService usersService)
+    public UsersController(ILogger<UsersController> logger, IUsersService usersService, IPasswordHelperService passwordHelperService)
     {
         _logger = logger;
         _usersService = usersService;
+        _passwordHelperService = passwordHelperService;
     }
 
     [Authorize]
@@ -78,7 +82,7 @@ public class UsersController : ControllerBase
             UserName = request.UserName,
             Email = request.Email,
             Password = request.Password,
-            UserRole = request.UserRole
+            UserRole = UserRole.User  // role is always set server-side; client cannot escalate to Admin
         };
 
         var created = await _usersService.CreateUser(user);
@@ -93,17 +97,21 @@ public class UsersController : ControllerBase
         if (existingUser is null)
             return NotFound("User was not found");
 
+        var passwordHash = !string.IsNullOrWhiteSpace(request.Password)
+            ? _passwordHelperService.HashPassword(request.Id.ToString(), request.Password)
+            : existingUser.Password;
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            return BadRequest("User password is missing");
+
         var updatedUser = new User
         {
             Id = request.Id,
             UserName = request.UserName,
             Email = request.Email,
             UserRole = request.UserRole,
-            Password = string.IsNullOrWhiteSpace(existingUser.Password) ? null : existingUser.Password
+            Password = passwordHash
         };
-
-        if (string.IsNullOrWhiteSpace(updatedUser.Password))
-            return BadRequest("User password is missing");
 
         var res = await _usersService.UpdateUser(updatedUser);
         return res ? Ok(res) : BadRequest("User could not be updated");
