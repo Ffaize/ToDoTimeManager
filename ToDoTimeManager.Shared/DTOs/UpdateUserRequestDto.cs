@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Utils;
 
 namespace ToDoTimeManager.Shared.DTOs;
@@ -19,10 +18,6 @@ public sealed class UpdateUserRequestDto
     [MaxLength(200)]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
-    public UserRole? UserRole { get; set; }
-
-    // Optional in case we later support "change password" from UI.
     [MinLength(6)]
     [MaxLength(200)]
     public string? Password { get; set; }

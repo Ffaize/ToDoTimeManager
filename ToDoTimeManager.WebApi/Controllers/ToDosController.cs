@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -20,6 +21,10 @@ public class ToDosController : ControllerBase
         _toDosService = toDosService;
     }
 
+    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private bool IsAdmin() => User.IsInRole("Admin");
+
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllToDos()
     {
@@ -33,7 +38,10 @@ public class ToDosController : ControllerBase
         if (id == Guid.Empty)
             return BadRequest("Invalid to-do ID");
         var toDo = await _toDosService.GetToDoById(id);
-        return toDo == null ? NotFound("To-do was not found") : Ok(toDo);
+        if (toDo == null) return NotFound("To-do was not found");
+        if (toDo.AssignedTo != GetCurrentUserId() && !IsAdmin())
+            return Forbid();
+        return Ok(toDo);
     }
 
     [HttpGet("GetByUserId/{userId}")]
@@ -41,6 +49,8 @@ public class ToDosController : ControllerBase
     {
         if (userId == Guid.Empty)
             return BadRequest("Invalid user ID");
+        if (userId != GetCurrentUserId() && !IsAdmin())
+            return Forbid();
         var toDos = await _toDosService.GetToDosByUserId(userId);
         return Ok(toDos);
     }
@@ -67,6 +77,11 @@ public class ToDosController : ControllerBase
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateToDo([FromBody] ToDoUpsertRequestDto request)
     {
+        var existing = await _toDosService.GetToDoById(request.Id);
+        if (existing == null) return NotFound("To-do was not found");
+        if (existing.AssignedTo != GetCurrentUserId() && !IsAdmin())
+            return Forbid();
+
         var toDo = new ToDo
         {
             Id = request.Id,
@@ -88,6 +103,10 @@ public class ToDosController : ControllerBase
     {
         if (id == Guid.Empty)
             return BadRequest("Invalid to-do ID");
+        var existing = await _toDosService.GetToDoById(id);
+        if (existing == null) return NotFound("To-do was not found");
+        if (existing.AssignedTo != GetCurrentUserId() && !IsAdmin())
+            return Forbid();
         var deletedToDo = await _toDosService.DeleteToDo(id);
         return deletedToDo ? Ok(deletedToDo) : BadRequest("To-do could not be deleted");
     }

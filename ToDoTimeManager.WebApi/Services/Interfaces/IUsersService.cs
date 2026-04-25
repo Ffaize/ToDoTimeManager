@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+﻿using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -11,5 +12,6 @@ public interface IUsersService
     Task<User?> GetUserByLoginParameter(string loginParameter);
     Task<bool> CreateUser(User newUser);
     Task<bool> UpdateUser(User updatedUser);
+    Task<bool> ChangeUserRole(Guid userId, UserRole newRole);
     Task<bool> DeleteUser(Guid userId);
 }
