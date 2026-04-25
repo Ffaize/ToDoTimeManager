@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[sp_Users_Update]
-	@Id UniqueIdentifier,
+	@Id UNIQUEIDENTIFIER,
 	@UserName NVARCHAR(256),
 	@Email NVARCHAR(256),
 	@Password NVARCHAR(512),
-	@UserRole BIT
+	@UserRole INT
 AS
 	BEGIN
 		UPDATE dbo.Users

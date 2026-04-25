@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
@@ -24,7 +25,10 @@ public class UsersController : ControllerBase
         _passwordHelperService = passwordHelperService;
     }
 
-    [Authorize]
+    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private bool IsAdmin() => User.IsInRole("Admin");
+
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllUsers()
     {
@@ -38,11 +42,13 @@ public class UsersController : ControllerBase
     {
         if (id == Guid.Empty)
             return BadRequest("Invalid user ID");
+        if (id != GetCurrentUserId() && !IsAdmin())
+            return Forbid();
         var user = await _usersService.GetUserById(id);
         return user == null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetByUsername/{userName}")]
     public async Task<IActionResult> GetUserByUsername(string userName)
     {
@@ -52,7 +58,7 @@ public class UsersController : ControllerBase
         return user is null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetByEmail/{email}")]
     public async Task<IActionResult> GetUserByEmail(string email)
     {
@@ -62,7 +68,7 @@ public class UsersController : ControllerBase
         return user is null ? NotFound("User was not found") : Ok(ToUserResponseDto(user));
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetByLoginParameter/{loginParameter}")]
     public async Task<IActionResult> GetUserByLoginParameter(string loginParameter)
     {
@@ -93,6 +99,9 @@ public class UsersController : ControllerBase
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
     {
+        if (request.Id != GetCurrentUserId())
+            return Forbid();
+
         var existingUser = await _usersService.GetUserById(request.Id);
         if (existingUser is null)
             return NotFound("User was not found");
@@ -109,7 +118,7 @@ public class UsersController : ControllerBase
             Id = request.Id,
             UserName = request.UserName,
             Email = request.Email,
-            UserRole = request.UserRole,
+            UserRole = existingUser.UserRole,  // role is never changed via this endpoint
             Password = passwordHash
         };
 
@@ -117,7 +126,17 @@ public class UsersController : ControllerBase
         return res ? Ok(res) : BadRequest("User could not be updated");
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
+    [HttpPut("ChangeRole/{id}")]
+    public async Task<IActionResult> ChangeUserRole(Guid id, [FromBody] ChangeUserRoleRequestDto request)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Invalid user ID");
+        var changed = await _usersService.ChangeUserRole(id, request.NewRole);
+        return changed ? Ok(changed) : NotFound("User was not found");
+    }
+
+    [Authorize(Roles = "Admin")]
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {

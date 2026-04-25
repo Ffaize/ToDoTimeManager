@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+﻿using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -109,6 +110,22 @@ public class UsersService : IUsersService
         try
         {
             return await _usersDataController.UpdateUser(new UserEntity(updatedUser));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> ChangeUserRole(Guid userId, UserRole newRole)
+    {
+        try
+        {
+            var existing = await _usersDataController.GetUserById(userId);
+            if (existing is null) return false;
+            existing.UserRole = newRole;
+            return await _usersDataController.UpdateUser(existing);
         }
         catch (Exception e)
         {
