@@ -7,6 +7,11 @@ using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
+/// <summary>
+/// Manages time log entries that track hours spent on to-do items.
+/// All endpoints require an authenticated user.
+/// Access to other users' entries is restricted to administrators.
+/// </summary>
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -14,6 +19,10 @@ public class TimeLogsController : ControllerBase
 {
     private readonly ITimeLogsService _timeLogsService;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="TimeLogsController"/>.
+    /// </summary>
+    /// <param name="timeLogsService">The service used to perform time-log CRUD operations.</param>
     public TimeLogsController(ITimeLogsService timeLogsService)
     {
         _timeLogsService = timeLogsService;
@@ -22,6 +31,11 @@ public class TimeLogsController : ControllerBase
     private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     private bool IsAdmin() => User.IsInRole("Admin");
 
+    /// <summary>
+    /// Retrieves every time log entry in the system across all users and to-do items.
+    /// Restricted to administrators.
+    /// </summary>
+    /// <returns>200 OK with a list of all <see cref="TimeLog"/> entries.</returns>
     [Authorize(Roles = "Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllTimeLogs()
@@ -30,6 +44,15 @@ public class TimeLogsController : ControllerBase
         return Ok(timeLogs);
     }
 
+    /// <summary>
+    /// Retrieves a single time log entry by its unique identifier.
+    /// Administrators may access any entry; regular users may only access their own entries.
+    /// </summary>
+    /// <param name="id">The unique identifier of the time log entry.</param>
+    /// <returns>
+    /// 200 OK with the matching <see cref="TimeLog"/> on success;
+    /// 500 Internal Server Error if the entry is not found or the caller lacks access.
+    /// </returns>
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetTimeLogById(Guid id)
     {
@@ -37,6 +60,11 @@ public class TimeLogsController : ControllerBase
         return timeLog != null ? Ok(timeLog) : StatusCode(500);
     }
 
+    /// <summary>
+    /// Retrieves all time log entries associated with a specific to-do item.
+    /// </summary>
+    /// <param name="toDoId">The unique identifier of the to-do item.</param>
+    /// <returns>200 OK with a list of <see cref="TimeLog"/> entries for the given to-do.</returns>
     [HttpGet("GetByToDoId/{toDoId}")]
     public async Task<IActionResult> GetTimeLogsByToDoId(Guid toDoId)
     {
@@ -44,6 +72,12 @@ public class TimeLogsController : ControllerBase
         return Ok(timeLogs);
     }
 
+    /// <summary>
+    /// Retrieves all time log entries recorded by a specific user.
+    /// Administrators may query any user; regular users may only query their own entries.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose time logs to retrieve.</param>
+    /// <returns>200 OK with a list of <see cref="TimeLog"/> entries for the given user.</returns>
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetTimeLogsByUserId(Guid userId)
     {
@@ -51,6 +85,13 @@ public class TimeLogsController : ControllerBase
         return Ok(timeLogs);
     }
 
+    /// <summary>
+    /// Retrieves all time log entries recorded by a specific user on a specific to-do item.
+    /// Administrators may query any combination; regular users may only query their own entries.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="toDoId">The unique identifier of the to-do item.</param>
+    /// <returns>200 OK with a list of matching <see cref="TimeLog"/> entries.</returns>
     [HttpGet("GetByUserIdAndToDoId/{userId}/{toDoId}")]
     public async Task<IActionResult> GetTimeLogsByUserIdAndToDoId(Guid userId, Guid toDoId)
     {
@@ -58,6 +99,17 @@ public class TimeLogsController : ControllerBase
         return Ok(timeLogs);
     }
 
+    /// <summary>
+    /// Creates a new time log entry recording hours spent on a to-do item.
+    /// </summary>
+    /// <param name="request">
+    /// The creation payload containing the associated to-do ID, user ID,
+    /// hours spent, log date, and an optional description.
+    /// </param>
+    /// <returns>
+    /// 200 OK with <c>true</c> on success;
+    /// 500 Internal Server Error if creation fails.
+    /// </returns>
     [HttpPost("Create")]
     public async Task<IActionResult> CreateTimeLog([FromBody] TimeLogUpsertRequestDto request)
     {
@@ -75,6 +127,17 @@ public class TimeLogsController : ControllerBase
         return created ? Ok(created) : StatusCode(500);
     }
 
+    /// <summary>
+    /// Updates an existing time log entry with the values from the supplied request payload.
+    /// Administrators may update any entry; regular users may only update their own entries.
+    /// </summary>
+    /// <param name="request">
+    /// The update payload containing the entry's identifier along with the new field values.
+    /// </param>
+    /// <returns>
+    /// 200 OK with <c>true</c> on success;
+    /// 500 Internal Server Error if the update fails or the caller lacks access.
+    /// </returns>
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateTimeLog([FromBody] TimeLogUpsertRequestDto request)
     {
@@ -92,6 +155,15 @@ public class TimeLogsController : ControllerBase
         return updated ? Ok(updated) : StatusCode(500);
     }
 
+    /// <summary>
+    /// Permanently deletes a time log entry by its unique identifier.
+    /// Administrators may delete any entry; regular users may only delete their own entries.
+    /// </summary>
+    /// <param name="id">The unique identifier of the time log entry to delete.</param>
+    /// <returns>
+    /// 200 OK with <c>true</c> on success;
+    /// 500 Internal Server Error if deletion fails or the caller lacks access.
+    /// </returns>
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteTimeLog(Guid id)
     {
