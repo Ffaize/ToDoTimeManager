@@ -127,6 +127,20 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
+    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndTime(Guid userId, int daysAgo)
+    {
+        try
+        {
+            var res = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(userId, daysAgo);
+            return res.Select(tle => tle.ToTimeLog()).ToList()!;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
     public async Task<bool> CreateTimeLog(TimeLog newTimeLog)
     {
         try

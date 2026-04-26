@@ -1,25 +1,24 @@
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Exceptions;
-using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class StatisticService : IStatisticService
 {
-    private readonly IToDosDataController _toDosDataController;
-    private readonly ITimeLogsDataController _timeLogsDataController;
+    private readonly IToDosService             _toDosService;
+    private readonly ITimeLogsService          _timeLogsService;
     private readonly ILogger<StatisticService> _logger;
 
     public StatisticService(
-        IToDosDataController toDosDataController,
-        ITimeLogsDataController timeLogsDataController,
+        IToDosService             toDosService,
+        ITimeLogsService          timeLogsService,
         ILogger<StatisticService> logger)
     {
-        _toDosDataController = toDosDataController;
-        _timeLogsDataController = timeLogsDataController;
-        _logger = logger;
+        _toDosService    = toDosService;
+        _timeLogsService = timeLogsService;
+        _logger          = logger;
     }
 
     public async Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId, Guid currentUserId, bool isAdmin)
@@ -46,10 +45,10 @@ public class StatisticService : IStatisticService
 
         try
         {
-            var timeLogsForFilterTime = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
+            var timeLogsForFilterTime = await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
             var daysIntoCurrentMonth = (int)(DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays;
-            var timeLogsForThisMonth = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(filter.UserId, daysIntoCurrentMonth);
-            var toDosForNearestDueDate = await _toDosDataController.GetToDosByNearestDueDateByUserId(filter.UserId);
+            var timeLogsForThisMonth = await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, daysIntoCurrentMonth);
+            var toDosForNearestDueDate = await _toDosService.GetToDosByNearestDueDateByUserId(filter.UserId);
             var toDoCountStatisticsOfAllTimes = new List<ToDoCountStatisticsOfAllTime>();
             await GetCountOfStatusesByStatus(filter.UserId, ToDoStatus.New, toDoCountStatisticsOfAllTimes);
             await GetCountOfStatusesByStatus(filter.UserId, ToDoStatus.InProgress, toDoCountStatisticsOfAllTimes);
@@ -58,8 +57,8 @@ public class StatisticService : IStatisticService
 
             return new MainPageStatisticModel
             {
-                TimeLogsForGivenTime = timeLogsForFilterTime.Select(x => x.ToTimeLog()).ToList(),
-                TimeLogsForThisMonth = timeLogsForThisMonth.Select(x => x.ToTimeLog()).ToList(),
+                TimeLogsForGivenTime = timeLogsForFilterTime,
+                TimeLogsForThisMonth = timeLogsForThisMonth,
                 DueDateTasks         = toDosForNearestDueDate.ToDictionary(x => x.DueDate!.Value, x => x),
                 ToDoStatuses         = toDoCountStatisticsOfAllTimes
             };
@@ -77,7 +76,7 @@ public class StatisticService : IStatisticService
 
     private async Task GetCountOfStatusesByStatus(Guid userId, ToDoStatus status, List<ToDoCountStatisticsOfAllTime> result)
     {
-        var count = await _toDosDataController.GetToDosCountByUserIdAndStatus(userId, status);
+        var count = await _toDosService.GetToDosCountByUserIdAndStatus(userId, status);
         result.Add(new ToDoCountStatisticsOfAllTime
         {
             ToDoStatus = status,

@@ -1,3 +1,4 @@
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -78,6 +79,60 @@ public class ToDosService : IToDosService
         {
             _logger.LogError(e, e.Message);
             return [];
+        }
+    }
+
+    public async Task<List<ToDo>> GetToDosByTeamId(Guid teamId)
+    {
+        try
+        {
+            var res = await _toDosDataController.GetToDosByTeamId(teamId);
+            return res.Select(e => e.ToToDo()).ToList();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    public async Task<List<ToDo>> GetToDosByProjectId(Guid projectId)
+    {
+        try
+        {
+            var res = await _toDosDataController.GetToDosByProjectId(projectId);
+            return res.Select(e => e.ToToDo()).ToList();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    public async Task<List<ToDo>> GetToDosByNearestDueDateByUserId(Guid userId)
+    {
+        try
+        {
+            return await _toDosDataController.GetToDosByNearestDueDateByUserId(userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    public async Task<int> GetToDosCountByUserIdAndStatus(Guid userId, ToDoStatus status)
+    {
+        try
+        {
+            return await _toDosDataController.GetToDosCountByUserIdAndStatus(userId, status);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return 0;
         }
     }
 

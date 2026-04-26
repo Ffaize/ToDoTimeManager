@@ -11,18 +11,18 @@ public class ProjectsService : IProjectsService
 {
     private readonly IProjectsDataController     _projectsDataController;
     private readonly IProjectTeamsDataController _projectTeamsDataController;
-    private readonly IToDosDataController        _toDosDataController;
+    private readonly IToDosService               _toDosService;
     private readonly ILogger<ProjectsService>    _logger;
 
     public ProjectsService(
         IProjectsDataController     projectsDataController,
         IProjectTeamsDataController projectTeamsDataController,
-        IToDosDataController        toDosDataController,
+        IToDosService               toDosService,
         ILogger<ProjectsService>    logger)
     {
         _projectsDataController     = projectsDataController;
         _projectTeamsDataController = projectTeamsDataController;
-        _toDosDataController        = toDosDataController;
+        _toDosService               = toDosService;
         _logger                     = logger;
     }
 
@@ -235,8 +235,7 @@ public class ProjectsService : IProjectsService
                     throw new ForbiddenException();
             }
 
-            var entities = await _toDosDataController.GetToDosByProjectId(projectId);
-            return entities.Select(e => e.ToToDo()).ToList();
+            return await _toDosService.GetToDosByProjectId(projectId);
         }
         catch (ServiceException)
         {
