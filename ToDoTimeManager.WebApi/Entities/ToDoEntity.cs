@@ -21,6 +21,7 @@ public class ToDoEntity
         Status = toDo.Status;
         AssignedTo = toDo.AssignedTo;
         NumberedId = toDo.NumberedId;
+        TeamId     = toDo.TeamId;
     }
 
     public Guid Id { get; set; }
@@ -32,19 +33,21 @@ public class ToDoEntity
     public DateTime? DueDate { get; set; }
     public ToDoStatus Status { get; set; }
     public Guid? AssignedTo { get; set; }
+    public Guid? TeamId     { get; set; }
 
     public ToDo ToToDo()
     {
         return new ToDo
         {
-            Id = Id,
-            Title = Title,
+            Id          = Id,
+            Title       = Title,
             Description = Description,
-            CreatedAt = CreatedAt,
-            DueDate = DueDate,
-            Status = Status,
-            AssignedTo = AssignedTo,
-            NumberedId = NumberedId
+            CreatedAt   = CreatedAt,
+            DueDate     = DueDate,
+            Status      = Status,
+            AssignedTo  = AssignedTo,
+            NumberedId  = NumberedId,
+            TeamId      = TeamId
         };
     }
 }

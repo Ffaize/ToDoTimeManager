@@ -14,4 +14,5 @@ public interface IToDosDataController
     Task<bool> UpdateToDo(ToDoEntity updatedToDo);
     Task<bool> DeleteToDo(Guid toDoId);
     Task<List<ToDo>> GetToDosByNearestDueDateByUserId(Guid filterUserId);
+    Task<List<ToDoEntity>> GetToDosByTeamId(Guid teamId);
 }

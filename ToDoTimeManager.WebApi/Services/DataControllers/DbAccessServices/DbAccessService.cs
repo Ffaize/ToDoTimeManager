@@ -88,6 +88,11 @@ public interface IDbAccessService
     /// <typeparamref name="TResult"/>.</returns>
     Task<List<TResult>> GetRecordsByParameters<TResult>(string procedureName, DynamicParameters parameters);
 
+    /// <summary>
+    /// Executes a stored procedure with the specified parameters (non-query — INSERT/UPDATE/DELETE).
+    /// </summary>
+    Task<int> ExecuteByParameters(string procedureName, DynamicParameters parameters);
+
     //Task<List<TResult>> GetRecordsAsync<T1, T2, T3, T4, TResult>(
     //    string procedureName,
     //    Func<T1, T2, T3, T4, TResult> map,
@@ -359,6 +364,19 @@ public class DbAccessService : IDbAccessService
         catch (Exception e)
         {
             throw new InvalidOperationException($"Error retrieving records using procedure '{procedureName}' with parameters: {e.Message}");
+        }
+    }
+
+    public async Task<int> ExecuteByParameters(string procedureName, DynamicParameters parameters)
+    {
+        try
+        {
+            await using var connection = new SqlConnection(GetConnectionString());
+            return await connection.ExecuteAsync(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException($"Error executing procedure '{procedureName}' with parameters: {e.Message}");
         }
     }
 
