@@ -1,5 +1,6 @@
-﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
+using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -9,6 +10,7 @@ public class TimeLogsService : ITimeLogsService
 {
     private readonly ITimeLogsDataController _timeLogsDataController;
     private readonly ILogger<TimeLogsService> _logger;
+
     public TimeLogsService(ITimeLogsDataController timeLogsDataController, ILogger<TimeLogsService> logger)
     {
         _timeLogsDataController = timeLogsDataController;
@@ -29,12 +31,25 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<TimeLog?> GetTimeLogById(Guid timeLogId)
+    public async Task<TimeLog?> GetTimeLogById(Guid timeLogId, Guid currentUserId, bool isAdmin)
     {
+        if (timeLogId == Guid.Empty)
+            throw new ValidationException("Invalid time log ID");
+
         try
         {
             var res = await _timeLogsDataController.GetTimeLogById(timeLogId);
-            return res?.ToTimeLog();
+            if (res == null)
+                throw new NotFoundException("Time log was not found");
+
+            if (res.UserId != currentUserId && !isAdmin)
+                throw new ForbiddenException();
+
+            return res.ToTimeLog();
+        }
+        catch (ServiceException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -45,11 +60,18 @@ public class TimeLogsService : ITimeLogsService
 
     public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId)
     {
+        if (toDoId == Guid.Empty)
+            throw new ValidationException("Invalid to-do ID");
+
         try
         {
             var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
+        catch (ServiceException)
+        {
+            throw;
+        }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
@@ -57,13 +79,22 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId)
+    public async Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId, Guid currentUserId, bool isAdmin)
     {
+        if (userId == Guid.Empty)
+            throw new ValidationException("Invalid user ID");
+        if (userId != currentUserId && !isAdmin)
+            throw new ForbiddenException();
+
         try
         {
             var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
+        catch (ServiceException)
+        {
+            throw;
+        }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
@@ -71,12 +102,23 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId)
+    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId, Guid currentUserId, bool isAdmin)
     {
+        if (userId == Guid.Empty)
+            throw new ValidationException("Invalid user ID");
+        if (toDoId == Guid.Empty)
+            throw new ValidationException("Invalid to-do ID");
+        if (userId != currentUserId && !isAdmin)
+            throw new ForbiddenException();
+
         try
         {
             var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
+        }
+        catch (ServiceException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -98,11 +140,22 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<bool> UpdateTimeLog(TimeLog updatedTimeLog)
+    public async Task<bool> UpdateTimeLog(TimeLog updatedTimeLog, Guid currentUserId, bool isAdmin)
     {
         try
         {
+            var existing = await _timeLogsDataController.GetTimeLogById(updatedTimeLog.Id);
+            if (existing == null)
+                throw new NotFoundException("Time log was not found");
+
+            if (existing.UserId != currentUserId && !isAdmin)
+                throw new ForbiddenException();
+
             return await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
+        }
+        catch (ServiceException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -111,11 +164,25 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<bool> DeleteTimeLog(Guid timeLogId)
+    public async Task<bool> DeleteTimeLog(Guid timeLogId, Guid currentUserId, bool isAdmin)
     {
+        if (timeLogId == Guid.Empty)
+            throw new ValidationException("Invalid time log ID");
+
         try
         {
+            var existing = await _timeLogsDataController.GetTimeLogById(timeLogId);
+            if (existing == null)
+                throw new NotFoundException("Time log was not found");
+
+            if (existing.UserId != currentUserId && !isAdmin)
+                throw new ForbiddenException();
+
             return await _timeLogsDataController.DeleteTimeLog(timeLogId);
+        }
+        catch (ServiceException)
+        {
+            throw;
         }
         catch (Exception e)
         {

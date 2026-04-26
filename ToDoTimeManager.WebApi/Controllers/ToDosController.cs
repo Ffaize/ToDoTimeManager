@@ -12,12 +12,10 @@ namespace ToDoTimeManager.WebApi.Controllers;
 [Route("api/[controller]")]
 public class ToDosController : ControllerBase
 {
-    private readonly ILogger<ToDosController> _logger;
     private readonly IToDosService _toDosService;
 
-    public ToDosController(ILogger<ToDosController> logger, IToDosService toDosService)
+    public ToDosController(IToDosService toDosService)
     {
-        _logger = logger;
         _toDosService = toDosService;
     }
 
@@ -35,23 +33,14 @@ public class ToDosController : ControllerBase
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetToDoById(Guid id)
     {
-        if (id == Guid.Empty)
-            return BadRequest("Invalid to-do ID");
-        var toDo = await _toDosService.GetToDoById(id);
-        if (toDo == null) return NotFound("To-do was not found");
-        if (toDo.AssignedTo != GetCurrentUserId() && !IsAdmin())
-            return Forbid();
-        return Ok(toDo);
+        var toDo = await _toDosService.GetToDoById(id, GetCurrentUserId(), IsAdmin());
+        return toDo != null ? Ok(toDo) : StatusCode(500);
     }
 
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetToDosByUserId(Guid userId)
     {
-        if (userId == Guid.Empty)
-            return BadRequest("Invalid user ID");
-        if (userId != GetCurrentUserId() && !IsAdmin())
-            return Forbid();
-        var toDos = await _toDosService.GetToDosByUserId(userId);
+        var toDos = await _toDosService.GetToDosByUserId(userId, GetCurrentUserId(), IsAdmin());
         return Ok(toDos);
     }
 
@@ -72,18 +61,13 @@ public class ToDosController : ControllerBase
             ProjectId   = request.ProjectId
         };
 
-        var newToDo = await _toDosService.CreateToDo(toDo);
-        return newToDo ? Ok(newToDo) : BadRequest("To-do could not be created");
+        var created = await _toDosService.CreateToDo(toDo);
+        return created ? Ok(created) : StatusCode(500);
     }
 
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateToDo([FromBody] ToDoUpsertRequestDto request)
     {
-        var existing = await _toDosService.GetToDoById(request.Id);
-        if (existing == null) return NotFound("To-do was not found");
-        if (existing.AssignedTo != GetCurrentUserId() && !IsAdmin())
-            return Forbid();
-
         var toDo = new ToDo
         {
             Id          = request.Id,
@@ -98,20 +82,14 @@ public class ToDosController : ControllerBase
             ProjectId   = request.ProjectId
         };
 
-        var updatedToDo = await _toDosService.UpdateToDo(toDo);
-        return updatedToDo ? Ok(updatedToDo) : BadRequest("To-do could not be updated");
+        var updated = await _toDosService.UpdateToDo(toDo, GetCurrentUserId(), IsAdmin());
+        return updated ? Ok(updated) : StatusCode(500);
     }
 
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteToDo(Guid id)
     {
-        if (id == Guid.Empty)
-            return BadRequest("Invalid to-do ID");
-        var existing = await _toDosService.GetToDoById(id);
-        if (existing == null) return NotFound("To-do was not found");
-        if (existing.AssignedTo != GetCurrentUserId() && !IsAdmin())
-            return Forbid();
-        var deletedToDo = await _toDosService.DeleteToDo(id);
-        return deletedToDo ? Ok(deletedToDo) : BadRequest("To-do could not be deleted");
+        var deleted = await _toDosService.DeleteToDo(id, GetCurrentUserId(), IsAdmin());
+        return deleted ? Ok(deleted) : StatusCode(500);
     }
 }
