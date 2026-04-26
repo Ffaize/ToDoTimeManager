@@ -1,6 +1,7 @@
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
+using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -31,14 +32,33 @@ public class ProjectsService : IProjectsService
         return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
     }
 
-    public async Task<ProjectResponseDto?> GetProjectById(Guid projectId)
+    public async Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, bool isAdmin)
     {
-        var entity = await _projectsDataController.GetProjectById(projectId);
-        if (entity == null) return null;
+        if (projectId == Guid.Empty)
+            throw new ValidationException("Invalid project ID");
 
-        var teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
-        var teams = teamEntities.Select(t => t.ToProjectTeam()).ToList();
-        return MapToDto(entity.ToProject(), teams);
+        try
+        {
+            var entity = await _projectsDataController.GetProjectById(projectId);
+            if (entity == null)
+                throw new NotFoundException("Project was not found");
+
+            if (!isAdmin && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
+                throw new ForbiddenException();
+
+            var teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
+            var teams = teamEntities.Select(t => t.ToProjectTeam()).ToList();
+            return MapToDto(entity.ToProject(), teams);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
     }
 
     public async Task<List<ProjectResponseDto>> GetProjectsByUserId(Guid userId)
@@ -49,66 +69,189 @@ public class ProjectsService : IProjectsService
 
     public async Task<bool> CreateProject(CreateProjectRequestDto request, Guid createdByUserId)
     {
-        var entity = new ProjectEntity
+        if (string.IsNullOrWhiteSpace(request.Name))
+            throw new ValidationException("Project name is required");
+
+        try
         {
-            Id          = request.Id,
-            Name        = request.Name,
-            Description = request.Description,
-            CreatedAt   = DateTime.UtcNow,
-            CreatedBy   = createdByUserId
-        };
-        return await _projectsDataController.CreateProject(entity);
+            var entity = new ProjectEntity
+            {
+                Id          = request.Id,
+                Name        = request.Name,
+                Description = request.Description,
+                CreatedAt   = DateTime.UtcNow,
+                CreatedBy   = createdByUserId
+            };
+            return await _projectsDataController.CreateProject(entity);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
-    public async Task<bool> UpdateProject(UpdateProjectRequestDto request)
+    public async Task<bool> UpdateProject(UpdateProjectRequestDto request, Guid currentUserId, bool isAdmin)
     {
-        var entity = new ProjectEntity
+        if (request.Id == Guid.Empty)
+            throw new ValidationException("Invalid project ID");
+
+        try
         {
-            Id          = request.Id,
-            Name        = request.Name,
-            Description = request.Description
-        };
-        return await _projectsDataController.UpdateProject(entity);
+            if (!isAdmin)
+            {
+                var project = await _projectsDataController.GetProjectById(request.Id);
+                if (project == null)
+                    throw new NotFoundException("Project was not found");
+                if (project.CreatedBy != currentUserId)
+                    throw new ForbiddenException();
+            }
+
+            var entity = new ProjectEntity
+            {
+                Id          = request.Id,
+                Name        = request.Name,
+                Description = request.Description
+            };
+            return await _projectsDataController.UpdateProject(entity);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
     public async Task<bool> DeleteProject(Guid projectId)
-        => await _projectsDataController.DeleteProject(projectId);
-
-    public async Task<bool> AddTeam(ProjectTeamUpsertRequestDto request)
     {
-        var existing = await _projectTeamsDataController.GetByProjectIdAndTeamId(request.ProjectId, request.TeamId);
-        if (existing != null) return false;
+        if (projectId == Guid.Empty)
+            throw new ValidationException("Invalid project ID");
 
-        var entity = new ProjectTeamEntity
+        try
         {
-            Id        = request.Id,
-            ProjectId = request.ProjectId,
-            TeamId    = request.TeamId
-        };
-        return await _projectTeamsDataController.AddTeam(entity);
+            return await _projectsDataController.DeleteProject(projectId);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
-    public async Task<bool> RemoveTeam(Guid projectId, Guid teamId)
-        => await _projectTeamsDataController.RemoveTeam(projectId, teamId);
-
-    public async Task<ProjectTeam?> GetProjectTeam(Guid projectId, Guid teamId)
+    public async Task<bool> AddTeam(ProjectTeamUpsertRequestDto request, Guid currentUserId, bool isAdmin)
     {
-        var entity = await _projectTeamsDataController.GetByProjectIdAndTeamId(projectId, teamId);
-        return entity?.ToProjectTeam();
+        if (request.ProjectId == Guid.Empty)
+            throw new ValidationException("Invalid project ID");
+
+        try
+        {
+            if (!isAdmin)
+            {
+                var project = await _projectsDataController.GetProjectById(request.ProjectId);
+                if (project == null)
+                    throw new NotFoundException("Project was not found");
+                if (project.CreatedBy != currentUserId)
+                    throw new ForbiddenException();
+            }
+
+            var existing = await _projectTeamsDataController.GetByProjectIdAndTeamId(request.ProjectId, request.TeamId);
+            if (existing != null)
+                throw new ConflictException("Team is already linked to this project");
+
+            var entity = new ProjectTeamEntity
+            {
+                Id        = request.Id,
+                ProjectId = request.ProjectId,
+                TeamId    = request.TeamId
+            };
+            return await _projectTeamsDataController.AddTeam(entity);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
-    public async Task<List<ToDo>> GetToDosByProjectId(Guid projectId)
+    public async Task<bool> RemoveTeam(Guid projectId, Guid teamId, Guid currentUserId, bool isAdmin)
     {
-        var entities = await _toDosDataController.GetToDosByProjectId(projectId);
-        return entities.Select(e => e.ToToDo()).ToList();
+        if (projectId == Guid.Empty || teamId == Guid.Empty)
+            throw new ValidationException("Invalid project or team ID");
+
+        try
+        {
+            if (!isAdmin)
+            {
+                var project = await _projectsDataController.GetProjectById(projectId);
+                if (project == null)
+                    throw new NotFoundException("Project was not found");
+                if (project.CreatedBy != currentUserId)
+                    throw new ForbiddenException();
+            }
+
+            return await _projectTeamsDataController.RemoveTeam(projectId, teamId);
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
-    public async Task<bool> UserHasAccessToProject(Guid projectId, Guid userId)
+    public async Task<List<ToDo>> GetToDosByProjectId(Guid projectId, Guid currentUserId, bool isAdmin)
     {
-        var project = await _projectsDataController.GetProjectById(projectId);
-        if (project == null) return false;
-        if (project.CreatedBy == userId) return true;
+        if (projectId == Guid.Empty)
+            throw new ValidationException("Invalid project ID");
 
+        try
+        {
+            if (!isAdmin)
+            {
+                var project = await _projectsDataController.GetProjectById(projectId);
+                if (project == null)
+                    throw new NotFoundException("Project was not found");
+
+                if (!await UserHasAccess(projectId, currentUserId, project.CreatedBy))
+                    throw new ForbiddenException();
+            }
+
+            var entities = await _toDosDataController.GetToDosByProjectId(projectId);
+            return entities.Select(e => e.ToToDo()).ToList();
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
+    private async Task<bool> UserHasAccess(Guid projectId, Guid userId, Guid createdBy)
+    {
+        if (createdBy == userId) return true;
         var accessible = await _projectsDataController.GetProjectsByUserId(userId);
         return accessible.Any(p => p.Id == projectId);
     }

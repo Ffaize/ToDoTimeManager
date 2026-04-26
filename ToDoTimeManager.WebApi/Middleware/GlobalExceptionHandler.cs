@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using ToDoTimeManager.WebApi.AdditionalComponents;
+using ToDoTimeManager.WebApi.Exceptions;
 
 namespace ToDoTimeManager.WebApi.Middleware;
 
@@ -14,33 +14,42 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IM
             await next(context);
             stopwatch.Stop();
         }
-        catch (CustomException exception)
+        catch (ServiceException exception)
         {
             stopwatch.Stop();
-            logger.LogError(exception, $"Custom exception caught in middleware. Elapsed Time: {stopwatch.ElapsedMilliseconds} ms");
-            var problemDetails = CreateProblemDetails(StatusCodes.Status400BadRequest, "Client Error", exception.Message);
+            logger.LogWarning(exception, "Service exception caught. StatusCode: {StatusCode}. Elapsed: {Elapsed} ms",
+                exception.StatusCode, stopwatch.ElapsedMilliseconds);
 
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            var problemDetails = CreateProblemDetails(exception.StatusCode, GetTitle(exception.StatusCode), exception.Message);
+            context.Response.StatusCode = exception.StatusCode;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
         catch (Exception exception)
         {
             stopwatch.Stop();
-            logger.LogError(exception, $"An unhandled exception has occurred. Elapsed Time: {stopwatch.ElapsedMilliseconds} ms");
+            logger.LogError(exception, "An unhandled exception has occurred. Elapsed: {Elapsed} ms", stopwatch.ElapsedMilliseconds);
 
             var problemDetails = CreateProblemDetails(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
-
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
+
+    private static string GetTitle(int statusCode) => statusCode switch
+    {
+        400 => "Validation Error",
+        403 => "Forbidden",
+        404 => "Not Found",
+        409 => "Conflict",
+        _   => "Error"
+    };
 
     private static ProblemDetails CreateProblemDetails(int status, string title, string? detail = null)
     {
         return new ProblemDetails
         {
             Status = status,
-            Title = title,
+            Title  = title,
             Detail = detail
         };
     }

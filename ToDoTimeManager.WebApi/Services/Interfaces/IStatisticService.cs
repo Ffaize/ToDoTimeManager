@@ -1,9 +1,9 @@
-﻿using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebApi.Services.Interfaces;
 
 public interface IStatisticService
 {
-    Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId);
-    Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequest filter);
+    Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId, Guid currentUserId, bool isAdmin);
+    Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequest filter, Guid currentUserId, bool isAdmin);
 }

@@ -12,18 +12,14 @@ namespace ToDoTimeManager.WebApi.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectsService _projectsService;
-    private readonly ILogger<ProjectsController> _logger;
 
-    public ProjectsController(IProjectsService projectsService, ILogger<ProjectsController> logger)
+    public ProjectsController(IProjectsService projectsService)
     {
         _projectsService = projectsService;
-        _logger = logger;
     }
 
     private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     private bool IsAdmin() => User.IsInRole("Admin");
-
-    // ── Admin only ──────────────────────────────────────────────────────────
 
     [Authorize(Roles = "Admin")]
     [HttpGet("GetAll")]
@@ -37,87 +33,44 @@ public class ProjectsController : ControllerBase
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteProject(Guid id)
     {
-        if (id == Guid.Empty) return BadRequest("Invalid project ID");
         var result = await _projectsService.DeleteProject(id);
-        return result ? Ok(result) : BadRequest("Project could not be deleted");
+        return result ? Ok(result) : StatusCode(500);
     }
-
-    // ── Admin or project-accessible user (read) ─────────────────────────────
 
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetProjectById(Guid id)
     {
-        if (id == Guid.Empty) return BadRequest("Invalid project ID");
-
-        var project = await _projectsService.GetProjectById(id);
-        if (project == null) return NotFound("Project was not found");
-
-        if (!IsAdmin() && !await _projectsService.UserHasAccessToProject(id, GetCurrentUserId()))
-            return Forbid();
-
-        return Ok(project);
+        var project = await _projectsService.GetProjectById(id, GetCurrentUserId(), IsAdmin());
+        return project != null ? Ok(project) : StatusCode(500);
     }
 
     [HttpGet("GetToDosByProjectId/{projectId}")]
     public async Task<IActionResult> GetToDosByProjectId(Guid projectId)
     {
-        if (projectId == Guid.Empty) return BadRequest("Invalid project ID");
-
-        if (!IsAdmin() && !await _projectsService.UserHasAccessToProject(projectId, GetCurrentUserId()))
-            return Forbid();
-
-        var todos = await _projectsService.GetToDosByProjectId(projectId);
+        var todos = await _projectsService.GetToDosByProjectId(projectId, GetCurrentUserId(), IsAdmin());
         return Ok(todos);
     }
-
-    // ── Admin or project owner (writes) ────────────────────────────────────
 
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateProject([FromBody] UpdateProjectRequestDto request)
     {
-        if (!IsAdmin())
-        {
-            var project = await _projectsService.GetProjectById(request.Id);
-            if (project == null) return NotFound("Project was not found");
-            if (project.CreatedBy != GetCurrentUserId()) return Forbid();
-        }
-
-        var result = await _projectsService.UpdateProject(request);
-        return result ? Ok(result) : BadRequest("Project could not be updated");
+        var result = await _projectsService.UpdateProject(request, GetCurrentUserId(), IsAdmin());
+        return result ? Ok(result) : StatusCode(500);
     }
 
     [HttpPost("AddTeam")]
     public async Task<IActionResult> AddTeam([FromBody] ProjectTeamUpsertRequestDto request)
     {
-        if (!IsAdmin())
-        {
-            var project = await _projectsService.GetProjectById(request.ProjectId);
-            if (project == null) return NotFound("Project was not found");
-            if (project.CreatedBy != GetCurrentUserId()) return Forbid();
-        }
-
-        var result = await _projectsService.AddTeam(request);
-        return result ? Ok(result) : BadRequest("Team could not be added (already linked or invalid data)");
+        var result = await _projectsService.AddTeam(request, GetCurrentUserId(), IsAdmin());
+        return result ? Ok(result) : StatusCode(500);
     }
 
     [HttpDelete("RemoveTeam/{projectId}/{teamId}")]
     public async Task<IActionResult> RemoveTeam(Guid projectId, Guid teamId)
     {
-        if (projectId == Guid.Empty || teamId == Guid.Empty)
-            return BadRequest("Invalid project or team ID");
-
-        if (!IsAdmin())
-        {
-            var project = await _projectsService.GetProjectById(projectId);
-            if (project == null) return NotFound("Project was not found");
-            if (project.CreatedBy != GetCurrentUserId()) return Forbid();
-        }
-
-        var result = await _projectsService.RemoveTeam(projectId, teamId);
-        return result ? Ok(result) : BadRequest("Team could not be removed");
+        var result = await _projectsService.RemoveTeam(projectId, teamId, GetCurrentUserId(), IsAdmin());
+        return result ? Ok(result) : StatusCode(500);
     }
-
-    // ── Any authenticated user ──────────────────────────────────────────────
 
     [HttpGet("GetMyProjects")]
     public async Task<IActionResult> GetMyProjects()
@@ -130,6 +83,6 @@ public class ProjectsController : ControllerBase
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
     {
         var result = await _projectsService.CreateProject(request, GetCurrentUserId());
-        return result ? Ok(result) : BadRequest("Project could not be created");
+        return result ? Ok(result) : StatusCode(500);
     }
 }
