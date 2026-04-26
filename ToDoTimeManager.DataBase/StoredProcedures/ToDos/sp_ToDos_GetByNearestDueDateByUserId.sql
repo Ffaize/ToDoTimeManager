@@ -4,8 +4,17 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT *
-    FROM ToDos
+    SELECT
+        Id,
+        Title,
+        Description,
+        CreatedAt,
+        DueDate,
+        Status,
+        AssignedTo,
+        NumberedId,
+        TeamId
+    FROM [dbo].[ToDos]
     WHERE AssignedTo = @UserId
       AND DueDate IS NOT NULL
       AND CAST(DueDate AS DATE) >= CAST(GETUTCDATE() AS DATE)

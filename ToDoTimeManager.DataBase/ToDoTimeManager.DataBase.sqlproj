@@ -61,11 +61,15 @@
     <Folder Include="StoredProcedures\TimeLogs" />
     <Folder Include="StoredProcedures\ToDos" />
     <Folder Include="StoredProcedures\Users" />
+    <Folder Include="StoredProcedures\Teams" />
+    <Folder Include="StoredProcedures\TeamMembers" />
   </ItemGroup>
   <ItemGroup>
+    <Build Include="Tables\Users.sql" />
+    <Build Include="Tables\Teams.sql" />
+    <Build Include="Tables\TeamMembers.sql" />
     <Build Include="Tables\TimeLogs.sql" />
     <Build Include="Tables\ToDos.sql" />
-    <Build Include="Tables\Users.sql" />
     <Build Include="StoredProcedures\Users\sp_Users_Create.sql" />
     <Build Include="StoredProcedures\Users\sp_Users_GetById.sql" />
     <Build Include="StoredProcedures\ToDos\sp_ToDos_Create.sql" />
@@ -91,5 +95,17 @@
     <Build Include="StoredProcedures\ToDos\sp_ToDos_GetCountByUserIdAndStatus.sql" />
     <Build Include="StoredProcedures\TimeLogs\sp_TimeLogs_GetByUserIdAndTime.sql" />
     <Build Include="StoredProcedures\ToDos\sp_ToDos_GetByNearestDueDateByUserId.sql" />
+    <Build Include="StoredProcedures\ToDos\sp_ToDos_GetByTeamId.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_Create.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_GetAll.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_GetById.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_Update.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_DeleteById.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_GetByUserId.sql" />
+    <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_Create.sql" />
+    <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_GetById.sql" />
+    <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_GetByTeamId.sql" />
+    <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_GetByTeamIdAndUserId.sql" />
+    <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_DeleteByTeamIdAndUserId.sql" />
   </ItemGroup>
 </Project>

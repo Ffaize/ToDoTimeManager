@@ -9,7 +9,8 @@ AS
 		DueDate,
 		Status,
 		AssignedTo,
-		NumberedId
-		FROM [dbo].[ToDos]
-		WHERE AssignedTo = @AssignedTo
+		NumberedId,
+		TeamId
+	FROM [dbo].[ToDos]
+	WHERE AssignedTo = @AssignedTo
 

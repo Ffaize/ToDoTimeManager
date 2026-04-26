@@ -129,4 +129,17 @@ public class ToDosDataController : IToDosDataController
             return [];
         }
     }
+
+    public async Task<List<ToDoEntity>> GetToDosByTeamId(Guid teamId)
+    {
+        try
+        {
+            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByTeamId", "TeamId", teamId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
 }

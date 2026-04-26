@@ -37,12 +37,15 @@ public class Program
         builder.Services.AddScoped<IUsersDataController, UsersDataController>();
         builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
         builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
+        builder.Services.AddScoped<ITeamsDataController, TeamsDataController>();
+        builder.Services.AddScoped<ITeamMembersDataController, TeamMembersDataController>();
 
         builder.Services.AddScoped<IUsersService, UsersService>();
         builder.Services.AddScoped<IToDosService, ToDosService>();
         builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IStatisticService, StatisticService>();
+        builder.Services.AddScoped<ITeamsService, TeamsService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
 

@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetAll]
-AS 
+AS
 	SELECT
 		Id,
 		Title,
@@ -8,6 +8,7 @@ AS
 		DueDate,
 		Status,
 		AssignedTo,
-		NumberedId
+		NumberedId,
+		TeamId
 	FROM
 		[dbo].[ToDos]
