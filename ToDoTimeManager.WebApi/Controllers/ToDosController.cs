@@ -60,14 +60,16 @@ public class ToDosController : ControllerBase
     {
         var toDo = new ToDo
         {
-            Id = request.Id,
-            NumberedId = request.NumberedId,
-            Title = request.Title,
+            Id          = request.Id,
+            NumberedId  = request.NumberedId,
+            Title       = request.Title,
             Description = request.Description,
-            CreatedAt = request.CreatedAt!.Value,
-            DueDate = request.DueDate,
-            Status = request.Status!.Value,
-            AssignedTo = request.AssignedTo
+            CreatedAt   = request.CreatedAt!.Value,
+            DueDate     = request.DueDate,
+            Status      = request.Status!.Value,
+            AssignedTo  = request.AssignedTo,
+            TeamId      = request.TeamId,
+            ProjectId   = request.ProjectId
         };
 
         var newToDo = await _toDosService.CreateToDo(toDo);
@@ -84,14 +86,16 @@ public class ToDosController : ControllerBase
 
         var toDo = new ToDo
         {
-            Id = request.Id,
-            NumberedId = request.NumberedId,
-            Title = request.Title,
+            Id          = request.Id,
+            NumberedId  = request.NumberedId,
+            Title       = request.Title,
             Description = request.Description,
-            CreatedAt = request.CreatedAt!.Value,
-            DueDate = request.DueDate,
-            Status = request.Status!.Value,
-            AssignedTo = request.AssignedTo
+            CreatedAt   = request.CreatedAt!.Value,
+            DueDate     = request.DueDate,
+            Status      = request.Status!.Value,
+            AssignedTo  = request.AssignedTo,
+            TeamId      = request.TeamId,
+            ProjectId   = request.ProjectId
         };
 
         var updatedToDo = await _toDosService.UpdateToDo(toDo);

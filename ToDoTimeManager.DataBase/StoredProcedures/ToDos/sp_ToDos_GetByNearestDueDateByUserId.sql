@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetByNearestDueDateByUserId]
+CREATE PROCEDURE [dbo].[sp_ToDos_GetByNearestDueDateByUserId]
 @UserId UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -13,7 +13,8 @@ BEGIN
         Status,
         AssignedTo,
         NumberedId,
-        TeamId
+        TeamId,
+        ProjectId
     FROM [dbo].[ToDos]
     WHERE AssignedTo = @UserId
       AND DueDate IS NOT NULL

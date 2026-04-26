@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetByAssignedTo]
+CREATE PROCEDURE [dbo].[sp_ToDos_GetByAssignedTo]
 	@AssignedTo UNIQUEIDENTIFIER
 AS
 	SELECT
@@ -10,7 +10,7 @@ AS
 		Status,
 		AssignedTo,
 		NumberedId,
-		TeamId
+		TeamId,
+		ProjectId
 	FROM [dbo].[ToDos]
 	WHERE AssignedTo = @AssignedTo
-

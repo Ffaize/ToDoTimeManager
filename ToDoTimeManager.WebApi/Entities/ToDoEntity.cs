@@ -22,6 +22,7 @@ public class ToDoEntity
         AssignedTo = toDo.AssignedTo;
         NumberedId = toDo.NumberedId;
         TeamId     = toDo.TeamId;
+        ProjectId  = toDo.ProjectId;
     }
 
     public Guid Id { get; set; }
@@ -34,6 +35,7 @@ public class ToDoEntity
     public ToDoStatus Status { get; set; }
     public Guid? AssignedTo { get; set; }
     public Guid? TeamId     { get; set; }
+    public Guid? ProjectId  { get; set; }
 
     public ToDo ToToDo()
     {
@@ -47,7 +49,8 @@ public class ToDoEntity
             Status      = Status,
             AssignedTo  = AssignedTo,
             NumberedId  = NumberedId,
-            TeamId      = TeamId
+            TeamId      = TeamId,
+            ProjectId   = ProjectId
         };
     }
 }

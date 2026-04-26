@@ -31,5 +31,7 @@ public sealed class ToDoUpsertRequestDto
     public Guid? AssignedTo { get; set; }
 
     public Guid? TeamId { get; set; }
+
+    public Guid? ProjectId { get; set; }
 }
 
