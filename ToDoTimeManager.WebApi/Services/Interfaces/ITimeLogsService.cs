@@ -9,6 +9,7 @@ public interface ITimeLogsService
     Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId);
     Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId, Guid currentUserId, bool isAdmin);
     Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId, Guid currentUserId, bool isAdmin);
+    Task<List<TimeLog>> GetTimeLogsByUserIdAndTime(Guid userId, int daysAgo);
     Task<bool> CreateTimeLog(TimeLog newTimeLog);
     Task<bool> UpdateTimeLog(TimeLog updatedTimeLog, Guid currentUserId, bool isAdmin);
     Task<bool> DeleteTimeLog(Guid timeLogId, Guid currentUserId, bool isAdmin);

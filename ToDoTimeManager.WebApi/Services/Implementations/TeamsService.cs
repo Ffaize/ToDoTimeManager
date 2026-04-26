@@ -10,21 +10,21 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class TeamsService : ITeamsService
 {
-    private readonly ITeamsDataController _teamsDataController;
+    private readonly ITeamsDataController       _teamsDataController;
     private readonly ITeamMembersDataController _teamMembersDataController;
-    private readonly IToDosDataController _toDosDataController;
-    private readonly ILogger<TeamsService> _logger;
+    private readonly IToDosService              _toDosService;
+    private readonly ILogger<TeamsService>      _logger;
 
     public TeamsService(
-        ITeamsDataController teamsDataController,
+        ITeamsDataController       teamsDataController,
         ITeamMembersDataController teamMembersDataController,
-        IToDosDataController toDosDataController,
-        ILogger<TeamsService> logger)
+        IToDosService              toDosService,
+        ILogger<TeamsService>      logger)
     {
-        _teamsDataController = teamsDataController;
+        _teamsDataController       = teamsDataController;
         _teamMembersDataController = teamMembersDataController;
-        _toDosDataController = toDosDataController;
-        _logger = logger;
+        _toDosService              = toDosService;
+        _logger                    = logger;
     }
 
     public async Task<List<TeamResponseDto>> GetAllTeams()
@@ -261,8 +261,7 @@ public class TeamsService : ITeamsService
                     throw new ForbiddenException();
             }
 
-            var entities = await _toDosDataController.GetToDosByTeamId(teamId);
-            return entities.Select(e => e.ToToDo()).ToList();
+            return await _toDosService.GetToDosByTeamId(teamId);
         }
         catch (ServiceException)
         {
