@@ -93,22 +93,6 @@ public interface IDbAccessService
     /// </summary>
     Task<int> ExecuteByParameters(string procedureName, DynamicParameters parameters);
 
-    //Task<List<TResult>> GetRecordsAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    string splitOn);
-
-    //Task<TResult?> GetRecordByIdAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    Guid id,
-    //    string splitOn);
-
-    //Task<List<TResult>> GetRecordsByParametersAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    DynamicParameters parameters,
-    //    string splitOn);
 }
 
 /// <summary>
@@ -168,56 +152,6 @@ public class DbAccessService : IDbAccessService
         }
     }
 
-
-    //public async Task<List<TResult>> GetRecordsAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    string splitOn)
-    //{
-    //    await using var connection = new SqlConnection(GetConnectionString());
-    //    var result = await connection.QueryAsync<T1, T2, T3, T4, TResult>(
-    //        procedureName,
-    //        map,
-    //        splitOn: splitOn,
-    //        commandType: CommandType.StoredProcedure);
-    //    return result.ToList();
-    //}
-
-    //public async Task<TResult?> GetRecordByIdAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    Guid id,
-    //    string splitOn)
-    //{
-    //    await using var connection = new SqlConnection(GetConnectionString());
-    //    var parameters = new DynamicParameters();
-    //    parameters.Add("@Id", id);
-    //    var result = await connection.QueryAsync<T1, T2, T3, T4, TResult>(
-    //        procedureName,
-    //        map,
-    //        param: parameters,
-    //        splitOn: splitOn,
-    //        commandType: CommandType.StoredProcedure);
-
-    //    return result.ToList().FirstOrDefault();
-    //}
-
-    //public async Task<List<TResult>> GetRecordsByParametersAsync<T1, T2, T3, T4, TResult>(
-    //    string procedureName,
-    //    Func<T1, T2, T3, T4, TResult> map,
-    //    DynamicParameters parameters,
-    //    string splitOn)
-    //{
-    //    await using var connection = new SqlConnection(GetConnectionString());
-    //    var result = await connection.QueryAsync<T1, T2, T3, T4, TResult>(
-    //        procedureName,
-    //        map,
-    //        param: parameters,
-    //        splitOn: splitOn,
-    //        commandType: CommandType.StoredProcedure);
-
-    //    return result.ToList();
-    //}
 
     /// <summary>
     /// Adds one record to the database using a stored procedure.
