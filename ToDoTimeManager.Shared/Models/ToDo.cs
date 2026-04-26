@@ -16,4 +16,5 @@ public class ToDo
     public ToDoStatus Status { get; set; } = ToDoStatus.New;
     public Guid? AssignedTo { get; set; }
     public Guid? TeamId     { get; set; }
+    public Guid? ProjectId  { get; set; }
 }

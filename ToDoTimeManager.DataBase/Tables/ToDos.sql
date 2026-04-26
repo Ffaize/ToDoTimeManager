@@ -9,6 +9,8 @@
     Status INT NOT NULL,
     AssignedTo UNIQUEIDENTIFIER NULL,
     TeamId     UNIQUEIDENTIFIER NULL,
-    CONSTRAINT [FK_ToDos_Users]  FOREIGN KEY ([AssignedTo]) REFERENCES [Users]([Id]),
-    CONSTRAINT [FK_ToDos_Teams]  FOREIGN KEY ([TeamId])     REFERENCES [Teams]([Id])
+    ProjectId  UNIQUEIDENTIFIER NULL,
+    CONSTRAINT [FK_ToDos_Users]    FOREIGN KEY ([AssignedTo]) REFERENCES [Users]([Id]),
+    CONSTRAINT [FK_ToDos_Teams]    FOREIGN KEY ([TeamId])     REFERENCES [Teams]([Id]),
+    CONSTRAINT [FK_ToDos_Projects] FOREIGN KEY ([ProjectId])  REFERENCES [Projects]([Id])
 )

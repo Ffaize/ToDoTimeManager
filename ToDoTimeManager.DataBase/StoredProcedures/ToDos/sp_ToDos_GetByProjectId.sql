@@ -1,5 +1,5 @@
-CREATE PROCEDURE [dbo].[sp_ToDos_GetByTeamId]
-    @TeamId UNIQUEIDENTIFIER
+CREATE PROCEDURE [dbo].[sp_ToDos_GetByProjectId]
+    @ProjectId UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -15,5 +15,5 @@ BEGIN
         TeamId,
         ProjectId
     FROM [dbo].[ToDos]
-    WHERE TeamId = @TeamId;
+    WHERE ProjectId = @ProjectId;
 END

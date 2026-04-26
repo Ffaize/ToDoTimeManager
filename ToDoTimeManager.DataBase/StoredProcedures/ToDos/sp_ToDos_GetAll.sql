@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetAll]
+CREATE PROCEDURE [dbo].[sp_ToDos_GetAll]
 AS
 	SELECT
 		Id,
@@ -9,6 +9,7 @@ AS
 		Status,
 		AssignedTo,
 		NumberedId,
-		TeamId
+		TeamId,
+		ProjectId
 	FROM
 		[dbo].[ToDos]
