@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -60,7 +61,7 @@ public class StatisticController : ControllerBase
     /// 500 Internal Server Error if the query fails or the caller lacks access.
     /// </returns>
     [HttpPost("GetMainPageStatistic")]
-    public async Task<IActionResult> GetMainPageStatistic([FromBody] MainPageStatisticRequest filter)
+    public async Task<IActionResult> GetMainPageStatistic([FromBody] MainPageStatisticRequestDto filter)
     {
         var statistic = await _statisticService.GetMainPageStatistic(filter, GetCurrentUserId(), IsAdmin());
         return statistic != null ? Ok(statistic) : StatusCode(500);

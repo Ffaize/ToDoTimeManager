@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.Shared.Models;
+﻿using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices
 {
@@ -27,7 +28,7 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices
             }
         }
 
-        public async Task<MainPageStatisticModel> GetMainPageStatistic(MainPageStatisticRequest filter)
+        public async Task<MainPageStatisticModel> GetMainPageStatistic(MainPageStatisticRequestDto filter)
         {
             try
             {

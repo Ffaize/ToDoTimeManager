@@ -1,3 +1,4 @@
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -36,7 +37,7 @@ public class StatisticService : IStatisticService
         return result;
     }
 
-    public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequest filter, Guid currentUserId, bool isAdmin)
+    public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequestDto filter, Guid currentUserId, bool isAdmin)
     {
         if (filter.UserId == Guid.Empty)
             throw new ValidationException("Invalid user ID");

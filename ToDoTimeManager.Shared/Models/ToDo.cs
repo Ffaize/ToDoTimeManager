@@ -12,7 +12,6 @@ public class ToDo
     public DateTime CreatedAt { get; set; }
     public DateTime? DueDate { get; set; }
     public string DisplayDueDate => DueDate != null ? ((DateTime)DueDate).ToLocalTime().ToShortDateString().ToString(CultureInfo.CurrentUICulture) : "-";
-
     public ToDoStatus Status { get; set; } = ToDoStatus.New;
     public Guid? AssignedTo { get; set; }
     public Guid? TeamId     { get; set; }

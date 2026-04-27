@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Localization;
@@ -67,7 +68,7 @@ public partial class MainPage
         {
             ShowLoader();
             var userCredentials = await AuthStateProvider.GetUserIdAndRoleAsync();
-            var filter = new MainPageStatisticRequest()
+            var filter = new MainPageStatisticRequestDto()
             {
                 TimeFilter = TimeFilter,
                 UserId = userCredentials?.Item1 ?? Guid.Empty
