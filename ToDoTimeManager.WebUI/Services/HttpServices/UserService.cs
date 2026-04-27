@@ -1,5 +1,4 @@
 using ToDoTimeManager.Shared.DTOs;
-using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices;
 

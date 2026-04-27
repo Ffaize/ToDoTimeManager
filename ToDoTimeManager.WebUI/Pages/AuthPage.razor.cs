@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
-using ToDoTimeManager.Shared.Enums;
-using ToDoTimeManager.Shared.DTOs;
-using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebUI.Resources;
 using ToDoTimeManager.WebUI.Resources;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
