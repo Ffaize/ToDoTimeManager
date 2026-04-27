@@ -66,7 +66,7 @@
 
     .navbar { border-top-right-radius: unset; }
 
-    .nav-scrollable { border-bottom-left-radius: var(--border-radius-container); }    
+    .nav-scrollable { border-bottom-left-radius: var(--border-radius-container); }
 }
 
 @media (min-width: 641px) {

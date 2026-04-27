@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\font\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

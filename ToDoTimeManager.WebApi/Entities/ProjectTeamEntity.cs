@@ -4,10 +4,6 @@ namespace ToDoTimeManager.WebApi.Entities;
 
 public class ProjectTeamEntity
 {
-    public ProjectTeamEntity()
-    {
-    }
-
     public Guid Id { get; set; }
     public Guid ProjectId { get; set; }
     public Guid TeamId { get; set; }
