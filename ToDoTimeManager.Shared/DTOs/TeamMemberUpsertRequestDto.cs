@@ -6,15 +6,11 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class TeamMemberUpsertRequestDto
 {
-    [NotEmptyGuid]
-    public Guid Id { get; set; }
+    [NotEmptyGuid] public Guid Id { get; set; }
 
-    [NotEmptyGuid]
-    public Guid TeamId { get; set; }
+    [NotEmptyGuid] public Guid TeamId { get; set; }
 
-    [NotEmptyGuid]
-    public Guid UserId { get; set; }
+    [NotEmptyGuid] public Guid UserId { get; set; }
 
-    [Required]
-    public TeamMemberRole Role { get; set; }
+    [Required] public TeamMemberRole Role { get; set; }
 }

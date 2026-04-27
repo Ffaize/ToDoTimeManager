@@ -8,21 +8,22 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class StatisticService : IStatisticService
 {
-    private readonly IToDosService             _toDosService;
-    private readonly ITimeLogsService          _timeLogsService;
+    private readonly IToDosService _toDosService;
+    private readonly ITimeLogsService _timeLogsService;
     private readonly ILogger<StatisticService> _logger;
 
     public StatisticService(
-        IToDosService             toDosService,
-        ITimeLogsService          timeLogsService,
+        IToDosService toDosService,
+        ITimeLogsService timeLogsService,
         ILogger<StatisticService> logger)
     {
-        _toDosService    = toDosService;
+        _toDosService = toDosService;
         _timeLogsService = timeLogsService;
-        _logger          = logger;
+        _logger = logger;
     }
 
-    public async Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId, Guid currentUserId, bool isAdmin)
+    public async Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId,
+        Guid currentUserId, bool isAdmin)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
@@ -30,14 +31,12 @@ public class StatisticService : IStatisticService
             throw new ForbiddenException();
 
         var result = new List<ToDoCountStatisticsOfAllTime>();
-        foreach (var status in Enum.GetValues<ToDoStatus>())
-        {
-            await GetCountOfStatusesByStatus(userId, status, result);
-        }
+        foreach (var status in Enum.GetValues<ToDoStatus>()) await GetCountOfStatusesByStatus(userId, status, result);
         return result;
     }
 
-    public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequestDto filter, Guid currentUserId, bool isAdmin)
+    public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequestDto filter,
+        Guid currentUserId, bool isAdmin)
     {
         if (filter.UserId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
@@ -46,10 +45,14 @@ public class StatisticService : IStatisticService
 
         try
         {
-            var timeLogsForFilterTime = await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
-            var daysIntoCurrentMonth = (int)(DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays;
-            var timeLogsForThisMonth = await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, daysIntoCurrentMonth);
-            var toDosForNearestDueDate = await _toDosService.GetToDosByNearestDueDateByUserId(filter.UserId);
+            List<TimeLog> timeLogsForFilterTime =
+                await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
+            var daysIntoCurrentMonth =
+                (int)(DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0,
+                    DateTimeKind.Utc)).TotalDays;
+            List<TimeLog> timeLogsForThisMonth =
+                await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, daysIntoCurrentMonth);
+            List<ToDo> toDosForNearestDueDate = await _toDosService.GetToDosByNearestDueDateByUserId(filter.UserId);
             var toDoCountStatisticsOfAllTimes = new List<ToDoCountStatisticsOfAllTime>();
             await GetCountOfStatusesByStatus(filter.UserId, ToDoStatus.New, toDoCountStatisticsOfAllTimes);
             await GetCountOfStatusesByStatus(filter.UserId, ToDoStatus.InProgress, toDoCountStatisticsOfAllTimes);
@@ -60,8 +63,8 @@ public class StatisticService : IStatisticService
             {
                 TimeLogsForGivenTime = timeLogsForFilterTime,
                 TimeLogsForThisMonth = timeLogsForThisMonth,
-                DueDateTasks         = toDosForNearestDueDate.ToDictionary(x => x.DueDate!.Value, x => x),
-                ToDoStatuses         = toDoCountStatisticsOfAllTimes
+                DueDateTasks = toDosForNearestDueDate.ToDictionary(x => x.DueDate!.Value, x => x),
+                ToDoStatuses = toDoCountStatisticsOfAllTimes
             };
         }
         catch (ServiceException)
@@ -75,13 +78,14 @@ public class StatisticService : IStatisticService
         }
     }
 
-    private async Task GetCountOfStatusesByStatus(Guid userId, ToDoStatus status, List<ToDoCountStatisticsOfAllTime> result)
+    private async Task GetCountOfStatusesByStatus(Guid userId, ToDoStatus status,
+        List<ToDoCountStatisticsOfAllTime> result)
     {
         var count = await _toDosService.GetToDosCountByUserIdAndStatus(userId, status);
         result.Add(new ToDoCountStatisticsOfAllTime
         {
             ToDoStatus = status,
-            Count      = count
+            Count = count
         });
     }
 
@@ -89,11 +93,11 @@ public class StatisticService : IStatisticService
     {
         return filterTimeFilter switch
         {
-            TimeFilter.DayAgo   => 1,
-            TimeFilter.WeekAgo  => 7,
+            TimeFilter.DayAgo => 1,
+            TimeFilter.WeekAgo => 7,
             TimeFilter.MonthAgo => 30,
-            TimeFilter.YearAgo  => 365,
-            _                   => -1
+            TimeFilter.YearAgo => 365,
+            var _ => -1
         };
     }
 }

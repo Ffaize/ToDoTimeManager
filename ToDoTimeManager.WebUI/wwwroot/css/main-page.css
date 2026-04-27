@@ -15,7 +15,7 @@
     padding: 10px;
 }
 
-@media(max-width: 1000px) {
+@media (max-width: 1000px) {
     .main-page-container {
         flex-direction: column !important;
         flex-wrap: nowrap;
@@ -28,14 +28,12 @@
     }
 }
 
-.main-page-statistic-container .action-buttons-header {
-    justify-content: end;
-}
+.main-page-statistic-container .action-buttons-header { justify-content: end; }
 
-    .main-page-statistic-container .action-buttons-header select {
-        max-width: 200px;
-        background: var(--midnight-green);
-    }
+.main-page-statistic-container .action-buttons-header select {
+    max-width: 200px;
+    background: var(--midnight-green);
+}
 
 .statistic-content {
     width: 100%;
@@ -58,38 +56,29 @@
     flex: 1;
 }
 
-    .main-page-row * {
-        width: 50% !important;
-        color: var(--white-color);
-        padding: 20px;
-        font-size: 20px;
-    }
-
-@media(max-width: 1500px) {
-    .main-page-row * {
-        font-size: 15px;
-    }
+.main-page-row * {
+    width: 50% !important;
+    color: var(--white-color);
+    padding: 20px;
+    font-size: 20px;
 }
 
-@media(max-width: 799px) {
+@media (max-width: 1500px) {
+    .main-page-row * { font-size: 15px; }
+}
 
+@media (max-width: 799px) {
     .main-page-row {
         height: fit-content;
         padding: 0 20px;
     }
 
-    .main-page-row-name {
-        padding: 0;
-    }
+    .main-page-row-name { padding: 0; }
 
-    .main-page-row-value {
-        padding: 0;
-    }
+    .main-page-row-value { padding: 0; }
 
 
-    .statistic-content {
-        overflow-y: auto;
-    }
+    .statistic-content { overflow-y: auto; }
 }
 
 .left-time-loged-count {
@@ -100,22 +89,22 @@
     justify-content: space-evenly;
 }
 
-    .left-time-loged-count span {
-        color: var(--white-color);
-        text-align: center;
-        font-size: 20px;
-        font-weight: 600;
-    }
+.left-time-loged-count span {
+    color: var(--white-color);
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
 
-    .left-time-loged-count .time {
-        height: 60%;
-        text-align: center;
-        align-content: center;
-        background: var(--midnight-green);
-        border-radius: var(--border-radius-container);
-        font-size: 30px;
-        padding: 5px;
-    }
+.left-time-loged-count .time {
+    height: 60%;
+    text-align: center;
+    align-content: center;
+    background: var(--midnight-green);
+    border-radius: var(--border-radius-container);
+    font-size: 30px;
+    padding: 5px;
+}
 
 .right-last-logs-container {
     width: 70%;
@@ -179,34 +168,20 @@
     min-width: 20px !important;
 }
 
-.current-day {
-    border: 3px solid var(--chestnut);
-}
+.current-day { border: 3px solid var(--chestnut); }
 
-.bg-lightgray {
-    background: var(--battleship-gray);
-}
+.bg-lightgray { background: var(--battleship-gray); }
 
-.bg-darkgreen {
-    background: var(--midnight-green);
-}
+.bg-darkgreen { background: var(--midnight-green); }
 
-.bg-mediumgreen {
-    background: var(--dark-slate-gray);
-}
+.bg-mediumgreen { background: var(--dark-slate-gray); }
 
-.bg-lightgreen {
-    background: var(--feldgrau);
-}
+.bg-lightgreen { background: var(--feldgrau); }
 
-@media(max-width: 385px) {
-    .calendar-day {
-        width: 27px !important;
-    }
+@media (max-width: 385px) {
+    .calendar-day { width: 27px !important; }
 
-    .statistic-content-calendar {
-        height: calc(100% - 66px);
-    }
+    .statistic-content-calendar { height: calc(100% - 66px); }
 }
 
 
@@ -243,9 +218,7 @@
     transform: rotateY(180deg)
 }
 
-    .due-date-arrow-right * {
-        fill: var(--white-color)
-    }
+.due-date-arrow-right * { fill: var(--white-color) }
 
 .due-date-task {
     width: calc(100% - 132px);
@@ -257,16 +230,18 @@
     padding: 7px;
     transition: border 0.5s;
 }
-    .due-date-task:hover {
-        border: 2px solid var(--chestnut);
-        cursor: pointer;
-    }
 
-    .due-date-task-number {
-        align-content: center;
-        padding-right: 7px;
-        border-right: 2px solid var(--midnight-green);
-    }
+.due-date-task:hover {
+    border: 2px solid var(--chestnut);
+    cursor: pointer;
+}
+
+.due-date-task-number {
+    align-content: center;
+    padding-right: 7px;
+    border-right: 2px solid var(--midnight-green);
+}
+
 .due-date-task-title {
     align-content: center;
     max-width: 30vw;
@@ -276,21 +251,15 @@
     text-overflow: ellipsis;
 }
 
-.border-blink-danger {
-    animation: blink 3s infinite ease-in-out !important;
-}
+.border-blink-danger { animation: blink 3s infinite ease-in-out !important; }
 
 
 @keyframes blink {
-    0% {
-        border-color: var(--battleship-gray);
-    }
-    50% {
-         border-color: var(--chestnut);
-    }
-    100% {
-        border-color: var(--battleship-gray);
-    }
+    0% { border-color: var(--battleship-gray); }
+
+    50% { border-color: var(--chestnut); }
+
+    100% { border-color: var(--battleship-gray); }
 }
 
 
@@ -301,25 +270,22 @@
     width: 100%;
 }
 
-    .statuses-container .task-block {
-        width: calc(50% - 10px);
-        height: calc(50% - 10px);
-        box-shadow: none !important;
-    }
-.InProgress-css-class, .Cancelled-css-class {
-    margin-left: 10px;
+.statuses-container .task-block {
+    width: calc(50% - 10px);
+    height: calc(50% - 10px);
+    box-shadow: none !important;
 }
 
-.New-css-class, .Completed-css-class {
-    margin-left: 5px;
-}
+.InProgress-css-class, .Cancelled-css-class { margin-left: 10px; }
+
+.New-css-class, .Completed-css-class { margin-left: 5px; }
 
 .InProgress-css-class, .New-css-class {
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-@media(max-width: 800px) {
+@media (max-width: 800px) {
     .statuses-container {
         flex-direction: row;
         overflow-y: auto;
@@ -331,8 +297,5 @@
         height: 50%;
     }
 
-    .InProgress-css-class, .Cancelled-css-class, .New-css-class, .Completed-css-class {
-        margin: 0 !important;
-    }
-
+    .InProgress-css-class, .Cancelled-css-class, .New-css-class, .Completed-css-class { margin: 0 !important; }
 }

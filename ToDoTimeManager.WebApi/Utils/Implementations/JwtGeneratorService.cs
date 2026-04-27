@@ -23,15 +23,15 @@ public class JwtGeneratorService : IJwtGeneratorService
         {
             new(JwtRegisteredClaimNames.Sub, userId),
             new(ClaimTypes.NameIdentifier, userId),
-            new(ClaimTypes.Role, Role.ToString() ?? string.Empty),
+            new(ClaimTypes.Role, Role.ToString() ?? string.Empty)
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"] ?? string.Empty));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JwtSettings:Issuer"],
-            audience: _configuration["JwtSettings:Audience"],
-            claims: claims,
+            _configuration["JwtSettings:Issuer"],
+            _configuration["JwtSettings:Audience"],
+            claims,
             expires: DateTime.UtcNow.AddMinutes(int.Parse(_configuration["JwtSettings:AccessTokenLifetime"] ?? "15")),
             signingCredentials: creds);
         return new JwtSecurityTokenHandler().WriteToken(token);

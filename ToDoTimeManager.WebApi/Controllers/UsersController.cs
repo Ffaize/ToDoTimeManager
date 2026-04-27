@@ -27,8 +27,15 @@ public class UsersController : ControllerBase
         _usersService = usersService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves all registered user accounts. Restricted to administrators.
@@ -39,7 +46,7 @@ public class UsersController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var users = await _usersService.GetAllUsers();
+        List<User> users = await _usersService.GetAllUsers();
         return Ok(users.Select(ToUserResponseDto));
     }
 
@@ -177,11 +184,14 @@ public class UsersController : ControllerBase
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 
-    private static UserResponseDto ToUserResponseDto(User user) => new()
+    private static UserResponseDto ToUserResponseDto(User user)
     {
-        Id       = user.Id,
-        UserName = user.UserName,
-        Email    = user.Email,
-        UserRole = user.UserRole
-    };
+        return new UserResponseDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            UserRole = user.UserRole
+        };
+    }
 }

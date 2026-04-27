@@ -10,26 +10,26 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class TeamsService : ITeamsService
 {
-    private readonly ITeamsDataController       _teamsDataController;
+    private readonly ITeamsDataController _teamsDataController;
     private readonly ITeamMembersDataController _teamMembersDataController;
-    private readonly IToDosService              _toDosService;
-    private readonly ILogger<TeamsService>      _logger;
+    private readonly IToDosService _toDosService;
+    private readonly ILogger<TeamsService> _logger;
 
     public TeamsService(
-        ITeamsDataController       teamsDataController,
+        ITeamsDataController teamsDataController,
         ITeamMembersDataController teamMembersDataController,
-        IToDosService              toDosService,
-        ILogger<TeamsService>      logger)
+        IToDosService toDosService,
+        ILogger<TeamsService> logger)
     {
-        _teamsDataController       = teamsDataController;
+        _teamsDataController = teamsDataController;
         _teamMembersDataController = teamMembersDataController;
-        _toDosService              = toDosService;
-        _logger                    = logger;
+        _toDosService = toDosService;
+        _logger = logger;
     }
 
     public async Task<List<TeamResponseDto>> GetAllTeams()
     {
-        var entities = await _teamsDataController.GetAllTeams();
+        List<TeamEntity> entities = await _teamsDataController.GetAllTeams();
         return entities.Select(e => MapToDto(e.ToTeam(), null)).ToList();
     }
 
@@ -51,8 +51,8 @@ public class TeamsService : ITeamsService
                     throw new ForbiddenException();
             }
 
-            var memberEntities = await _teamMembersDataController.GetMembersByTeamId(teamId);
-            var members = memberEntities.Select(m => m.ToTeamMember()).ToList();
+            List<TeamMemberEntity> memberEntities = await _teamMembersDataController.GetMembersByTeamId(teamId);
+            List<TeamMember> members = memberEntities.Select(m => m.ToTeamMember()).ToList();
             return MapToDto(entity.ToTeam(), members);
         }
         catch (ServiceException)
@@ -68,7 +68,7 @@ public class TeamsService : ITeamsService
 
     public async Task<List<TeamResponseDto>> GetTeamsByUserId(Guid userId)
     {
-        var entities = await _teamsDataController.GetTeamsByUserId(userId);
+        List<TeamEntity> entities = await _teamsDataController.GetTeamsByUserId(userId);
         return entities.Select(e => MapToDto(e.ToTeam(), null)).ToList();
     }
 
@@ -79,11 +79,11 @@ public class TeamsService : ITeamsService
 
         var teamEntity = new TeamEntity
         {
-            Id          = request.Id,
-            Name        = request.Name,
+            Id = request.Id,
+            Name = request.Name,
             Description = request.Description,
-            CreatedAt   = DateTime.UtcNow,
-            CreatedBy   = createdByUserId
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = createdByUserId
         };
 
         try
@@ -97,10 +97,10 @@ public class TeamsService : ITeamsService
 
             var ownerMember = new TeamMemberEntity
             {
-                Id     = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 TeamId = request.Id,
                 UserId = createdByUserId,
-                Role   = TeamMemberRole.Owner
+                Role = TeamMemberRole.Owner
             };
 
             var ownerAdded = await _teamMembersDataController.AddMember(ownerMember);
@@ -136,8 +136,8 @@ public class TeamsService : ITeamsService
 
             var entity = new TeamEntity
             {
-                Id          = request.Id,
-                Name        = request.Name,
+                Id = request.Id,
+                Name = request.Name,
                 Description = request.Description
             };
             return await _teamsDataController.UpdateTeam(entity);
@@ -182,7 +182,8 @@ public class TeamsService : ITeamsService
         {
             if (!isAdmin)
             {
-                var callerMembership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.TeamId, currentUserId);
+                var callerMembership =
+                    await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.TeamId, currentUserId);
                 if (callerMembership == null || callerMembership.Role != TeamMemberRole.Owner)
                     throw new ForbiddenException();
             }
@@ -193,10 +194,10 @@ public class TeamsService : ITeamsService
 
             var entity = new TeamMemberEntity
             {
-                Id     = request.Id,
+                Id = request.Id,
                 TeamId = request.TeamId,
                 UserId = request.UserId,
-                Role   = request.Role
+                Role = request.Role
             };
             return await _teamMembersDataController.AddMember(entity);
         }
@@ -220,17 +221,18 @@ public class TeamsService : ITeamsService
         {
             if (!isAdmin)
             {
-                var callerMembership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
+                var callerMembership =
+                    await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
                 if (callerMembership == null || callerMembership.Role != TeamMemberRole.Owner)
                     throw new ForbiddenException();
             }
 
-            var members = await _teamMembersDataController.GetMembersByTeamId(teamId);
+            List<TeamMemberEntity> members = await _teamMembersDataController.GetMembersByTeamId(teamId);
             var targetMember = members.FirstOrDefault(m => m.UserId == userId);
             if (targetMember == null)
                 throw new NotFoundException("Member was not found in this team");
 
-            var owners = members.Where(m => m.Role == TeamMemberRole.Owner).ToList();
+            List<TeamMemberEntity> owners = members.Where(m => m.Role == TeamMemberRole.Owner).ToList();
             if (targetMember.Role == TeamMemberRole.Owner && owners.Count == 1)
                 throw new ConflictException("Cannot remove the last owner of a team");
 
@@ -274,14 +276,17 @@ public class TeamsService : ITeamsService
         }
     }
 
-    private static TeamResponseDto MapToDto(Team team, List<TeamMember>? members) => new()
+    private static TeamResponseDto MapToDto(Team team, List<TeamMember>? members)
     {
-        Id          = team.Id,
-        Name        = team.Name,
-        Description = team.Description,
-        CreatedAt   = team.CreatedAt,
-        CreatedBy   = team.CreatedBy,
-        MemberCount = team.MemberCount,
-        Members     = members
-    };
+        return new TeamResponseDto
+        {
+            Id = team.Id,
+            Name = team.Name,
+            Description = team.Description,
+            CreatedAt = team.CreatedAt,
+            CreatedBy = team.CreatedBy,
+            MemberCount = team.MemberCount,
+            Members = members
+        };
+    }
 }

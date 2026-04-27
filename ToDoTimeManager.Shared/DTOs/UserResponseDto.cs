@@ -9,4 +9,3 @@ public sealed class UserResponseDto
     public string? Email { get; set; }
     public UserRole? UserRole { get; set; }
 }
-

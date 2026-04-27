@@ -4,13 +4,9 @@
     gap: 20px;
 }
 
-.buttons-container * {
-    max-width: 300px;
-}
+.buttons-container * { max-width: 300px; }
 
-.buttons-container input {
-    height: 50px;
-}
+.buttons-container input { height: 50px; }
 
 .task-title {
     align-self: start;
@@ -25,53 +21,39 @@
 
 
 
-@media(max-width: 1200px) {
-    .task-title {
-        display: none !important;
-    }
+@media (max-width: 1200px) {
+    .task-title { display: none !important; }
 }
 
-@media(max-width: 1000px) {
+@media (max-width: 1000px) {
     .buttons-container {
         flex-direction: unset;
         flex-wrap: wrap;
         align-self: center;
     }
 
-        .buttons-container * {
-            max-width: 48%;
-        }
+    .buttons-container * { max-width: 48%; }
 }
 
-@media(max-width: 900px) {
-    .tasks-colums-sticky-info {
-        display: none !important;
-    }
+@media (max-width: 900px) {
+    .tasks-colums-sticky-info { display: none !important; }
 
-    .to-do {
-        display: none !important;
-    }
+    .to-do { display: none !important; }
 
-    .to-do-min-width {
-        display: block !important;
-    }
+    .to-do-min-width { display: block !important; }
 }
 
-@media(max-width: 790px) {
+@media (max-width: 790px) {
     .buttons-container {
         flex-direction: column !important;
         gap: 10px !important;
     }
 
 
-        .buttons-container * {
-            max-width: unset;
-        }
+    .buttons-container * { max-width: unset; }
 }
 
-.to-do-due-date, .to-do-creted-at, .to-do-status, .to-do-number {
-    max-width: 200px;
-}
+.to-do-due-date, .to-do-creted-at, .to-do-status, .to-do-number { max-width: 200px; }
 
 .buttons-container {
     align-self: flex-end;
@@ -104,18 +86,14 @@
     box-shadow: var(--shadow-card)
 }
 
-    .to-do:hover {
-        border: 3px solid var(--midnight-green)
-    }
+.to-do:hover { border: 3px solid var(--midnight-green) }
 
-    .to-do * {
-        flex: 1;
-        border-right: 3px solid var(--midnight-green)
-    }
+.to-do * {
+    flex: 1;
+    border-right: 3px solid var(--midnight-green)
+}
 
-    .to-do .to-do-due-date {
-        border-right: none !important;
-    }
+.to-do .to-do-due-date { border-right: none !important; }
 
 .tasks-colums-sticky-info {
     position: sticky;
@@ -129,9 +107,7 @@
     gap: 10px;
 }
 
-    .tasks-colums-sticky-info * {
-        flex: 1;
-    }
+.tasks-colums-sticky-info * { flex: 1; }
 
 
 .to-do-min-width {
@@ -144,9 +120,7 @@
     box-shadow: var(--shadow-card)
 }
 
-    .to-do-min-width:hover {
-        border: 3px solid var(--midnight-green)
-    }
+.to-do-min-width:hover { border: 3px solid var(--midnight-green) }
 
 .to-do-min-width-row {
     display: flex;
@@ -169,5 +143,5 @@
     width: 100%;
     text-align: center;
     font-size: larger;
-    color: rgba(0,0,0,0.6)
+    color: rgba(0, 0, 0, 0.6)
 }

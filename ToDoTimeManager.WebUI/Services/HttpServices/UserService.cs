@@ -1,136 +1,135 @@
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 
-namespace ToDoTimeManager.WebUI.Services.HttpServices
+namespace ToDoTimeManager.WebUI.Services.HttpServices;
+
+public class UserService : BaseHttpService
 {
-    public class UserService : BaseHttpService
+    private readonly ILogger<UserService> _logger;
+
+    public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger) : base(httpClientFactory)
     {
-        private readonly ILogger<UserService> _logger;
+        _logger = logger;
+        ApiControllerName = "Users";
+    }
 
-        public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger) : base(httpClientFactory)
+    public async Task<List<UserResponseDto>?> GetAllUsers()
+    {
+        try
         {
-            _logger = logger;
-            ApiControllerName = "Users";
+            var response = await _httpClient.GetAsync(Url("GetAll"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<UserResponseDto>>();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
+    }
 
-        public async Task<List<UserResponseDto>?> GetAllUsers()
+    public async Task<UserResponseDto?> GetUserById(Guid id)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Url("GetAll"));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<UserResponseDto>>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.GetAsync(Url($"GetById/{id}"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UserResponseDto>();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
+    }
 
-        public async Task<UserResponseDto?> GetUserById(Guid id)
+    public async Task<UserResponseDto?> GetUserByUsername(string userName)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Url($"GetById/{id}"));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.GetAsync(Url($"GetByUsername/{userName}"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UserResponseDto>();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
+    }
 
-        public async Task<UserResponseDto?> GetUserByUsername(string userName)
+    public async Task<UserResponseDto?> GetUserByEmail(string email)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Url($"GetByUsername/{userName}"));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.GetAsync(Url($"GetByEmail/{email}"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UserResponseDto>();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
+    }
 
-        public async Task<UserResponseDto?> GetUserByEmail(string email)
+    public async Task<UserResponseDto?> GetUserByLoginParameter(string loginParameter)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Url($"GetByEmail/{email}"));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.GetAsync(Url($"GetByLoginParameter/{loginParameter}"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UserResponseDto>();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
+    }
 
-        public async Task<UserResponseDto?> GetUserByLoginParameter(string loginParameter)
+    public async Task<bool> Create(CreateUserRequestDto user)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Url($"GetByLoginParameter/{loginParameter}"));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserResponseDto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.PostAsJsonAsync(Url("Create"), user);
+            response.EnsureSuccessStatusCode();
+            return true;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return false;
+        }
+    }
 
-        public async Task<bool> Create(CreateUserRequestDto user)
+    public async Task<bool> Update(UpdateUserRequestDto user)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(Url("Create"), user);
-                response.EnsureSuccessStatusCode();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return false;
-            }
+            var response = await _httpClient.PutAsJsonAsync(Url("Update"), user);
+            response.EnsureSuccessStatusCode();
+            return true;
         }
-        public async Task<bool> Update(UpdateUserRequestDto user)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync(Url("Update"), user);
-                response.EnsureSuccessStatusCode();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return false;
-            }
+            _logger.LogError(ex.Message, ex);
+            return false;
         }
+    }
 
-        public async Task<bool> Delete(Guid id)
+    public async Task<bool> Delete(Guid id)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.DeleteAsync(Url($"Delete/{id}"));
-                response.EnsureSuccessStatusCode();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return false;
-            }
+            var response = await _httpClient.DeleteAsync(Url($"Delete/{id}"));
+            response.EnsureSuccessStatusCode();
+            return true;
         }
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return false;
+        }
     }
 }

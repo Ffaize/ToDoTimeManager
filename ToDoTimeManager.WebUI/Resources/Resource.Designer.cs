@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ToDoTimeManager.WebUI.Localization {
+namespace ToDoTimeManager.WebUI.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ToDoTimeManager.WebUI.Localization {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ToDoTimeManager.WebUI.Localization.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ToDoTimeManager.WebUI.Resources.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

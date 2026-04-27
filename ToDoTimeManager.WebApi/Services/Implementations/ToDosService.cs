@@ -22,7 +22,7 @@ public class ToDosService : IToDosService
     {
         try
         {
-            var res = await _toDosDataController.GetAllToDos();
+            List<ToDoEntity> res = await _toDosDataController.GetAllToDos();
             return res.Select(tde => tde.ToToDo()).ToList();
         }
         catch (Exception e)
@@ -68,7 +68,7 @@ public class ToDosService : IToDosService
 
         try
         {
-            var res = await _toDosDataController.GetToDosByUserId(userId);
+            List<ToDoEntity> res = await _toDosDataController.GetToDosByUserId(userId);
             return res.Select(tde => tde.ToToDo()).ToList();
         }
         catch (ServiceException)
@@ -86,7 +86,7 @@ public class ToDosService : IToDosService
     {
         try
         {
-            var res = await _toDosDataController.GetToDosByTeamId(teamId);
+            List<ToDoEntity> res = await _toDosDataController.GetToDosByTeamId(teamId);
             return res.Select(e => e.ToToDo()).ToList();
         }
         catch (Exception e)
@@ -100,7 +100,7 @@ public class ToDosService : IToDosService
     {
         try
         {
-            var res = await _toDosDataController.GetToDosByProjectId(projectId);
+            List<ToDoEntity> res = await _toDosDataController.GetToDosByProjectId(projectId);
             return res.Select(e => e.ToToDo()).ToList();
         }
         catch (Exception e)

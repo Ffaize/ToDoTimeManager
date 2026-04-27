@@ -18,8 +18,16 @@ public class ProjectTeamsDataController : IProjectTeamsDataController
 
     public async Task<List<ProjectTeamEntity>> GetTeamsByProjectId(Guid projectId)
     {
-        try { return await _dbAccessService.GetAllByParameter<ProjectTeamEntity>("sp_ProjectTeams_GetByProjectId", "ProjectId", projectId); }
-        catch (Exception e) { _logger.LogError(e, e.Message); return []; }
+        try
+        {
+            return await _dbAccessService.GetAllByParameter<ProjectTeamEntity>("sp_ProjectTeams_GetByProjectId",
+                "ProjectId", projectId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
     }
 
     public async Task<ProjectTeamEntity?> GetByProjectIdAndTeamId(Guid projectId, Guid teamId)
@@ -29,17 +37,28 @@ public class ProjectTeamsDataController : IProjectTeamsDataController
             var parameters = new DynamicParameters();
             parameters.Add("ProjectId", projectId);
             parameters.Add("TeamId", teamId);
-            var results = await _dbAccessService.GetRecordsByParameters<ProjectTeamEntity>(
+            List<ProjectTeamEntity> results = await _dbAccessService.GetRecordsByParameters<ProjectTeamEntity>(
                 "sp_ProjectTeams_GetByProjectIdAndTeamId", parameters);
             return results.FirstOrDefault();
         }
-        catch (Exception e) { _logger.LogError(e, e.Message); return null; }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
     }
 
     public async Task<bool> AddTeam(ProjectTeamEntity newProjectTeam)
     {
-        try { return await _dbAccessService.AddRecord("sp_ProjectTeams_Create", newProjectTeam) >= 1; }
-        catch (Exception e) { _logger.LogError(e, e.Message); return false; }
+        try
+        {
+            return await _dbAccessService.AddRecord("sp_ProjectTeams_Create", newProjectTeam) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
     public async Task<bool> RemoveTeam(Guid projectId, Guid teamId)
@@ -52,6 +71,10 @@ public class ProjectTeamsDataController : IProjectTeamsDataController
             return await _dbAccessService.ExecuteByParameters(
                 "sp_ProjectTeams_DeleteByProjectIdAndTeamId", parameters) >= 1;
         }
-        catch (Exception e) { _logger.LogError(e, e.Message); return false; }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 }

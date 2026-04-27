@@ -5,14 +5,12 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class UpdateProjectRequestDto
 {
-    [NotEmptyGuid]
-    public Guid Id { get; set; }
+    [NotEmptyGuid] public Guid Id { get; set; }
 
     [Required]
     [MinLength(1)]
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
-    [MaxLength(500)]
-    public string? Description { get; set; }
+    [MaxLength(500)] public string? Description { get; set; }
 }

@@ -1,10 +1,12 @@
-﻿@if(IsLoading)
-{
+﻿@if (IsLoading) {
     <div class="overlay">
         <div class="loader"></div>
     </div>
 }
 
 @code {
-    [Parameter] public bool IsLoading { get; set; }
+
+    [Parameter]
+    public bool IsLoading { get; set; }
+
 }

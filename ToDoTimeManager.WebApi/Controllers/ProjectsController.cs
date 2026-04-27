@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
@@ -27,8 +28,15 @@ public class ProjectsController : ControllerBase
         _projectsService = projectsService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves all projects in the system. Restricted to administrators.
@@ -38,7 +46,7 @@ public class ProjectsController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllProjects()
     {
-        var projects = await _projectsService.GetAllProjects();
+        List<ProjectResponseDto> projects = await _projectsService.GetAllProjects();
         return Ok(projects);
     }
 
@@ -85,7 +93,7 @@ public class ProjectsController : ControllerBase
     [HttpGet("GetToDosByProjectId/{projectId}")]
     public async Task<IActionResult> GetToDosByProjectId(Guid projectId)
     {
-        var todos = await _projectsService.GetToDosByProjectId(projectId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> todos = await _projectsService.GetToDosByProjectId(projectId, GetCurrentUserId(), IsAdmin());
         return Ok(todos);
     }
 
@@ -145,7 +153,7 @@ public class ProjectsController : ControllerBase
     [HttpGet("GetMyProjects")]
     public async Task<IActionResult> GetMyProjects()
     {
-        var projects = await _projectsService.GetProjectsByUserId(GetCurrentUserId());
+        List<ProjectResponseDto> projects = await _projectsService.GetProjectsByUserId(GetCurrentUserId());
         return Ok(projects);
     }
 

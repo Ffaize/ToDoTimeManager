@@ -1,7 +1,7 @@
 ﻿@using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Enums
 @using ToDoTimeManager.Shared.Models
-@using ToDoTimeManager.WebUI.Localization
+@using ToDoTimeManager.WebUI.Resources
 <div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
 <div class="modal-window" hidden="@(!Show)">
     <div class="modal-window-header">
@@ -30,50 +30,61 @@
         </button>
     </div>
 </div>
+
 @code {
-    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
-    [Parameter] public bool Show { get; set; }
-    [Parameter] public string Title { get; set; } = string.Empty;
-    [Parameter] public ToDo? Task { get; set; }
-    [Parameter] public bool BlockTaskNumberInput { get; set; }
-    [Parameter] public bool IsEditMode { get; set; }
-    [Parameter] public TimeLog? ExistingTimeLog { get; set; }
+
+    [Parameter]
+    public Action<ModalResult> ResultChanged { get; set; } = null!;
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public ToDo? Task { get; set; }
+
+    [Parameter]
+    public bool BlockTaskNumberInput { get; set; }
+
+    [Parameter]
+    public bool IsEditMode { get; set; }
+
+    [Parameter]
+    public TimeLog? ExistingTimeLog { get; set; }
+
     private TimeLog TimeLog { get; set; } = new();
     public int TaskNumber { get; set; }
 
     #region BaseForComponent
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
+    [Inject]
+    private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
     public bool IsLoading { get; set; }
     public double HoursSpent { get; set; }
 
-    public void ShowLoader()
-    {
+    public void ShowLoader() {
         IsLoading = true;
         InvokeAsync(StateHasChanged);
     }
-    public void HideLoader()
-    {
+
+    public void HideLoader() {
         IsLoading = false;
         InvokeAsync(StateHasChanged);
     }
+
     #endregion
 
-
-    protected override void OnParametersSet()
-    {
-        if (Task is not null && BlockTaskNumberInput && !IsEditMode)
-        {
+    protected override void OnParametersSet() {
+        if (Task is not null && BlockTaskNumberInput && !IsEditMode) {
             TaskNumber = Task.NumberedId;
-        }
-
-        else if (Task is not null && IsEditMode && ExistingTimeLog is not null)
-        {
+        } else if (Task is not null && IsEditMode && ExistingTimeLog is not null) {
             TaskNumber = Task.NumberedId;
             HoursSpent = ExistingTimeLog.HoursSpent.TotalHours;
             TimeLog.LogDescription = ExistingTimeLog.LogDescription;
-        }
-        else
-        {
+        } else {
             TimeLog = new TimeLog();
         }
 
@@ -81,25 +92,21 @@
         base.OnParametersSet();
     }
 
-    private async Task Close(object? result)
-    {
+    private async Task Close(object? result) {
         Show = false;
         ResultChanged?.Invoke(new ModalResult(Show, true, result, TaskNumber));
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnOverlayClick()
-    {
+    private void OnOverlayClick() {
         _ = Close(null);
     }
 
-    private void OnCancelClicked()
-    {
+    private void OnCancelClicked() {
         _ = Close(null);
     }
 
-    private void OnConfirmClicked()
-    {
+    private void OnConfirmClicked() {
         TimeLog.HoursSpent = TimeSpan.FromHours(HoursSpent);
         _ = Close(TimeLog);
     }

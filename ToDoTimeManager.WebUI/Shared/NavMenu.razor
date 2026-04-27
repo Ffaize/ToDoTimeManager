@@ -3,7 +3,7 @@
 @using ToDoTimeManager.Shared.Models
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Shared.Icons
-@using ToDoTimeManager.WebUI.Localization
+@using ToDoTimeManager.WebUI.Resources
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TaskForge</a>
@@ -16,19 +16,19 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <img src="images/home.png" class="nav-item-icon"  alt=""/>
+                <img src="images/home.png" class="nav-item-icon" alt=""/>
                 <span class="oi oi-home nav-item-text" aria-hidden="true">@Localizer["Home"]</span>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
-                <img src="images/user.png" class="nav-item-icon"  alt=""/>
+                <img src="images/user.png" class="nav-item-icon" alt=""/>
                 <span class="oi oi-home nav-item-text" aria-hidden="true">@Localizer["Profile"]</span>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="tasks" Match="NavLinkMatch.All">
-                <img src="images/clipboard.png" class="nav-item-icon"  alt=""/>
+                <img src="images/clipboard.png" class="nav-item-icon" alt=""/>
                 <span class="oi oi-home nav-item-text" aria-hidden="true">@Localizer["Tasks"]</span>
             </NavLink>
         </div>
@@ -46,16 +46,21 @@
 </div>
 
 @code {
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
 
-    [Parameter] public bool CollapseNavMenu { get; set; }
-    [Parameter] public EventCallback<bool> CollapseNavMenuChanged { get; set; }
+    [Inject]
+    private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
+    [Parameter]
+    public bool CollapseNavMenu { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> CollapseNavMenuChanged { get; set; }
 
     private string? NavMenuCssClass => CollapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
+    private void ToggleNavMenu() {
         CollapseNavMenu = !CollapseNavMenu;
         StateHasChanged();
     }
+
 }

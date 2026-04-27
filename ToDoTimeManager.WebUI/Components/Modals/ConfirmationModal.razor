@@ -1,6 +1,6 @@
 ﻿@using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.Models
-@using ToDoTimeManager.WebUI.Localization
+@using ToDoTimeManager.WebUI.Resources
 <div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
 
 <div class="modal-window" hidden="@(!Show)">
@@ -21,46 +21,55 @@
         </button>
     </div>
 </div>
+
 @code {
-    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
-    [Parameter] public bool Show { get; set; }
-    [Parameter] public string Title { get; set; } = string.Empty;
-    [Parameter] public string ConfirmText { get; set; } = string.Empty;
+
+    [Parameter]
+    public Action<ModalResult> ResultChanged { get; set; } = null!;
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ConfirmText { get; set; } = string.Empty;
 
     #region BaseForComponent
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
+    [Inject]
+    private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
     public bool IsLoading { get; set; }
-    public void ShowLoader()
-    {
+
+    public void ShowLoader() {
         IsLoading = true;
         InvokeAsync(StateHasChanged);
     }
-    public void HideLoader()
-    {
+
+    public void HideLoader() {
         IsLoading = false;
         InvokeAsync(StateHasChanged);
     }
+
     #endregion
 
-    private async Task Close(bool result)
-    {
+    private async Task Close(bool result) {
         Show = false;
         ResultChanged?.Invoke(new ModalResult(Show, false, result));
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnOverlayClick()
-    {
+    private void OnOverlayClick() {
         _ = Close(false);
     }
 
-    private void OnCancelClicked()
-    {
+    private void OnCancelClicked() {
         _ = Close(false);
     }
 
-    private void OnConfirmClicked()
-    {
+    private void OnConfirmClicked() {
         _ = Close(true);
     }
 

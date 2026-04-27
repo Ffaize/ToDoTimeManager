@@ -22,10 +22,7 @@ public class Program
         builder.Services.AddServerSideBlazor();
         builder.Services.AddLocalization();
         builder.Services.AddServerSideBlazor()
-            .AddCircuitOptions(options =>
-            {
-                options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1);
-            });
+            .AddCircuitOptions(options => { options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1); });
 
         builder.Services.AddSingleton<ToastsService>();
         builder.Services.AddScoped<TokenMessageHandler>();

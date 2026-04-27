@@ -5,6 +5,5 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class ChangeUserRoleRequestDto
 {
-    [Required]
-    public UserRole NewRole { get; set; }
+    [Required] public UserRole NewRole { get; set; }
 }

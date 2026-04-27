@@ -5,8 +5,7 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class UpdateUserRequestDto
 {
-    [NotEmptyGuid]
-    public Guid Id { get; set; }
+    [NotEmptyGuid] public Guid Id { get; set; }
 
     [Required]
     [MinLength(2)]
@@ -18,8 +17,5 @@ public sealed class UpdateUserRequestDto
     [MaxLength(200)]
     public string Email { get; set; } = string.Empty;
 
-    [MinLength(6)]
-    [MaxLength(200)]
-    public string? Password { get; set; }
+    [MinLength(6)] [MaxLength(200)] public string? Password { get; set; }
 }
-

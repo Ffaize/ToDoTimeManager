@@ -9,6 +9,7 @@ public class TimeLogsDataController : ITimeLogsDataController
 {
     private readonly IDbAccessService _dbAccessService;
     private readonly ILogger<TimeLogsDataController> _logger;
+
     public TimeLogsDataController(IDbAccessService dbAccessService, ILogger<TimeLogsDataController> logger)
     {
         _dbAccessService = dbAccessService;
@@ -74,7 +75,8 @@ public class TimeLogsDataController : ITimeLogsDataController
             var parameters = new DynamicParameters();
             parameters.Add("ToDoId", toDoId);
             parameters.Add("UserId", userId);
-            return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndToDoId", parameters);
+            return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndToDoId",
+                parameters);
         }
         catch (Exception e)
         {
@@ -129,7 +131,8 @@ public class TimeLogsDataController : ITimeLogsDataController
             var parameters = new DynamicParameters();
             parameters.Add("UserId", filterUserId);
             parameters.Add("DaysAgo", getFilterDaysAgo);
-            return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndTime", parameters);
+            return await _dbAccessService.GetRecordsByParameters<TimeLogEntity>("sp_TimeLogs_GetByUserIdAndTime",
+                parameters);
         }
         catch (Exception e)
         {

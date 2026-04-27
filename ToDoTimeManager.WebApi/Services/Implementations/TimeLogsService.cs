@@ -21,7 +21,7 @@ public class TimeLogsService : ITimeLogsService
     {
         try
         {
-            var res = await _timeLogsDataController.GetAllTimeLogs();
+            List<TimeLogEntity> res = await _timeLogsDataController.GetAllTimeLogs();
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
         catch (Exception e)
@@ -65,7 +65,7 @@ public class TimeLogsService : ITimeLogsService
 
         try
         {
-            var res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
+            List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
         catch (ServiceException)
@@ -88,7 +88,7 @@ public class TimeLogsService : ITimeLogsService
 
         try
         {
-            var res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
+            List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
         catch (ServiceException)
@@ -102,7 +102,8 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId, Guid currentUserId, bool isAdmin)
+    public async Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId, Guid currentUserId,
+        bool isAdmin)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
@@ -113,7 +114,7 @@ public class TimeLogsService : ITimeLogsService
 
         try
         {
-            var res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
+            List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
         catch (ServiceException)
@@ -131,7 +132,7 @@ public class TimeLogsService : ITimeLogsService
     {
         try
         {
-            var res = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(userId, daysAgo);
+            List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByUserIdAndTime(userId, daysAgo);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
         catch (Exception e)

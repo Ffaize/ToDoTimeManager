@@ -15,13 +15,15 @@ public class TokenMessageHandler : DelegatingHandler
     private readonly CircuitServicesAccesor _circuitServicesAccesor;
     private readonly CustomAuthStateProvider? _authenticationStateProvider;
 
-    public TokenMessageHandler(CircuitServicesAccesor circuitServicesAccesor, AuthenticationStateProvider authenticationStateProvider)
+    public TokenMessageHandler(CircuitServicesAccesor circuitServicesAccesor,
+        AuthenticationStateProvider authenticationStateProvider)
     {
         _authenticationStateProvider = authenticationStateProvider as CustomAuthStateProvider;
         _circuitServicesAccesor = circuitServicesAccesor;
     }
 
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -30,7 +32,7 @@ public class TokenMessageHandler : DelegatingHandler
             var response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode != HttpStatusCode.Unauthorized || tokens == null) return response;
-            var refreshExpiry = tokens.RefreshTokenExpiresAt;
+            DateTime? refreshExpiry = tokens.RefreshTokenExpiresAt;
             if (refreshExpiry < DateTime.UtcNow)
                 throw new UnauthorizedAccessException("Refresh token expired");
 
@@ -59,11 +61,8 @@ public class TokenMessageHandler : DelegatingHandler
         if (tokens is null) return null;
         var token = tokens.AccessToken;
         if (!string.IsNullOrWhiteSpace(token))
-        {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
 
         return tokens;
-
     }
 }

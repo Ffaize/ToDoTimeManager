@@ -52,6 +52,5 @@
     border-bottom-left-radius: var(--border-radius-container);
     border-bottom-right-radius: var(--border-radius-container);
 }
- .modal-footer button {
-     color: var(--white-color); 
- }
+
+.modal-footer button { color: var(--white-color); }

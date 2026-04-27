@@ -15,7 +15,8 @@ public class UsersService : IUsersService
     private readonly ILogger<UsersService> _logger;
     private readonly IPasswordHelperService _passwordHelperService;
 
-    public UsersService(IUsersDataController usersDataController, ILogger<UsersService> logger, IPasswordHelperService passwordHelperService)
+    public UsersService(IUsersDataController usersDataController, ILogger<UsersService> logger,
+        IPasswordHelperService passwordHelperService)
     {
         _usersDataController = usersDataController;
         _logger = logger;
@@ -26,7 +27,7 @@ public class UsersService : IUsersService
     {
         try
         {
-            var res = await _usersDataController.GetAllUsers();
+            List<UserEntity> res = await _usersDataController.GetAllUsers();
             return res.Select(ue => ue.ToUser()).ToList();
         }
         catch (Exception e)
@@ -153,9 +154,9 @@ public class UsersService : IUsersService
 
             var user = new User
             {
-                Id       = request.Id,
+                Id = request.Id,
                 UserName = request.UserName,
-                Email    = request.Email,
+                Email = request.Email,
                 Password = _passwordHelperService.HashPassword(request.Id.ToString(), request.Password),
                 UserRole = UserRole.User
             };
@@ -195,9 +196,9 @@ public class UsersService : IUsersService
 
             var updatedEntity = new UserEntity
             {
-                Id       = request.Id,
+                Id = request.Id,
                 UserName = request.UserName,
-                Email    = request.Email,
+                Email = request.Email,
                 UserRole = existing.UserRole,
                 Password = passwordHash
             };

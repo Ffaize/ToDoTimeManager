@@ -1,6 +1,5 @@
-CREATE PROCEDURE [dbo].[sp_TeamMembers_GetByTeamIdAndUserId]
-    @TeamId UNIQUEIDENTIFIER,
-    @UserId UNIQUEIDENTIFIER
+CREATE PROCEDURE [dbo].[sp_TeamMembers_GetByTeamIdAndUserId] @TeamId UNIQUEIDENTIFIER,
+                                                             @UserId UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;

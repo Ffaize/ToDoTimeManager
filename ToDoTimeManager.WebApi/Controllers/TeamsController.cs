@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
@@ -27,8 +28,15 @@ public class TeamsController : ControllerBase
         _teamsService = teamsService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves all teams in the system. Restricted to administrators.
@@ -38,7 +46,7 @@ public class TeamsController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllTeams()
     {
-        var teams = await _teamsService.GetAllTeams();
+        List<TeamResponseDto> teams = await _teamsService.GetAllTeams();
         return Ok(teams);
     }
 
@@ -83,7 +91,7 @@ public class TeamsController : ControllerBase
     [HttpGet("GetToDosByTeamId/{teamId}")]
     public async Task<IActionResult> GetToDosByTeamId(Guid teamId)
     {
-        var todos = await _teamsService.GetToDosByTeamId(teamId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> todos = await _teamsService.GetToDosByTeamId(teamId, GetCurrentUserId(), IsAdmin());
         return Ok(todos);
     }
 
@@ -143,7 +151,7 @@ public class TeamsController : ControllerBase
     [HttpGet("GetMyTeams")]
     public async Task<IActionResult> GetMyTeams()
     {
-        var teams = await _teamsService.GetTeamsByUserId(GetCurrentUserId());
+        List<TeamResponseDto> teams = await _teamsService.GetTeamsByUserId(GetCurrentUserId());
         return Ok(teams);
     }
 

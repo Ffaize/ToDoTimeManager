@@ -8,7 +8,8 @@ namespace ToDoTimeManager.WebUI.Handlers;
 
 public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) : DelegatingHandler
 {
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+        CancellationToken cancellationToken)
     {
         var response = await base.SendAsync(request, cancellationToken);
 
@@ -60,20 +61,15 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
             // ProblemDetails: { "title": "...", "detail": "...", "status": ... }
             if (doc.RootElement.TryGetProperty("detail", out var detailProp) &&
                 detailProp.ValueKind == JsonValueKind.String)
-            {
                 return detailProp.GetString();
-            }
 
             if (doc.RootElement.TryGetProperty("title", out var titleProp) &&
                 titleProp.ValueKind == JsonValueKind.String)
-            {
                 return titleProp.GetString();
-            }
 
             // ValidationProblemDetails: { "errors": { "Field": [ "msg1", ... ] } }
             if (doc.RootElement.TryGetProperty("errors", out var errorsProp) &&
                 errorsProp.ValueKind == JsonValueKind.Object)
-            {
                 foreach (var property in errorsProp.EnumerateObject())
                 {
                     var arr = property.Value;
@@ -84,7 +80,6 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
                             return first.GetString();
                     }
                 }
-            }
 
             // Fallback: whole JSON as string
             return content.Replace("\"", string.Empty).Trim();

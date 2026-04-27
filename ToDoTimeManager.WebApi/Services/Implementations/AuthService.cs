@@ -53,9 +53,10 @@ public class AuthService : IAuthService
 
             return new TokenModel
             {
-                AccessToken          = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-                RefreshToken         = _jwtGeneratorService.GenerateRefreshToken(),
-                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
+                AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
+                RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
+                RefreshTokenExpiresAt =
+                    DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
             };
         }
         catch (ServiceException)
@@ -84,8 +85,8 @@ public class AuthService : IAuthService
 
             return new TokenModel
             {
-                AccessToken           = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
-                RefreshToken          = tokenModel.RefreshToken,
+                AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
+                RefreshToken = tokenModel.RefreshToken,
                 RefreshTokenExpiresAt = tokenModel.RefreshTokenExpiresAt
             };
         }
@@ -102,26 +103,26 @@ public class AuthService : IAuthService
 
     private (string? UserId, string? Role) ValidateAndReadToken(string token)
     {
-        var key      = _configuration["JwtSettings:Key"] ?? string.Empty;
-        var issuer   = _configuration["JwtSettings:Issuer"];
+        var key = _configuration["JwtSettings:Key"] ?? string.Empty;
+        var issuer = _configuration["JwtSettings:Issuer"];
         var audience = _configuration["JwtSettings:Audience"];
 
         var validationParams = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-            ValidateIssuer           = true,
-            ValidIssuer              = issuer,
-            ValidateAudience         = true,
-            ValidAudience            = audience,
-            ValidateLifetime         = false,  // allow expired tokens to be refreshed
-            ClockSkew                = TimeSpan.Zero
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateLifetime = false, // allow expired tokens to be refreshed
+            ClockSkew = TimeSpan.Zero
         };
 
-        var handler   = new JwtSecurityTokenHandler();
-        var principal = handler.ValidateToken(token, validationParams, out _);
-        var userId    = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        var role      = principal.FindFirstValue(ClaimTypes.Role);
+        var handler = new JwtSecurityTokenHandler();
+        var principal = handler.ValidateToken(token, validationParams, out var _);
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var role = principal.FindFirstValue(ClaimTypes.Role);
         return (userId, role);
     }
 }

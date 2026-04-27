@@ -6,8 +6,7 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class ToDoUpsertRequestDto
 {
-    [NotEmptyGuid]
-    public Guid Id { get; set; }
+    [NotEmptyGuid] public Guid Id { get; set; }
 
     // Kept for compatibility with existing UI/API payloads.
     public int NumberedId { get; set; }
@@ -17,16 +16,13 @@ public sealed class ToDoUpsertRequestDto
     [MaxLength(200)]
     public string Title { get; set; } = string.Empty;
 
-    [MaxLength(4000)]
-    public string? Description { get; set; }
+    [MaxLength(4000)] public string? Description { get; set; }
 
-    [Required]
-    public DateTime? CreatedAt { get; set; }
+    [Required] public DateTime? CreatedAt { get; set; }
 
     public DateTime? DueDate { get; set; }
 
-    [Required]
-    public ToDoStatus? Status { get; set; }
+    [Required] public ToDoStatus? Status { get; set; }
 
     public Guid? AssignedTo { get; set; }
 
@@ -34,4 +30,3 @@ public sealed class ToDoUpsertRequestDto
 
     public Guid? ProjectId { get; set; }
 }
-

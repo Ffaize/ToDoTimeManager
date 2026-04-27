@@ -17,36 +17,27 @@
     z-index: 999;
 }
 
-    .toast-m p {
-        margin: 0;
-        width: 100%;
-        white-space: normal;
-        font-size: clamp(12px, 16px, 20px);
-        overflow-wrap: break-word;
-        color: var(--light-text-color);
-        text-align: center;
-    }
+.toast-m p {
+    margin: 0;
+    width: 100%;
+    white-space: normal;
+    font-size: clamp(12px, 16px, 20px);
+    overflow-wrap: break-word;
+    color: var(--light-text-color);
+    text-align: center;
+}
 
 .toast-m.show {
     transform: translate(-50%, 0);
     opacity: 1;
 }
 
-.toast-m--success {
-    background-color: var(--success-color);
-}
+.toast-m--success { background-color: var(--success-color); }
 
-.toast-m--warning {
-    background-color: var(--warning-color);
-}
+.toast-m--warning { background-color: var(--warning-color); }
 
-.toast-m--error {
-    background-color: var(--error-color);
-}
+.toast-m--error { background-color: var(--error-color); }
 
-.toast-m__icon {
-    fill: var(--light-text-color);
-}
+.toast-m__icon { fill: var(--light-text-color); }
 
-.i-light {
-}
+.i-light { }

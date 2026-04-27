@@ -10,9 +10,11 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Services.Implementations;
 
-public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAccesor circuitServicesAccesor) : AuthenticationStateProvider
+public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAccesor circuitServicesAccesor)
+    : AuthenticationStateProvider
 {
     private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
@@ -27,7 +29,6 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
             var jsonToken = handler.ReadToken(result.AccessToken) as JwtSecurityToken;
 
             if (jsonToken != null)
-            {
                 if (jsonToken.ValidTo < DateTime.UtcNow && result.RefreshTokenExpiresAt > DateTime.UtcNow)
                 {
                     var authService = circuitServicesAccesor?.Service?.GetRequiredService<AuthService>();
@@ -42,8 +43,6 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
                         }
                     }
                 }
-
-            }
 
             if (jsonToken == null)
             {

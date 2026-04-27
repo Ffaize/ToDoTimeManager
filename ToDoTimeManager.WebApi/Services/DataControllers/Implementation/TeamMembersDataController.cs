@@ -18,8 +18,16 @@ public class TeamMembersDataController : ITeamMembersDataController
 
     public async Task<List<TeamMemberEntity>> GetMembersByTeamId(Guid teamId)
     {
-        try { return await _dbAccessService.GetAllByParameter<TeamMemberEntity>("sp_TeamMembers_GetByTeamId", "TeamId", teamId); }
-        catch (Exception e) { _logger.LogError(e, e.Message); return []; }
+        try
+        {
+            return await _dbAccessService.GetAllByParameter<TeamMemberEntity>("sp_TeamMembers_GetByTeamId", "TeamId",
+                teamId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
     }
 
     public async Task<TeamMemberEntity?> GetMemberByTeamIdAndUserId(Guid teamId, Guid userId)
@@ -29,17 +37,28 @@ public class TeamMembersDataController : ITeamMembersDataController
             var parameters = new DynamicParameters();
             parameters.Add("TeamId", teamId);
             parameters.Add("UserId", userId);
-            var results = await _dbAccessService.GetRecordsByParameters<TeamMemberEntity>(
+            List<TeamMemberEntity> results = await _dbAccessService.GetRecordsByParameters<TeamMemberEntity>(
                 "sp_TeamMembers_GetByTeamIdAndUserId", parameters);
             return results.FirstOrDefault();
         }
-        catch (Exception e) { _logger.LogError(e, e.Message); return null; }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
     }
 
     public async Task<bool> AddMember(TeamMemberEntity newMember)
     {
-        try { return await _dbAccessService.AddRecord("sp_TeamMembers_Create", newMember) >= 1; }
-        catch (Exception e) { _logger.LogError(e, e.Message); return false; }
+        try
+        {
+            return await _dbAccessService.AddRecord("sp_TeamMembers_Create", newMember) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
     public async Task<bool> RemoveMember(Guid teamId, Guid userId)
@@ -52,6 +71,10 @@ public class TeamMembersDataController : ITeamMembersDataController
             return await _dbAccessService.ExecuteByParameters(
                 "sp_TeamMembers_DeleteByTeamIdAndUserId", parameters) >= 1;
         }
-        catch (Exception e) { _logger.LogError(e, e.Message); return false; }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿@using ToDoTimeManager.WebUI.Shared
 
-<Router AppAssembly="@typeof(Program).Assembly" @rendermode="new InteractiveServerRenderMode(prerender: false)">
+<Router AppAssembly="@typeof(Program).Assembly" @rendermode="new InteractiveServerRenderMode(false)">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
     </Found>
     <NotFound>
         <CascadingAuthenticationState>

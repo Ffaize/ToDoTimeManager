@@ -10,23 +10,19 @@
 }
 
 
-    input:disabled {
-        color: rgba(255, 255, 255, 0.5) !important;
-        background: rgba(255, 255, 255, 0.5) !important;
-    }
-
-input::placeholder {
-    color: rgba(255, 255, 255,0.7)
+input:disabled {
+    color: rgba(255, 255, 255, 0.5) !important;
+    background: rgba(255, 255, 255, 0.5) !important;
 }
 
-    input:focus {
-        border: 2px solid var(--chestnut);
-    }
+input::placeholder { color: rgba(255, 255, 255, 0.7) }
 
-    input:focus-visible {
-        border: 2px solid var(--chestnut);
-        outline: unset;
-    }
+input:focus { border: 2px solid var(--chestnut); }
+
+input:focus-visible {
+    border: 2px solid var(--chestnut);
+    outline: unset;
+}
 
 textarea {
     border-radius: var(--border-radius-box);
@@ -42,28 +38,20 @@ textarea {
     -moz-appearance: textfield;
 }
 
-textarea::placeholder {
-        color: rgba(255, 255, 255,0.7)
-    }
+textarea::placeholder { color: rgba(255, 255, 255, 0.7) }
 
-@media(max-height: 700px) {
-    textarea {
-        max-height: 20vh;
-    }
+@media (max-height: 700px) {
+    textarea { max-height: 20vh; }
 }
 
-    textarea:focus {
-        border: 2px solid var(--chestnut);
-    }
+textarea:focus { border: 2px solid var(--chestnut); }
 
-    textarea:focus-visible {
-        border: 2px solid var(--chestnut);
-        outline: unset;
-    }
-
-.language-selector {
-    border-radius: var(--border-radius-box);
+textarea:focus-visible {
+    border: 2px solid var(--chestnut);
+    outline: unset;
 }
+
+.language-selector { border-radius: var(--border-radius-box); }
 
 select {
     border-radius: var(--border-radius-bth);
@@ -74,18 +62,14 @@ select {
     width: 100%;
 }
 
-    select:focus {
-        border: 2px solid var(--chestnut);
-    }
+select:focus { border: 2px solid var(--chestnut); }
 
-    select:focus-visible {
-        border: 2px solid var(--chestnut);
-        outline: unset;
-    }
+select:focus-visible {
+    border: 2px solid var(--chestnut);
+    outline: unset;
+}
 
-    select:hover {
-        cursor: pointer;
-    }
+select:hover { cursor: pointer; }
 
 .primary-button {
     width: 100%;
@@ -111,9 +95,7 @@ select {
     box-shadow: var(--shadow-button)
 }
 
-button:active {
-    border: 2px solid var(--chestnut);
-}
+button:active { border: 2px solid var(--chestnut); }
 
 .toast-box {
     background: 0 0;
@@ -142,34 +124,24 @@ button:active {
     opacity: 0;
 }
 
-@media(max-width: 1500px) {
-    .custom-toast {
-        width: 50vw;
-    }
+@media (max-width: 1500px) {
+    .custom-toast { width: 50vw; }
 }
 
-@media(max-width: 1100px) {
-    .custom-toast {
-        width: 60vw;
-    }
+@media (max-width: 1100px) {
+    .custom-toast { width: 60vw; }
 }
 
-@media(max-width: 900px) {
-    .custom-toast {
-        width: 70vw;
-    }
+@media (max-width: 900px) {
+    .custom-toast { width: 70vw; }
 }
 
-@media(max-width: 640px) {
-    .custom-toast {
-        width: 80vw;
-    }
+@media (max-width: 640px) {
+    .custom-toast { width: 80vw; }
 }
 
-@media(max-width: 500px) {
-    .custom-toast {
-        width: 90vw;
-    }
+@media (max-width: 500px) {
+    .custom-toast { width: 90vw; }
 }
 
 .custom-toast svg {
@@ -184,44 +156,30 @@ button:active {
     margin: 0;
     text-wrap-mode: wrap;
     line-height: 38px;
-    font-size: clamp(16px,20px,23px);
+    font-size: clamp(16px, 20px, 23px);
     color: var(--white-color);
     font-weight: 550;
 }
 
 
-.i-white {
-    fill: var(--white-color);
-}
+.i-white { fill: var(--white-color); }
 
-.success {
-    background: var(--success-color)
-}
+.success { background: var(--success-color) }
 
-    .success .toast-close-button {
-        background: #227338;
-    }
+.success .toast-close-button { background: #227338; }
 
-.error {
-    background: var(--error-color)
-}
+.error { background: var(--error-color) }
 
-    .error .toast-close-button {
-        background: #ad2a2a;
-    }
+.error .toast-close-button { background: #ad2a2a; }
 
 .toast-close-button {
     border-radius: var(--border-radius-box);
     border: 2px solid transparent;
 }
 
-.toast-fade-in {
-    animation: fadeIn 0.31s linear;
-}
+.toast-fade-in { animation: fadeIn 0.31s linear; }
 
-.toast-fade-out {
-    animation: fadeOut 0.3s linear;
-}
+.toast-fade-out { animation: fadeOut 0.3s linear; }
 
 .toast-faded {
     opacity: 1 !important;
@@ -266,13 +224,9 @@ button:active {
     fill: var(--white-color)
 }
 
-.primary-button svg * {
-    fill: var(--white-color)
-}
+.primary-button svg * { fill: var(--white-color) }
 
-.secondary-button svg * {
-    fill: var(--white-color)
-}
+.secondary-button svg * { fill: var(--white-color) }
 
 
 

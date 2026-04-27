@@ -5,14 +5,14 @@
 @inject NavigationManager NavigationManager
 
 <PageTitle>ToDoTimeManager.WebUI</PageTitle>
-<ToastBox />
+<ToastBox/>
 
 
 <AuthorizeView>
     <Authorized>
         <div class="page">
             <div class="sidebar">
-                <NavMenu CollapseNavMenu="ColapseNavMenu" CollapseNavMenuChanged="OnCollapseNavMenuChanged" />
+                <NavMenu CollapseNavMenu="ColapseNavMenu" CollapseNavMenuChanged="OnCollapseNavMenuChanged"/>
             </div>
 
             <main @onclick="HideNavMenu">
@@ -29,8 +29,7 @@
     </Authorizing>
 
     <NotAuthorized>
-        @if (!_navigated)
-        {
+        @if (!_navigated) {
             @NavigateToAuth()
         }
     </NotAuthorized>
@@ -40,27 +39,24 @@
     private bool _navigated;
     public bool ColapseNavMenu { get; set; }
 
-    private RenderFragment NavigateToAuth() => builder =>
-    {
-        _ = Task.Run(async () =>
-        {
-            await Task.Yield();
-            _navigated = true;
-            NavigationManager.NavigateTo("/auth");
-        });
-    };
+    private RenderFragment NavigateToAuth() {
+        return builder => {
+            _ = Task.Run(async () => {
+                await Task.Yield();
+                _navigated = true;
+                NavigationManager.NavigateTo("/auth");
+            });
+        };
+    }
 
-    private void HideNavMenu()
-    {
+    private void HideNavMenu() {
         ColapseNavMenu = true;
         StateHasChanged();
     }
 
-    private void OnCollapseNavMenuChanged(bool obj)
-    {
+    private void OnCollapseNavMenuChanged(bool obj) {
         ColapseNavMenu = obj;
         StateHasChanged();
     }
 
 }
-

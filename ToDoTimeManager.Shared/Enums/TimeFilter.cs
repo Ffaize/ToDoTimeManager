@@ -7,5 +7,4 @@ public enum TimeFilter
     WeekAgo,
     MonthAgo,
     YearAgo
-
 }

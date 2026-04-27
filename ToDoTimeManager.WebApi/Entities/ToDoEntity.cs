@@ -5,10 +5,8 @@ namespace ToDoTimeManager.WebApi.Entities;
 
 public class ToDoEntity
 {
-
     public ToDoEntity()
     {
-
     }
 
     public ToDoEntity(ToDo toDo)
@@ -21,8 +19,8 @@ public class ToDoEntity
         Status = toDo.Status;
         AssignedTo = toDo.AssignedTo;
         NumberedId = toDo.NumberedId;
-        TeamId     = toDo.TeamId;
-        ProjectId  = toDo.ProjectId;
+        TeamId = toDo.TeamId;
+        ProjectId = toDo.ProjectId;
     }
 
     public Guid Id { get; set; }
@@ -34,23 +32,23 @@ public class ToDoEntity
     public DateTime? DueDate { get; set; }
     public ToDoStatus Status { get; set; }
     public Guid? AssignedTo { get; set; }
-    public Guid? TeamId     { get; set; }
-    public Guid? ProjectId  { get; set; }
+    public Guid? TeamId { get; set; }
+    public Guid? ProjectId { get; set; }
 
     public ToDo ToToDo()
     {
         return new ToDo
         {
-            Id          = Id,
-            Title       = Title,
+            Id = Id,
+            Title = Title,
             Description = Description,
-            CreatedAt   = CreatedAt,
-            DueDate     = DueDate,
-            Status      = Status,
-            AssignedTo  = AssignedTo,
-            NumberedId  = NumberedId,
-            TeamId      = TeamId,
-            ProjectId   = ProjectId
+            CreatedAt = CreatedAt,
+            DueDate = DueDate,
+            Status = Status,
+            AssignedTo = AssignedTo,
+            NumberedId = NumberedId,
+            TeamId = TeamId,
+            ProjectId = ProjectId
         };
     }
 }

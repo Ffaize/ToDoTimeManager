@@ -71,7 +71,8 @@ public class UsersDataController : IUsersDataController
     {
         try
         {
-            return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter", "LoginParameter", loginParameter);
+            return await _dbAccessService.GetOneByParameter<UserEntity>("sp_Users_GetByLoginParameter",
+                "LoginParameter", loginParameter);
         }
         catch (Exception e)
         {

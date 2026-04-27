@@ -9,26 +9,26 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class ProjectsService : IProjectsService
 {
-    private readonly IProjectsDataController     _projectsDataController;
+    private readonly IProjectsDataController _projectsDataController;
     private readonly IProjectTeamsDataController _projectTeamsDataController;
-    private readonly IToDosService               _toDosService;
-    private readonly ILogger<ProjectsService>    _logger;
+    private readonly IToDosService _toDosService;
+    private readonly ILogger<ProjectsService> _logger;
 
     public ProjectsService(
-        IProjectsDataController     projectsDataController,
+        IProjectsDataController projectsDataController,
         IProjectTeamsDataController projectTeamsDataController,
-        IToDosService               toDosService,
-        ILogger<ProjectsService>    logger)
+        IToDosService toDosService,
+        ILogger<ProjectsService> logger)
     {
-        _projectsDataController     = projectsDataController;
+        _projectsDataController = projectsDataController;
         _projectTeamsDataController = projectTeamsDataController;
-        _toDosService               = toDosService;
-        _logger                     = logger;
+        _toDosService = toDosService;
+        _logger = logger;
     }
 
     public async Task<List<ProjectResponseDto>> GetAllProjects()
     {
-        var entities = await _projectsDataController.GetAllProjects();
+        List<ProjectEntity> entities = await _projectsDataController.GetAllProjects();
         return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
     }
 
@@ -46,8 +46,8 @@ public class ProjectsService : IProjectsService
             if (!isAdmin && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
                 throw new ForbiddenException();
 
-            var teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
-            var teams = teamEntities.Select(t => t.ToProjectTeam()).ToList();
+            List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
+            List<ProjectTeam> teams = teamEntities.Select(t => t.ToProjectTeam()).ToList();
             return MapToDto(entity.ToProject(), teams);
         }
         catch (ServiceException)
@@ -63,7 +63,7 @@ public class ProjectsService : IProjectsService
 
     public async Task<List<ProjectResponseDto>> GetProjectsByUserId(Guid userId)
     {
-        var entities = await _projectsDataController.GetProjectsByUserId(userId);
+        List<ProjectEntity> entities = await _projectsDataController.GetProjectsByUserId(userId);
         return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
     }
 
@@ -76,11 +76,11 @@ public class ProjectsService : IProjectsService
         {
             var entity = new ProjectEntity
             {
-                Id          = request.Id,
-                Name        = request.Name,
+                Id = request.Id,
+                Name = request.Name,
                 Description = request.Description,
-                CreatedAt   = DateTime.UtcNow,
-                CreatedBy   = createdByUserId
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = createdByUserId
             };
             return await _projectsDataController.CreateProject(entity);
         }
@@ -113,8 +113,8 @@ public class ProjectsService : IProjectsService
 
             var entity = new ProjectEntity
             {
-                Id          = request.Id,
-                Name        = request.Name,
+                Id = request.Id,
+                Name = request.Name,
                 Description = request.Description
             };
             return await _projectsDataController.UpdateProject(entity);
@@ -172,9 +172,9 @@ public class ProjectsService : IProjectsService
 
             var entity = new ProjectTeamEntity
             {
-                Id        = request.Id,
+                Id = request.Id,
                 ProjectId = request.ProjectId,
-                TeamId    = request.TeamId
+                TeamId = request.TeamId
             };
             return await _projectTeamsDataController.AddTeam(entity);
         }
@@ -251,18 +251,21 @@ public class ProjectsService : IProjectsService
     private async Task<bool> UserHasAccess(Guid projectId, Guid userId, Guid createdBy)
     {
         if (createdBy == userId) return true;
-        var accessible = await _projectsDataController.GetProjectsByUserId(userId);
+        List<ProjectEntity> accessible = await _projectsDataController.GetProjectsByUserId(userId);
         return accessible.Any(p => p.Id == projectId);
     }
 
-    private static ProjectResponseDto MapToDto(Project project, List<ProjectTeam>? teams) => new()
+    private static ProjectResponseDto MapToDto(Project project, List<ProjectTeam>? teams)
     {
-        Id          = project.Id,
-        Name        = project.Name,
-        Description = project.Description,
-        CreatedAt   = project.CreatedAt,
-        CreatedBy   = project.CreatedBy,
-        TeamCount   = project.TeamCount,
-        Teams       = teams
-    };
+        return new ProjectResponseDto
+        {
+            Id = project.Id,
+            Name = project.Name,
+            Description = project.Description,
+            CreatedAt = project.CreatedAt,
+            CreatedBy = project.CreatedBy,
+            TeamCount = project.TeamCount,
+            Teams = teams
+        };
+    }
 }

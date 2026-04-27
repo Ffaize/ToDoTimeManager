@@ -1,45 +1,44 @@
 using ToDoTimeManager.Shared.Models;
 
-namespace ToDoTimeManager.WebUI.Services.HttpServices
+namespace ToDoTimeManager.WebUI.Services.HttpServices;
+
+public class AuthService : BaseHttpService
 {
-    public class AuthService : BaseHttpService
+    private readonly ILogger<AuthService> _logger;
+
+    public AuthService(IHttpClientFactory httpClientFactory, ILogger<AuthService> logger) : base(httpClientFactory)
     {
-        private readonly ILogger<AuthService> _logger;
-        public AuthService(IHttpClientFactory httpClientFactory, ILogger<AuthService> logger) : base(httpClientFactory)
-        {
-            _logger = logger;
-            ApiControllerName = "Auth";
-        }
+        _logger = logger;
+        ApiControllerName = "Auth";
+    }
 
-        public async Task<TokenModel?> RefreshToken(TokenModel tokens)
+    public async Task<TokenModel?> RefreshToken(TokenModel tokens)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(Url("RefreshToken"), tokens);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<TokenModel>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            var response = await _httpClient.PostAsJsonAsync(Url("RefreshToken"), tokens);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<TokenModel>();
         }
-
-        public async Task<TokenModel?> Login(LoginUser user)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(Url("Login"), user);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<TokenModel>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-                return null;
-            }
+            _logger.LogError(ex.Message, ex);
+            return null;
         }
+    }
 
+    public async Task<TokenModel?> Login(LoginUser user)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(Url("Login"), user);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<TokenModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return null;
+        }
     }
 }

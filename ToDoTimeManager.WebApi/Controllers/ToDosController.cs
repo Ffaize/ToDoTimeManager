@@ -27,8 +27,15 @@ public class ToDosController : ControllerBase
         _toDosService = toDosService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves every to-do item in the system regardless of the assigned user.
@@ -39,7 +46,7 @@ public class ToDosController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllToDos()
     {
-        var toDos = await _toDosService.GetAllToDos();
+        List<ToDo> toDos = await _toDosService.GetAllToDos();
         return Ok(toDos);
     }
 
@@ -68,7 +75,7 @@ public class ToDosController : ControllerBase
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetToDosByUserId(Guid userId)
     {
-        var toDos = await _toDosService.GetToDosByUserId(userId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> toDos = await _toDosService.GetToDosByUserId(userId, GetCurrentUserId(), IsAdmin());
         return Ok(toDos);
     }
 
@@ -88,16 +95,16 @@ public class ToDosController : ControllerBase
     {
         var toDo = new ToDo
         {
-            Id          = request.Id,
-            NumberedId  = request.NumberedId,
-            Title       = request.Title,
+            Id = request.Id,
+            NumberedId = request.NumberedId,
+            Title = request.Title,
             Description = request.Description,
-            CreatedAt   = request.CreatedAt!.Value,
-            DueDate     = request.DueDate,
-            Status      = request.Status!.Value,
-            AssignedTo  = request.AssignedTo,
-            TeamId      = request.TeamId,
-            ProjectId   = request.ProjectId
+            CreatedAt = request.CreatedAt!.Value,
+            DueDate = request.DueDate,
+            Status = request.Status!.Value,
+            AssignedTo = request.AssignedTo,
+            TeamId = request.TeamId,
+            ProjectId = request.ProjectId
         };
 
         var created = await _toDosService.CreateToDo(toDo);
@@ -120,16 +127,16 @@ public class ToDosController : ControllerBase
     {
         var toDo = new ToDo
         {
-            Id          = request.Id,
-            NumberedId  = request.NumberedId,
-            Title       = request.Title,
+            Id = request.Id,
+            NumberedId = request.NumberedId,
+            Title = request.Title,
             Description = request.Description,
-            CreatedAt   = request.CreatedAt!.Value,
-            DueDate     = request.DueDate,
-            Status      = request.Status!.Value,
-            AssignedTo  = request.AssignedTo,
-            TeamId      = request.TeamId,
-            ProjectId   = request.ProjectId
+            CreatedAt = request.CreatedAt!.Value,
+            DueDate = request.DueDate,
+            Status = request.Status!.Value,
+            AssignedTo = request.AssignedTo,
+            TeamId = request.TeamId,
+            ProjectId = request.ProjectId
         };
 
         var updated = await _toDosService.UpdateToDo(toDo, GetCurrentUserId(), IsAdmin());

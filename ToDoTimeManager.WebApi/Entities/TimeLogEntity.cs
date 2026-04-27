@@ -4,10 +4,8 @@ namespace ToDoTimeManager.WebApi.Entities;
 
 public class TimeLogEntity
 {
-
     public TimeLogEntity()
     {
-
     }
 
 

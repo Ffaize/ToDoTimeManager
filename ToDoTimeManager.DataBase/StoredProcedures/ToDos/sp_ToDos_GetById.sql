@@ -1,16 +1,14 @@
-CREATE PROCEDURE [dbo].[sp_ToDos_GetById]
-	@Id UNIQUEIDENTIFIER
+CREATE PROCEDURE [dbo].[sp_ToDos_GetById] @Id UNIQUEIDENTIFIER
 AS
-	SELECT
-		Id,
-		Title,
-		Description,
-		CreatedAt,
-		DueDate,
-		Status,
-		AssignedTo,
-		NumberedId,
-		TeamId,
-		ProjectId
-	FROM [dbo].[ToDos]
-	WHERE Id = @Id
+SELECT Id,
+       Title,
+       Description,
+       CreatedAt,
+       DueDate,
+       Status,
+       AssignedTo,
+       NumberedId,
+       TeamId,
+       ProjectId
+FROM [dbo].[ToDos]
+WHERE Id = @Id

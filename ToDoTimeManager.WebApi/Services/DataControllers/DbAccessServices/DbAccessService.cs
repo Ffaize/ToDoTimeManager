@@ -92,7 +92,6 @@ public interface IDbAccessService
     /// Executes a stored procedure with the specified parameters (non-query — INSERT/UPDATE/DELETE).
     /// </summary>
     Task<int> ExecuteByParameters(string procedureName, DynamicParameters parameters);
-
 }
 
 /// <summary>
@@ -143,12 +142,14 @@ public class DbAccessService : IDbAccessService
         try
         {
             await using var connection = new SqlConnection(GetConnectionString());
-            var result = await connection.QueryAsync<TResult>(procedureName, commandType: CommandType.StoredProcedure);
+            IEnumerable<TResult> result =
+                await connection.QueryAsync<TResult>(procedureName, commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error retrieving records using procedure '{procedureName}': {e.Message}");
+            throw new InvalidOperationException(
+                $"Error retrieving records using procedure '{procedureName}': {e.Message}");
         }
     }
 
@@ -189,7 +190,8 @@ public class DbAccessService : IDbAccessService
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error updating record using procedure '{procedureName}': {e.Message}");
+            throw new InvalidOperationException(
+                $"Error updating record using procedure '{procedureName}': {e.Message}");
         }
     }
 
@@ -210,7 +212,8 @@ public class DbAccessService : IDbAccessService
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error deleting record with ID '{id}' using procedure '{procedureName}': {e.Message}");
+            throw new InvalidOperationException(
+                $"Error deleting record with ID '{id}' using procedure '{procedureName}': {e.Message}");
         }
     }
 
@@ -228,11 +231,13 @@ public class DbAccessService : IDbAccessService
             await using var connection = new SqlConnection(GetConnectionString());
             var parameters = new DynamicParameters();
             parameters.Add("@Id", id);
-            return await connection.QuerySingleOrDefaultAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QuerySingleOrDefaultAsync<TResult>(procedureName, parameters,
+                commandType: CommandType.StoredProcedure);
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error retrieving record with ID '{id}' using procedure '{procedureName}' : {e.Message}");
+            throw new InvalidOperationException(
+                $"Error retrieving record with ID '{id}' using procedure '{procedureName}' : {e.Message}");
         }
     }
 
@@ -253,11 +258,13 @@ public class DbAccessService : IDbAccessService
             parameters.Add(parameterName, value);
             // Stored procedures can (by DB data or query logic) return multiple rows.
             // For "GetOne..." operations we want to be resilient and return the first match.
-            return await connection.QueryFirstOrDefaultAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryFirstOrDefaultAsync<TResult>(procedureName, parameters,
+                commandType: CommandType.StoredProcedure);
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error retrieving record with parameter '{parameterName}' and value '{value}' using procedure '{procedureName}': {e.Message}");
+            throw new InvalidOperationException(
+                $"Error retrieving record with parameter '{parameterName}' and value '{value}' using procedure '{procedureName}': {e.Message}");
         }
     }
 
@@ -269,7 +276,8 @@ public class DbAccessService : IDbAccessService
     /// <param name="parameterName"></param>
     /// <param name="value"></param>
     /// <returns>All items with specified parameter</returns>
-    public async Task<List<TResult>> GetAllByParameter<TResult>(string procedureName, string parameterName, object value)
+    public async Task<List<TResult>> GetAllByParameter<TResult>(string procedureName, string parameterName,
+        object value)
     {
         try
         {
@@ -277,12 +285,14 @@ public class DbAccessService : IDbAccessService
             var parameters = new DynamicParameters();
             parameters.Add(parameterName, value);
 
-            var result = await connection.QueryAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            IEnumerable<TResult> result = await connection.QueryAsync<TResult>(procedureName, parameters,
+                commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error retrieving records with parameter '{parameterName}' and value '{value}' using procedure '{procedureName}': {e.Message}");
+            throw new InvalidOperationException(
+                $"Error retrieving records with parameter '{parameterName}' and value '{value}' using procedure '{procedureName}': {e.Message}");
         }
     }
 
@@ -292,12 +302,14 @@ public class DbAccessService : IDbAccessService
         try
         {
             await using var connection = new SqlConnection(GetConnectionString());
-            var result = await connection.QueryAsync<TResult>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            IEnumerable<TResult> result = await connection.QueryAsync<TResult>(procedureName, parameters,
+                commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error retrieving records using procedure '{procedureName}' with parameters: {e.Message}");
+            throw new InvalidOperationException(
+                $"Error retrieving records using procedure '{procedureName}' with parameters: {e.Message}");
         }
     }
 
@@ -310,8 +322,8 @@ public class DbAccessService : IDbAccessService
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException($"Error executing procedure '{procedureName}' with parameters: {e.Message}");
+            throw new InvalidOperationException(
+                $"Error executing procedure '{procedureName}' with parameters: {e.Message}");
         }
     }
-
 }

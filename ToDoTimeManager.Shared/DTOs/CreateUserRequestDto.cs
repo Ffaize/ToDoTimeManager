@@ -6,8 +6,7 @@ namespace ToDoTimeManager.Shared.DTOs;
 
 public sealed class CreateUserRequestDto
 {
-    [NotEmptyGuid]
-    public Guid Id { get; set; }
+    [NotEmptyGuid] public Guid Id { get; set; }
 
     [Required]
     [MinLength(2)]
@@ -24,7 +23,5 @@ public sealed class CreateUserRequestDto
     [MaxLength(200)]
     public string Password { get; set; } = string.Empty;
 
-    [Required]
-    public UserRole? UserRole { get; set; }
+    [Required] public UserRole? UserRole { get; set; }
 }
-

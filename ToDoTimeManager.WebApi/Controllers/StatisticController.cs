@@ -28,8 +28,15 @@ public class StatisticController : ControllerBase
         _statisticService = statisticService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves the all-time count of to-do items grouped by status for a specific user.
@@ -43,7 +50,8 @@ public class StatisticController : ControllerBase
     [HttpGet("GetToDoCountStatisticsOfAllTimeByUserId/{userId}")]
     public async Task<IActionResult> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId)
     {
-        var statistics = await _statisticService.GetToDoCountStatisticsOfAllTimeByUserId(userId, GetCurrentUserId(), IsAdmin());
+        List<ToDoCountStatisticsOfAllTime> statistics =
+            await _statisticService.GetToDoCountStatisticsOfAllTimeByUserId(userId, GetCurrentUserId(), IsAdmin());
         return Ok(statistics);
     }
 

@@ -1,6 +1,6 @@
 @using Microsoft.Extensions.Localization
 @using ToDoTimeManager.Shared.DTOs
-@using ToDoTimeManager.WebUI.Localization
+@using ToDoTimeManager.WebUI.Resources
 <div class="modal-overlay" @onclick="OnOverlayClick" hidden="@(!Show)"></div>
 
 <div class="modal-window" hidden="@(!Show)">
@@ -10,12 +10,12 @@
     <div class="modal-content">
         <div style="width: 100%;">
             <h4>@Localizer["UserName"]</h4>
-            <InputText @bind-Value="@InternalUser.UserName" placeholder="@Localizer["Enter..."]" />
+            <InputText @bind-Value="@InternalUser.UserName" placeholder="@Localizer["Enter..."]"/>
         </div>
 
         <div style="width: 100%;">
             <h4>@Localizer["Email"]</h4>
-            <InputText @bind-Value="@InternalUser.Email" placeholder="@Localizer["Enter..."]" />
+            <InputText @bind-Value="@InternalUser.Email" placeholder="@Localizer["Enter..."]"/>
         </div>
     </div>
     <div class="modal-footer">
@@ -27,37 +27,48 @@
         </button>
     </div>
 </div>
+
 @code {
 
-    [Parameter] public UserResponseDto? User { get; set; } = new() { Id = Guid.NewGuid() };
-    [Parameter] public Action<ModalResult> ResultChanged { get; set; } = null!;
-    [Parameter] public bool Show { get; set; }
-    [Parameter] public string Title { get; set; } = string.Empty;
-    [Parameter] public bool IsPerformedByAdmin { get; set; }
+    [Parameter]
+    public UserResponseDto? User { get; set; } = new() { Id = Guid.NewGuid() };
+
+    [Parameter]
+    public Action<ModalResult> ResultChanged { get; set; } = null!;
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsPerformedByAdmin { get; set; }
 
     private UpdateUserRequestDto InternalUser { get; set; } = new() { Id = Guid.Empty };
 
     #region BaseForComponent
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
+    [Inject]
+    private IStringLocalizer<Resource> Localizer { get; set; } = null!;
+
     public bool IsLoading { get; set; }
-    public void ShowLoader()
-    {
+
+    public void ShowLoader() {
         IsLoading = true;
         InvokeAsync(StateHasChanged);
     }
-    public void HideLoader()
-    {
+
+    public void HideLoader() {
         IsLoading = false;
         InvokeAsync(StateHasChanged);
     }
+
     #endregion
 
-    protected override void OnParametersSet()
-    {
-        if (User is not null)
-        {
-            InternalUser = new UpdateUserRequestDto
-            {
+    protected override void OnParametersSet() {
+        if (User is not null) {
+            InternalUser = new UpdateUserRequestDto {
                 Id = User.Id,
                 UserName = User.UserName ?? string.Empty,
                 Email = User.Email ?? string.Empty
@@ -67,25 +78,21 @@
         base.OnParametersSet();
     }
 
-    private async Task Close(bool isDataSave)
-    {
+    private async Task Close(bool isDataSave) {
         Show = false;
         ResultChanged?.Invoke(!isDataSave ? new ModalResult(Show, false) : new ModalResult(Show, true, InternalUser));
         await InvokeAsync(StateHasChanged);
     }
 
-    private void OnOverlayClick()
-    {
+    private void OnOverlayClick() {
         _ = Close(false);
     }
 
-    private void OnCancelClicked()
-    {
+    private void OnCancelClicked() {
         _ = Close(false);
     }
 
-    private void OnSaveClicked()
-    {
+    private void OnSaveClicked() {
         _ = Close(true);
     }
 

@@ -28,8 +28,15 @@ public class TimeLogsController : ControllerBase
         _timeLogsService = timeLogsService;
     }
 
-    private Guid GetCurrentUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    private bool IsAdmin() => User.IsInRole("Admin");
+    private Guid GetCurrentUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    }
+
+    private bool IsAdmin()
+    {
+        return User.IsInRole("Admin");
+    }
 
     /// <summary>
     /// Retrieves every time log entry in the system across all users and to-do items.
@@ -40,7 +47,7 @@ public class TimeLogsController : ControllerBase
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllTimeLogs()
     {
-        var timeLogs = await _timeLogsService.GetAllTimeLogs();
+        List<TimeLog> timeLogs = await _timeLogsService.GetAllTimeLogs();
         return Ok(timeLogs);
     }
 
@@ -68,7 +75,7 @@ public class TimeLogsController : ControllerBase
     [HttpGet("GetByToDoId/{toDoId}")]
     public async Task<IActionResult> GetTimeLogsByToDoId(Guid toDoId)
     {
-        var timeLogs = await _timeLogsService.GetTimeLogsByToDoId(toDoId);
+        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByToDoId(toDoId);
         return Ok(timeLogs);
     }
 
@@ -81,7 +88,7 @@ public class TimeLogsController : ControllerBase
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetTimeLogsByUserId(Guid userId)
     {
-        var timeLogs = await _timeLogsService.GetTimeLogsByUserId(userId, GetCurrentUserId(), IsAdmin());
+        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByUserId(userId, GetCurrentUserId(), IsAdmin());
         return Ok(timeLogs);
     }
 
@@ -95,7 +102,8 @@ public class TimeLogsController : ControllerBase
     [HttpGet("GetByUserIdAndToDoId/{userId}/{toDoId}")]
     public async Task<IActionResult> GetTimeLogsByUserIdAndToDoId(Guid userId, Guid toDoId)
     {
-        var timeLogs = await _timeLogsService.GetTimeLogsByUserIdAndToDoId(toDoId, userId, GetCurrentUserId(), IsAdmin());
+        List<TimeLog> timeLogs =
+            await _timeLogsService.GetTimeLogsByUserIdAndToDoId(toDoId, userId, GetCurrentUserId(), IsAdmin());
         return Ok(timeLogs);
     }
 
@@ -115,11 +123,11 @@ public class TimeLogsController : ControllerBase
     {
         var timeLog = new TimeLog
         {
-            Id             = request.Id,
-            ToDoId         = request.ToDoId,
-            UserId         = request.UserId,
-            HoursSpent     = request.HoursSpent!.Value,
-            LogDate        = request.LogDate!.Value,
+            Id = request.Id,
+            ToDoId = request.ToDoId,
+            UserId = request.UserId,
+            HoursSpent = request.HoursSpent!.Value,
+            LogDate = request.LogDate!.Value,
             LogDescription = request.LogDescription
         };
 
@@ -143,11 +151,11 @@ public class TimeLogsController : ControllerBase
     {
         var timeLog = new TimeLog
         {
-            Id             = request.Id,
-            ToDoId         = request.ToDoId,
-            UserId         = request.UserId,
-            HoursSpent     = request.HoursSpent!.Value,
-            LogDate        = request.LogDate!.Value,
+            Id = request.Id,
+            ToDoId = request.ToDoId,
+            UserId = request.UserId,
+            HoursSpent = request.HoursSpent!.Value,
+            LogDate = request.LogDate!.Value,
             LogDescription = request.LogDescription
         };
 

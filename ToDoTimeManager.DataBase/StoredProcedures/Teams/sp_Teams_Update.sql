@@ -1,7 +1,6 @@
-CREATE PROCEDURE [dbo].[sp_Teams_Update]
-    @Id          UNIQUEIDENTIFIER,
-    @Name        NVARCHAR(100),
-    @Description NVARCHAR(500)
+CREATE PROCEDURE [dbo].[sp_Teams_Update] @Id UNIQUEIDENTIFIER,
+                                         @Name NVARCHAR(100),
+                                         @Description NVARCHAR(500)
 AS
 BEGIN
     SET NOCOUNT ON;

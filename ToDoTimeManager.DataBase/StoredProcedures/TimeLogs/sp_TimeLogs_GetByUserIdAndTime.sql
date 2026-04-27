@@ -1,6 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[sp_TimeLogs_GetByUserIdAndTime]
-    @UserId UNIQUEIDENTIFIER,
-    @DaysAgo INT
+﻿CREATE PROCEDURE [dbo].[sp_TimeLogs_GetByUserIdAndTime] @UserId UNIQUEIDENTIFIER,
+                                                        @DaysAgo INT
 AS
 BEGIN
     SET NOCOUNT ON;

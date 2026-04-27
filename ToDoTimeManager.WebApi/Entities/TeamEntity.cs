@@ -4,31 +4,36 @@ namespace ToDoTimeManager.WebApi.Entities;
 
 public class TeamEntity
 {
-    public TeamEntity() { }
+    public TeamEntity()
+    {
+    }
 
     public TeamEntity(Team team)
     {
-        Id          = team.Id;
-        Name        = team.Name;
+        Id = team.Id;
+        Name = team.Name;
         Description = team.Description;
-        CreatedAt   = team.CreatedAt;
-        CreatedBy   = team.CreatedBy;
+        CreatedAt = team.CreatedAt;
+        CreatedBy = team.CreatedBy;
     }
 
-    public Guid     Id          { get; set; }
-    public string   Name        { get; set; } = string.Empty;
-    public string?  Description { get; set; }
-    public DateTime CreatedAt   { get; set; }
-    public Guid     CreatedBy   { get; set; }
-    public int      MemberCount { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public Guid CreatedBy { get; set; }
+    public int MemberCount { get; set; }
 
-    public Team ToTeam() => new()
+    public Team ToTeam()
     {
-        Id          = Id,
-        Name        = Name,
-        Description = Description,
-        CreatedAt   = CreatedAt,
-        CreatedBy   = CreatedBy,
-        MemberCount = MemberCount
-    };
+        return new Team
+        {
+            Id = Id,
+            Name = Name,
+            Description = Description,
+            CreatedAt = CreatedAt,
+            CreatedBy = CreatedBy,
+            MemberCount = MemberCount
+        };
+    }
 }

@@ -8,25 +8,25 @@ public class AuthResponsesOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var authAttributes = context.MethodInfo.DeclaringType?.GetCustomAttributes(true)
+        IEnumerable<AuthorizeAttribute>? authAttributes = context.MethodInfo.DeclaringType?.GetCustomAttributes(true)
             .Union(context.MethodInfo.GetCustomAttributes(true))
             .OfType<AuthorizeAttribute>();
 
         if (authAttributes == null || !authAttributes.Any()) return;
-        var securityRequirement = new OpenApiSecurityRequirement()
+        var securityRequirement = new OpenApiSecurityRequirement
         {
             {
                 // Put here you own security scheme, this one is an example
-                new()
+                new OpenApiSecurityScheme
                 {
-                    Reference = new()
+                    Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = "Bearer"
                     },
                     Scheme = "oauth2",
                     Name = "Bearer",
-                    In = ParameterLocation.Header,
+                    In = ParameterLocation.Header
                 },
                 new List<string>()
             }

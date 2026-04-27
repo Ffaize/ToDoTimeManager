@@ -1,16 +1,16 @@
 ﻿CREATE TABLE [dbo].[ToDos]
 (
-    Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-    NumberedId INT NOT NULL,
-    Title NVARCHAR(100) NULL,
-    Description NVARCHAR(MAX) NULL,
-    CreatedAt DATETIME NOT NULL,
-    DueDate DATETIME NULL,
-    Status INT NOT NULL,
-    AssignedTo UNIQUEIDENTIFIER NULL,
-    TeamId     UNIQUEIDENTIFIER NULL,
-    ProjectId  UNIQUEIDENTIFIER NULL,
-    CONSTRAINT [FK_ToDos_Users]    FOREIGN KEY ([AssignedTo]) REFERENCES [Users]([Id]),
-    CONSTRAINT [FK_ToDos_Teams]    FOREIGN KEY ([TeamId])     REFERENCES [Teams]([Id]),
-    CONSTRAINT [FK_ToDos_Projects] FOREIGN KEY ([ProjectId])  REFERENCES [Projects]([Id])
+    Id          UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    NumberedId  INT              NOT NULL,
+    Title       NVARCHAR(100)    NULL,
+    Description NVARCHAR(MAX)    NULL,
+    CreatedAt   DATETIME         NOT NULL,
+    DueDate     DATETIME         NULL,
+    Status      INT              NOT NULL,
+    AssignedTo  UNIQUEIDENTIFIER NULL,
+    TeamId      UNIQUEIDENTIFIER NULL,
+    ProjectId   UNIQUEIDENTIFIER NULL,
+    CONSTRAINT [FK_ToDos_Users] FOREIGN KEY ([AssignedTo]) REFERENCES [Users] ([Id]),
+    CONSTRAINT [FK_ToDos_Teams] FOREIGN KEY ([TeamId]) REFERENCES [Teams] ([Id]),
+    CONSTRAINT [FK_ToDos_Projects] FOREIGN KEY ([ProjectId]) REFERENCES [Projects] ([Id])
 )

@@ -6,5 +6,5 @@ public enum TeamMemberRole
     BackEndDeveloper = 1,
     FrontEndDeveloper = 2,
     FullStackDeveloper = 3,
-    Owner  = 4,
+    Owner = 4
 }

@@ -5,5 +5,5 @@ CREATE TABLE [dbo].[Teams]
     Description NVARCHAR(500)    NULL,
     CreatedAt   DATETIME         NOT NULL,
     CreatedBy   UNIQUEIDENTIFIER NOT NULL,
-    CONSTRAINT [FK_Teams_Users_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users]([Id])
+    CONSTRAINT [FK_Teams_Users_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [Users] ([Id])
 )

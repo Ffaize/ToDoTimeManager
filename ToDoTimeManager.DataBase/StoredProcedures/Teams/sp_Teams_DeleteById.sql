@@ -1,5 +1,4 @@
-CREATE PROCEDURE [dbo].[sp_Teams_DeleteById]
-    @Id UNIQUEIDENTIFIER
+CREATE PROCEDURE [dbo].[sp_Teams_DeleteById] @Id UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -8,9 +7,11 @@ BEGIN
     SET TeamId = NULL
     WHERE TeamId = @Id;
 
-    DELETE FROM [dbo].[TeamMembers]
+    DELETE
+    FROM [dbo].[TeamMembers]
     WHERE TeamId = @Id;
 
-    DELETE FROM [dbo].[Teams]
+    DELETE
+    FROM [dbo].[Teams]
     WHERE Id = @Id;
 END

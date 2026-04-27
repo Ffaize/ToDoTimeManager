@@ -1,9 +1,8 @@
-CREATE PROCEDURE [dbo].[sp_Teams_Create]
-    @Id          UNIQUEIDENTIFIER,
-    @Name        NVARCHAR(100),
-    @Description NVARCHAR(500),
-    @CreatedAt   DATETIME,
-    @CreatedBy   UNIQUEIDENTIFIER
+CREATE PROCEDURE [dbo].[sp_Teams_Create] @Id UNIQUEIDENTIFIER,
+                                         @Name NVARCHAR(100),
+                                         @Description NVARCHAR(500),
+                                         @CreatedAt DATETIME,
+                                         @CreatedBy UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;

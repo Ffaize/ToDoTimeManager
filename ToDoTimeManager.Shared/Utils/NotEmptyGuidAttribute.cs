@@ -14,4 +14,3 @@ public sealed class NotEmptyGuidAttribute : ValidationAttribute
         return false;
     }
 }
-

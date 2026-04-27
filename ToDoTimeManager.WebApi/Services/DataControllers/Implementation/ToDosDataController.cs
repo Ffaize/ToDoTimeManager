@@ -9,7 +9,6 @@ namespace ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
 
 public class ToDosDataController : IToDosDataController
 {
-
     private readonly IDbAccessService _dbAccessService;
     private readonly ILogger<ToDosDataController> _logger;
 
@@ -18,6 +17,7 @@ public class ToDosDataController : IToDosDataController
         _dbAccessService = dbAccessService;
         _logger = logger;
     }
+
     public async Task<List<ToDoEntity>> GetAllToDos()
     {
         try
@@ -48,7 +48,8 @@ public class ToDosDataController : IToDosDataController
     {
         try
         {
-            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByAssignedTo", "AssignedTo", userId);
+            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByAssignedTo", "AssignedTo",
+                userId);
         }
         catch (Exception e)
         {
@@ -65,7 +66,9 @@ public class ToDosDataController : IToDosDataController
             parameters.Add("UserId", userId);
             parameters.Add("ToDoStatus", status);
 
-            var result = await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetCountByUserIdAndStatus", parameters);
+            List<ToDoEntity> result =
+                await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetCountByUserIdAndStatus",
+                    parameters);
             return result.Count;
         }
         catch (Exception e)
@@ -120,7 +123,9 @@ public class ToDosDataController : IToDosDataController
         {
             var parameters = new DynamicParameters();
             parameters.Add("UserId", filterUserId);
-            var result = await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetByNearestDueDateByUserId", parameters);
+            List<ToDoEntity> result =
+                await _dbAccessService.GetRecordsByParameters<ToDoEntity>("sp_ToDos_GetByNearestDueDateByUserId",
+                    parameters);
             return result.Select(x => x.ToToDo()).ToList();
         }
         catch (Exception e)
@@ -147,7 +152,8 @@ public class ToDosDataController : IToDosDataController
     {
         try
         {
-            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByProjectId", "ProjectId", projectId);
+            return await _dbAccessService.GetAllByParameter<ToDoEntity>("sp_ToDos_GetByProjectId", "ProjectId",
+                projectId);
         }
         catch (Exception e)
         {

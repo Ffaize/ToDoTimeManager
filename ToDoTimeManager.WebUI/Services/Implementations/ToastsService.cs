@@ -7,6 +7,7 @@ public class ToastsService
 {
     public List<ToastModel> Messages { get; set; } = [];
     public Action? OnChange { get; set; }
+
     public async Task ShowToast(string message, bool isError)
     {
         if (Messages is { Count: > 4 })
@@ -21,7 +22,6 @@ public class ToastsService
         OnChange?.Invoke();
     }
 }
-
 
 public class ToastModel : IDisposable
 {
@@ -50,6 +50,7 @@ public class ToastModel : IDisposable
         CreateTimer();
         Timer?.Start();
     }
+
     private void CreateTimer()
     {
         Timer = new Timer();

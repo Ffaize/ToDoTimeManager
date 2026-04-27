@@ -8,7 +8,6 @@ namespace ToDoTimeManager.WebApi.Utils.Implementations;
 
 public class PasswordHelperService : IPasswordHelperService
 {
-
     public string HashPassword(string salt, string password)
     {
         var userHash = HashPasswordWithSalt(password, DateToByteArray(salt));
@@ -23,7 +22,9 @@ public class PasswordHelperService : IPasswordHelperService
 
     private static PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword)
     {
-        return user.Password != null && user.Password.Equals(hashedPassword) ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;
+        return user.Password != null && user.Password.Equals(hashedPassword)
+            ? PasswordVerificationResult.Success
+            : PasswordVerificationResult.Failed;
     }
 
     private static byte[] DateToByteArray(string salt)
@@ -35,6 +36,7 @@ public class PasswordHelperService : IPasswordHelperService
             writer.WriteString("string", salt);
             writer.WriteEndObject();
         }
+
         var dateTimeBytes = memoryStream.ToArray();
         return dateTimeBytes;
     }
@@ -42,10 +44,10 @@ public class PasswordHelperService : IPasswordHelperService
     private static string HashPasswordWithSalt(string password, byte[] salt)
     {
         return Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password: password,
-            salt: salt,
-            prf: KeyDerivationPrf.HMACSHA256,
-            iterationCount: 100000,
-            numBytesRequested: 256 / 8));
+            password,
+            salt,
+            KeyDerivationPrf.HMACSHA256,
+            100000,
+            256 / 8));
     }
 }
