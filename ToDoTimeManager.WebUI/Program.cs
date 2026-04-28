@@ -26,6 +26,7 @@ public class Program
             .AddCircuitOptions(options => { options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1); });
 
         builder.Services.AddSingleton<IToastsService, ToastsService>();
+        builder.Services.AddScoped<IModalService, ModalService>();
         builder.Services.AddScoped<TokenMessageHandler>();
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();
