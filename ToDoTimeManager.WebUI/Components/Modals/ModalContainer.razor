@@ -1,0 +1,17 @@
+@if (ModalService.ActiveComponentType is not null)
+{
+    <div class="modal-backdrop">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title">@ModalService.ActiveTitle</span>
+                <button class="modal-close-btn" @onclick="OnCancel">
+                    <CloseIcon />
+                </button>
+            </div>
+            <div class="modal-content">
+                <DynamicComponent Type="ModalService.ActiveComponentType"
+                                  Parameters="GetParameters()" />
+            </div>
+        </div>
+    </div>
+}
