@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using ToDoTimeManager.WebUI.Services.Implementations;
+using ToDoTimeManager.WebUI.Services.Interfaces;
 
 namespace ToDoTimeManager.WebUI.Components.Toast;
 
 public partial class ToastBox : IDisposable
 {
-    [Inject] private ToastsService ToastService { get; set; } = null!;
+    [Inject] private IToastsService ToastService { get; set; } = null!;
 
     protected override void OnInitialized()
     {

@@ -1,8 +1,9 @@
 using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
-using ToDoTimeManager.WebUI.Services.Implementations;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
+using ToDoTimeManager.WebUI.Models.Enums;
+using ToDoTimeManager.WebUI.Services.Interfaces;
 
 namespace ToDoTimeManager.WebUI.Handlers;
 
@@ -34,8 +35,8 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
             if (string.IsNullOrWhiteSpace(message))
                 message = content.Replace("\"", string.Empty);
 
-            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<ToastsService>();
-            await toastMessagesService.ShowToast(message, true);
+            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<IToastsService>();
+            await toastMessagesService.ShowToast(message, ToastType.Error);
             return response;
         }
         catch (Exception e)

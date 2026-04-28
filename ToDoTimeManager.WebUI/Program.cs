@@ -4,6 +4,7 @@ using ToDoTimeManager.WebUI.Handlers;
 using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
+using ToDoTimeManager.WebUI.Services.Interfaces;
 
 namespace ToDoTimeManager.WebUI;
 
@@ -24,7 +25,7 @@ public class Program
         builder.Services.AddServerSideBlazor()
             .AddCircuitOptions(options => { options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1); });
 
-        builder.Services.AddSingleton<ToastsService>();
+        builder.Services.AddSingleton<IToastsService, ToastsService>();
         builder.Services.AddScoped<TokenMessageHandler>();
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();

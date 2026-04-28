@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\Interfaces\**" />
-    <Content Remove="Services\Interfaces\**" />
-    <EmbeddedResource Remove="Services\Interfaces\**" />
-    <None Remove="Services\Interfaces\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.21" />
   </ItemGroup>
