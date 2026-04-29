@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
@@ -12,9 +11,7 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// Manages user accounts including registration, profile updates, role management, and deletion.
 /// Individual endpoints carry their own authorization requirements.
 /// </summary>
-[ApiController]
-[Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController : BaseController
 {
     private readonly IUsersService _usersService;
 
@@ -25,16 +22,6 @@ public class UsersController : ControllerBase
     public UsersController(IUsersService usersService)
     {
         _usersService = usersService;
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    }
-
-    private bool IsAdmin()
-    {
-        return User.IsInRole("Admin");
     }
 
     /// <summary>

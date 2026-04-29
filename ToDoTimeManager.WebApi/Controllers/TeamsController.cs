@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -13,9 +12,7 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// Operations on other users' teams are restricted to administrators or team creators.
 /// </summary>
 [Authorize]
-[ApiController]
-[Route("api/[controller]")]
-public class TeamsController : ControllerBase
+public class TeamsController : BaseController
 {
     private readonly ITeamsService _teamsService;
 
@@ -26,16 +23,6 @@ public class TeamsController : ControllerBase
     public TeamsController(ITeamsService teamsService)
     {
         _teamsService = teamsService;
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    }
-
-    private bool IsAdmin()
-    {
-        return User.IsInRole("Admin");
     }
 
     /// <summary>

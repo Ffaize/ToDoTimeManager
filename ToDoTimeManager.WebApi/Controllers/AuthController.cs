@@ -9,10 +9,8 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// Handles authentication operations including login and token refresh.
 /// All endpoints are publicly accessible without a prior authentication token.
 /// </summary>
-[ApiController]
 [AllowAnonymous]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
 

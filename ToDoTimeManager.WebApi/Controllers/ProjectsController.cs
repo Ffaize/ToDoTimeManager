@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -13,9 +12,7 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// Operations on other users' projects are restricted to administrators or project creators.
 /// </summary>
 [Authorize]
-[ApiController]
-[Route("api/[controller]")]
-public class ProjectsController : ControllerBase
+public class ProjectsController : BaseController
 {
     private readonly IProjectsService _projectsService;
 
@@ -26,16 +23,6 @@ public class ProjectsController : ControllerBase
     public ProjectsController(IProjectsService projectsService)
     {
         _projectsService = projectsService;
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    }
-
-    private bool IsAdmin()
-    {
-        return User.IsInRole("Admin");
     }
 
     /// <summary>
