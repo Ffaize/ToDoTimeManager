@@ -1,0 +1,8 @@
+CREATE TABLE [dbo].[TwoFactorCodes]
+(
+    Id        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID() PRIMARY KEY,
+    UserId    UNIQUEIDENTIFIER NOT NULL REFERENCES [dbo].[Users] (Id) ON DELETE CASCADE,
+    Code      NVARCHAR(7)      NOT NULL,
+    ExpiresAt DATETIME         NOT NULL,
+    CONSTRAINT [UQ_TwoFactorCodes_UserId] UNIQUE (UserId)
+)

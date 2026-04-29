@@ -18,22 +18,25 @@ public class AuthService : IAuthService
     private readonly IJwtGeneratorService _jwtGeneratorService;
     private readonly IConfiguration _configuration;
     private readonly IUsersDataController _usersDataController;
+    private readonly ITwoFactorService _twoFactorService;
 
     public AuthService(
         ILogger<AuthService> logger,
         IPasswordHelperService passwordHelperService,
         IJwtGeneratorService jwtGeneratorService,
         IConfiguration configuration,
-        IUsersDataController usersDataController)
+        IUsersDataController usersDataController,
+        ITwoFactorService twoFactorService)
     {
         _logger = logger;
         _passwordHelperService = passwordHelperService;
         _jwtGeneratorService = jwtGeneratorService;
         _configuration = configuration;
         _usersDataController = usersDataController;
+        _twoFactorService = twoFactorService;
     }
 
-    public async Task<TokenModel?> Login(LoginUser loginUser)
+    public async Task<TwoFactorPendingModel?> Login(LoginUser loginUser)
     {
         if (loginUser == null || string.IsNullOrWhiteSpace(loginUser.LoginParameter))
             throw new ValidationException("Login data is invalid");
@@ -51,13 +54,7 @@ public class AuthService : IAuthService
             if (!_passwordHelperService.VerifyPassword(user, passwordHash))
                 throw new ValidationException("Invalid username or password");
 
-            return new TokenModel
-            {
-                AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-                RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
-                RefreshTokenExpiresAt =
-                    DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
-            };
+            return await _twoFactorService.SendCode(user.Id);
         }
         catch (ServiceException)
         {

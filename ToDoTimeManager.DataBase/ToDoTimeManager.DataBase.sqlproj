@@ -65,6 +65,7 @@
     <Folder Include="StoredProcedures\TeamMembers" />
     <Folder Include="StoredProcedures\Projects" />
     <Folder Include="StoredProcedures\ProjectTeams" />
+    <Folder Include="StoredProcedures\TwoFactorCodes" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users.sql" />
@@ -122,5 +123,9 @@
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_GetByProjectId.sql" />
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_GetByProjectIdAndTeamId.sql" />
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_DeleteByProjectIdAndTeamId.sql" />
+    <Build Include="Tables\TwoFactorCodes.sql" />
+    <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_DeleteByUserId.sql" />
+    <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_GetByUserId.sql" />
+    <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_Upsert.sql" />
   </ItemGroup>
 </Project>
