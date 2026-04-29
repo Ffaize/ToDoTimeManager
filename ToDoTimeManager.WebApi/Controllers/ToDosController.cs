@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -12,9 +11,7 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// Access to other users' items is restricted to administrators.
 /// </summary>
 [Authorize]
-[ApiController]
-[Route("api/[controller]")]
-public class ToDosController : ControllerBase
+public class ToDosController : BaseController
 {
     private readonly IToDosService _toDosService;
 
@@ -25,16 +22,6 @@ public class ToDosController : ControllerBase
     public ToDosController(IToDosService toDosService)
     {
         _toDosService = toDosService;
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    }
-
-    private bool IsAdmin()
-    {
-        return User.IsInRole("Admin");
     }
 
     /// <summary>

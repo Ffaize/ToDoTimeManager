@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -12,10 +11,8 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// All endpoints require an authenticated user.
 /// Querying another user's statistics is restricted to administrators.
 /// </summary>
-[ApiController]
-[Route("api/[controller]")]
 [Authorize]
-public class StatisticController : ControllerBase
+public class StatisticController : BaseController
 {
     private readonly IStatisticService _statisticService;
 
@@ -26,16 +23,6 @@ public class StatisticController : ControllerBase
     public StatisticController(IStatisticService statisticService)
     {
         _statisticService = statisticService;
-    }
-
-    private Guid GetCurrentUserId()
-    {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    }
-
-    private bool IsAdmin()
-    {
-        return User.IsInRole("Admin");
     }
 
     /// <summary>
