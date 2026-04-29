@@ -48,6 +48,11 @@ public class Program
         builder.Services.AddScoped<IStatisticService, StatisticService>();
         builder.Services.AddScoped<ITeamsService, TeamsService>();
         builder.Services.AddScoped<IProjectsService, ProjectsService>();
+        builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
+
+        builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
+        builder.Services.AddScoped<ITwoFactorCodeGeneratorService, TwoFactorCodeGeneratorService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
 

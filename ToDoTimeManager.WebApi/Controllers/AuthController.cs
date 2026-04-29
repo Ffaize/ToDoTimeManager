@@ -1,51 +1,61 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
 /// <summary>
-/// Handles authentication operations including login and token refresh.
+/// Handles authentication operations including login, 2FA code verification, and token refresh.
 /// All endpoints are publicly accessible without a prior authentication token.
 /// </summary>
 [AllowAnonymous]
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
+    private readonly ITwoFactorService _twoFactorService;
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="AuthController"/>.
-    /// </summary>
-    /// <param name="authService">The authentication service used to validate credentials and issue tokens.</param>
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, ITwoFactorService twoFactorService)
     {
         _authService = authService;
+        _twoFactorService = twoFactorService;
     }
 
     /// <summary>
-    /// Authenticates a user with their credentials and returns a JWT access token paired with a refresh token.
+    /// Validates credentials and sends a 2FA code to the user's email.
+    /// The token is NOT returned here — call VerifyCode after entering the code.
     /// </summary>
-    /// <param name="loginUser">The login credentials containing a username or email and a password.</param>
-    /// <returns>
-    /// 200 OK with a <see cref="TokenModel"/> containing the access and refresh tokens on success;
-    /// 500 Internal Server Error if authentication fails.
-    /// </returns>
     [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginUser? loginUser)
     {
-        var tokenModel = await _authService.Login(loginUser!);
-        return tokenModel != null ? Ok(tokenModel) : StatusCode(500);
+        var pending = await _authService.Login(loginUser!);
+        return pending != null ? Ok(pending) : StatusCode(500);
+    }
+
+    /// <summary>
+    /// Resends a 2FA code to the user's email (e.g. when the previous one expired).
+    /// </summary>
+    [HttpPost("SendCode")]
+    public async Task<IActionResult> SendCode([FromBody] SendTwoFactorCodeRequestDto request)
+    {
+        var pending = await _twoFactorService.SendCode(request.UserId);
+        return Ok(pending);
+    }
+
+    /// <summary>
+    /// Verifies the 2FA code and returns a JWT access token + refresh token on success.
+    /// </summary>
+    [HttpPost("VerifyCode")]
+    public async Task<IActionResult> VerifyCode([FromBody] VerifyTwoFactorRequestDto request)
+    {
+        var tokenModel = await _twoFactorService.VerifyCode(request.UserId, request.Code!);
+        return Ok(tokenModel);
     }
 
     /// <summary>
     /// Issues a new access token using a valid, non-expired refresh token.
     /// </summary>
-    /// <param name="tokenModel">The current token pair containing the refresh token to exchange.</param>
-    /// <returns>
-    /// 200 OK with a refreshed <see cref="TokenModel"/> on success;
-    /// 500 Internal Server Error if the refresh token is invalid or expired.
-    /// </returns>
     [HttpPost("RefreshToken")]
     public IActionResult RefreshToken(TokenModel? tokenModel)
     {
