@@ -51,7 +51,9 @@ public class TwoFactorService : ITwoFactorService
                 int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5"))
         };
 
-        await _twoFactorCodesDataController.UpsertCode(entity);
+        var upsertSucceeded = await _twoFactorCodesDataController.UpsertCode(entity);
+        if (!upsertSucceeded)
+            throw new ServiceException("Failed to persist verification code.");
         await _emailService.SendTwoFactorCodeAsync(userEntity.Email!, code);
 
         return new TwoFactorPendingModel
