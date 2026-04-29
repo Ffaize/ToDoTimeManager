@@ -4,6 +4,6 @@ CREATE PROCEDURE [dbo].[sp_TwoFactorCodes_Upsert] @Id        UNIQUEIDENTIFIER,
                                                   @ExpiresAt DATETIME
 AS
     SET NOCOUNT ON;
-    DELETE FROM [dbo].[TwoFactorCodes] WHERE UserId = @UserId;
+    EXEC [dbo].[sp_TwoFactorCodes_DeleteByUserId] @UserId;
     INSERT INTO [dbo].[TwoFactorCodes] (Id, UserId, Code, ExpiresAt)
     VALUES (@Id, @UserId, @Code, @ExpiresAt);

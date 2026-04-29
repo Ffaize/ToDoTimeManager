@@ -47,7 +47,8 @@ public class TwoFactorService : ITwoFactorService
             Id = Guid.NewGuid(),
             UserId = userId,
             Code = code,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(
+                int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5"))
         };
 
         await _twoFactorCodesDataController.UpsertCode(entity);
