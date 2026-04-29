@@ -98,10 +98,11 @@ public class EmailService : IEmailService
 
         message.Body = bodyBuilder.ToMessageBody();
 
+        using var cancellationTokenSource = new System.Threading.CancellationTokenSource(System.TimeSpan.FromSeconds(30));
         using var client = new SmtpClient();
-        await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync(senderEmail, password);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await client.ConnectAsync(host, port, SecureSocketOptions.StartTls, cancellationTokenSource.Token);
+        await client.AuthenticateAsync(senderEmail, password, cancellationTokenSource.Token);
+        await client.SendAsync(message, cancellationTokenSource.Token);
+        await client.DisconnectAsync(true, cancellationTokenSource.Token);
     }
 }

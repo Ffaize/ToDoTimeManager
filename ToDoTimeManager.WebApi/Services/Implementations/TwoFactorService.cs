@@ -67,7 +67,10 @@ public class TwoFactorService : ITwoFactorService
     {
         var record = await _twoFactorCodesDataController.GetByUserId(userId);
         if (record == null)
-            throw new ValidationException("No verification code found. Please request a new one.");
+        {
+            _logger.LogError("Unable to verify two-factor code for user {UserId}: code lookup returned null.", userId);
+            throw new InvalidOperationException("Unable to verify the verification code at this time.");
+        }
 
         if (record.ExpiresAt < DateTime.UtcNow)
         {

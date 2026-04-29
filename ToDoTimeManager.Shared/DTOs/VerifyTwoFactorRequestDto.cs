@@ -9,5 +9,6 @@ public class VerifyTwoFactorRequestDto
     public Guid UserId { get; set; }
 
     [Required]
-    public string? Code { get; set; }
+    [RegularExpression(@"^\d{3}-\d{3}$", ErrorMessage = "Code must be in the format XXX-XXX.")]
+    public string Code { get; set; } = string.Empty;
 }
