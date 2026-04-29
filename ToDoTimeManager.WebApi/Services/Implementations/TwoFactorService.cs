@@ -41,6 +41,9 @@ public class TwoFactorService : ITwoFactorService
         if (userEntity == null)
             throw new NotFoundException("User not found");
 
+        if (string.IsNullOrWhiteSpace(userEntity.Email))
+            throw new ValidationException("User has no email address configured.");
+
         var code = _codeGeneratorService.GenerateCode();
         var entity = new TwoFactorCodeEntity
         {
@@ -54,12 +57,12 @@ public class TwoFactorService : ITwoFactorService
         var upsertSucceeded = await _twoFactorCodesDataController.UpsertCode(entity);
         if (!upsertSucceeded)
             throw new ServiceException("Failed to persist verification code.");
-        await _emailService.SendTwoFactorCodeAsync(userEntity.Email!, code);
+        await _emailService.SendTwoFactorCodeAsync(userEntity.Email, code);
 
         return new TwoFactorPendingModel
         {
             UserId = userId,
-            MaskedEmail = MaskEmail(userEntity.Email!)
+            MaskedEmail = MaskEmail(userEntity.Email)
         };
     }
 
@@ -81,7 +84,9 @@ public class TwoFactorService : ITwoFactorService
         if (!string.Equals(record.Code, code, StringComparison.OrdinalIgnoreCase))
             throw new ValidationException("Invalid verification code.");
 
-        await _twoFactorCodesDataController.DeleteByUserId(userId);
+        var deleted = await _twoFactorCodesDataController.DeleteByUserId(userId);
+        if (!deleted)
+            throw new ServiceException("Failed to invalidate verification code. Please try again.");
 
         var userEntity = await _usersDataController.GetUserById(userId);
         if (userEntity == null)
