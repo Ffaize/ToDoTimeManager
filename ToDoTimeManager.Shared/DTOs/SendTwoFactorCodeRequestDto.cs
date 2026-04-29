@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations;
+using ToDoTimeManager.Shared.Utils;
 
 namespace ToDoTimeManager.Shared.DTOs;
 
 public class SendTwoFactorCodeRequestDto
 {
-    [Required]
+    [NotEmptyGuid]
     public Guid UserId { get; set; }
 }
