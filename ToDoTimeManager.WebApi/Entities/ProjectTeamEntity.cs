@@ -7,6 +7,7 @@ public class ProjectTeamEntity
     public Guid Id { get; set; }
     public Guid ProjectId { get; set; }
     public Guid TeamId { get; set; }
+    public Guid? ProjectManagerId { get; set; }
 
     public ProjectTeam ToProjectTeam()
     {
@@ -14,7 +15,8 @@ public class ProjectTeamEntity
         {
             Id = Id,
             ProjectId = ProjectId,
-            TeamId = TeamId
+            TeamId = TeamId,
+            ProjectManagerId = ProjectManagerId
         };
     }
 }
