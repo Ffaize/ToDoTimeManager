@@ -49,7 +49,7 @@ public class ToDosController : BaseController
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetToDoById(Guid id)
     {
-        var toDo = await _toDosService.GetToDoById(id, GetCurrentUserId(), IsAdmin());
+        var toDo = await _toDosService.GetToDoById(id, GetCurrentUserId(), GetCurrentUserRole());
         return toDo != null ? Ok(toDo) : StatusCode(500);
     }
 
@@ -62,7 +62,7 @@ public class ToDosController : BaseController
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetToDosByUserId(Guid userId)
     {
-        List<ToDo> toDos = await _toDosService.GetToDosByUserId(userId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> toDos = await _toDosService.GetToDosByUserId(userId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(toDos);
     }
 
@@ -128,7 +128,7 @@ public class ToDosController : BaseController
             ProjectId = request.ProjectId
         };
 
-        var updated = await _toDosService.UpdateToDo(toDo, GetCurrentUserId(), IsAdmin());
+        var updated = await _toDosService.UpdateToDo(toDo, GetCurrentUserId(), GetCurrentUserRole());
         return updated ? Ok(updated) : StatusCode(500);
     }
 
@@ -144,7 +144,7 @@ public class ToDosController : BaseController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteToDo(Guid id)
     {
-        var deleted = await _toDosService.DeleteToDo(id, GetCurrentUserId(), IsAdmin());
+        var deleted = await _toDosService.DeleteToDo(id, GetCurrentUserId(), GetCurrentUserRole());
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 }

@@ -33,7 +33,7 @@ public class TeamsService : ITeamsService
         return entities.Select(e => MapToDto(e.ToTeam(), null)).ToList();
     }
 
-    public async Task<TeamResponseDto?> GetTeamById(Guid teamId, Guid currentUserId, bool isAdmin)
+    public async Task<TeamResponseDto?> GetTeamById(Guid teamId, Guid currentUserId, UserRole currentUserRole)
     {
         if (teamId == Guid.Empty)
             throw new ValidationException("Invalid team ID");
@@ -44,7 +44,7 @@ public class TeamsService : ITeamsService
             if (entity == null)
                 throw new NotFoundException("Team was not found");
 
-            if (!isAdmin)
+            if (currentUserRole < UserRole.Admin)
             {
                 var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
                 if (membership == null)
@@ -120,14 +120,15 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<bool> UpdateTeam(UpdateTeamRequestDto request, Guid currentUserId, bool isAdmin)
+    public async Task<bool> UpdateTeam(UpdateTeamRequestDto request, Guid currentUserId, UserRole currentUserRole)
     {
         if (request.Id == Guid.Empty)
             throw new ValidationException("Invalid team ID");
 
         try
         {
-            if (!isAdmin)
+            // Manager+ can update any team; others must be the team Owner
+            if (currentUserRole < UserRole.Manager)
             {
                 var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.Id, currentUserId);
                 if (membership == null || membership.Role != TeamMemberRole.Owner)
@@ -173,14 +174,15 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<bool> AddMember(TeamMemberUpsertRequestDto request, Guid currentUserId, bool isAdmin)
+    public async Task<bool> AddMember(TeamMemberUpsertRequestDto request, Guid currentUserId, UserRole currentUserRole)
     {
         if (request.TeamId == Guid.Empty)
             throw new ValidationException("Invalid team ID");
 
         try
         {
-            if (!isAdmin)
+            // Manager+ can add members to any team; others must be the team Owner
+            if (currentUserRole < UserRole.Manager)
             {
                 var callerMembership =
                     await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.TeamId, currentUserId);
@@ -212,14 +214,15 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<bool> RemoveMember(Guid teamId, Guid userId, Guid currentUserId, bool isAdmin)
+    public async Task<bool> RemoveMember(Guid teamId, Guid userId, Guid currentUserId, UserRole currentUserRole)
     {
         if (teamId == Guid.Empty || userId == Guid.Empty)
             throw new ValidationException("Invalid team or user ID");
 
         try
         {
-            if (!isAdmin)
+            // Manager+ can remove members from any team; others must be the team Owner
+            if (currentUserRole < UserRole.Manager)
             {
                 var callerMembership =
                     await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
@@ -249,14 +252,14 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<List<ToDo>> GetToDosByTeamId(Guid teamId, Guid currentUserId, bool isAdmin)
+    public async Task<List<ToDo>> GetToDosByTeamId(Guid teamId, Guid currentUserId, UserRole currentUserRole)
     {
         if (teamId == Guid.Empty)
             throw new ValidationException("Invalid team ID");
 
         try
         {
-            if (!isAdmin)
+            if (currentUserRole < UserRole.Admin)
             {
                 var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
                 if (membership == null)

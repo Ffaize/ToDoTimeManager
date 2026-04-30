@@ -38,7 +38,7 @@ public class StatisticController : BaseController
     public async Task<IActionResult> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId)
     {
         List<ToDoCountStatisticsOfAllTime> statistics =
-            await _statisticService.GetToDoCountStatisticsOfAllTimeByUserId(userId, GetCurrentUserId(), IsAdmin());
+            await _statisticService.GetToDoCountStatisticsOfAllTimeByUserId(userId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(statistics);
     }
 
@@ -58,7 +58,7 @@ public class StatisticController : BaseController
     [HttpPost("GetMainPageStatistic")]
     public async Task<IActionResult> GetMainPageStatistic([FromBody] MainPageStatisticRequestDto filter)
     {
-        var statistic = await _statisticService.GetMainPageStatistic(filter, GetCurrentUserId(), IsAdmin());
+        var statistic = await _statisticService.GetMainPageStatistic(filter, GetCurrentUserId(), GetCurrentUserRole());
         return statistic != null ? Ok(statistic) : StatusCode(500);
     }
 }

@@ -50,7 +50,7 @@ public class TimeLogsController : BaseController
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetTimeLogById(Guid id)
     {
-        var timeLog = await _timeLogsService.GetTimeLogById(id, GetCurrentUserId(), IsAdmin());
+        var timeLog = await _timeLogsService.GetTimeLogById(id, GetCurrentUserId(), GetCurrentUserRole());
         return timeLog != null ? Ok(timeLog) : StatusCode(500);
     }
 
@@ -75,7 +75,7 @@ public class TimeLogsController : BaseController
     [HttpGet("GetByUserId/{userId}")]
     public async Task<IActionResult> GetTimeLogsByUserId(Guid userId)
     {
-        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByUserId(userId, GetCurrentUserId(), IsAdmin());
+        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByUserId(userId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(timeLogs);
     }
 
@@ -90,7 +90,7 @@ public class TimeLogsController : BaseController
     public async Task<IActionResult> GetTimeLogsByUserIdAndToDoId(Guid userId, Guid toDoId)
     {
         List<TimeLog> timeLogs =
-            await _timeLogsService.GetTimeLogsByUserIdAndToDoId(toDoId, userId, GetCurrentUserId(), IsAdmin());
+            await _timeLogsService.GetTimeLogsByUserIdAndToDoId(toDoId, userId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(timeLogs);
     }
 
@@ -146,7 +146,7 @@ public class TimeLogsController : BaseController
             LogDescription = request.LogDescription
         };
 
-        var updated = await _timeLogsService.UpdateTimeLog(timeLog, GetCurrentUserId(), IsAdmin());
+        var updated = await _timeLogsService.UpdateTimeLog(timeLog, GetCurrentUserId(), GetCurrentUserRole());
         return updated ? Ok(updated) : StatusCode(500);
     }
 
@@ -162,7 +162,7 @@ public class TimeLogsController : BaseController
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteTimeLog(Guid id)
     {
-        var deleted = await _timeLogsService.DeleteTimeLog(id, GetCurrentUserId(), IsAdmin());
+        var deleted = await _timeLogsService.DeleteTimeLog(id, GetCurrentUserId(), GetCurrentUserRole());
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 }

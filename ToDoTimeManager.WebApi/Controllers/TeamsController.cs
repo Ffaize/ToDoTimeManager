@@ -65,7 +65,7 @@ public class TeamsController : BaseController
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetTeamById(Guid id)
     {
-        var team = await _teamsService.GetTeamById(id, GetCurrentUserId(), IsAdmin());
+        var team = await _teamsService.GetTeamById(id, GetCurrentUserId(), GetCurrentUserRole());
         return team != null ? Ok(team) : StatusCode(500);
     }
 
@@ -78,7 +78,7 @@ public class TeamsController : BaseController
     [HttpGet("GetToDosByTeamId/{teamId}")]
     public async Task<IActionResult> GetToDosByTeamId(Guid teamId)
     {
-        List<ToDo> todos = await _teamsService.GetToDosByTeamId(teamId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> todos = await _teamsService.GetToDosByTeamId(teamId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(todos);
     }
 
@@ -94,7 +94,7 @@ public class TeamsController : BaseController
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateTeam([FromBody] UpdateTeamRequestDto request)
     {
-        var result = await _teamsService.UpdateTeam(request, GetCurrentUserId(), IsAdmin());
+        var result = await _teamsService.UpdateTeam(request, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -110,7 +110,7 @@ public class TeamsController : BaseController
     [HttpPost("AddMember")]
     public async Task<IActionResult> AddMember([FromBody] TeamMemberUpsertRequestDto request)
     {
-        var result = await _teamsService.AddMember(request, GetCurrentUserId(), IsAdmin());
+        var result = await _teamsService.AddMember(request, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -127,7 +127,7 @@ public class TeamsController : BaseController
     [HttpDelete("RemoveMember/{teamId}/{userId}")]
     public async Task<IActionResult> RemoveMember(Guid teamId, Guid userId)
     {
-        var result = await _teamsService.RemoveMember(teamId, userId, GetCurrentUserId(), IsAdmin());
+        var result = await _teamsService.RemoveMember(teamId, userId, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -153,6 +153,8 @@ public class TeamsController : BaseController
     [HttpPost("Create")]
     public async Task<IActionResult> CreateTeam([FromBody] CreateTeamRequestDto request)
     {
+        if (!IsManager())
+            return Forbid();
         var result = await _teamsService.CreateTeam(request, GetCurrentUserId());
         return result ? Ok(result) : StatusCode(500);
     }

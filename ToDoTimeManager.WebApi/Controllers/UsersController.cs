@@ -25,11 +25,11 @@ public class UsersController : BaseController
     }
 
     /// <summary>
-    /// Retrieves all registered user accounts. Restricted to administrators.
+    /// Retrieves all registered user accounts. Restricted to managers and administrators.
     /// Sensitive fields such as passwords are excluded from the response.
     /// </summary>
     /// <returns>200 OK with a list of <see cref="UserResponseDto"/> objects.</returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllUsers()
     {
@@ -50,7 +50,7 @@ public class UsersController : BaseController
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetUserById(Guid id)
     {
-        var user = await _usersService.GetUserById(id, GetCurrentUserId(), IsAdmin());
+        var user = await _usersService.GetUserById(id, GetCurrentUserId(), GetCurrentUserRole());
         return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
     }
 

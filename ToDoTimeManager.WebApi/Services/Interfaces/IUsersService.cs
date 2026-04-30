@@ -7,7 +7,7 @@ namespace ToDoTimeManager.WebApi.Services.Interfaces;
 public interface IUsersService
 {
     Task<List<User>> GetAllUsers();
-    Task<User?> GetUserById(Guid userId, Guid currentUserId, bool isAdmin);
+    Task<User?> GetUserById(Guid userId, Guid currentUserId, UserRole currentUserRole);
     Task<User?> GetUserByUsername(string username);
     Task<User?> GetUserByEmail(string email);
     Task<User?> GetUserByLoginParameter(string loginParameter);
