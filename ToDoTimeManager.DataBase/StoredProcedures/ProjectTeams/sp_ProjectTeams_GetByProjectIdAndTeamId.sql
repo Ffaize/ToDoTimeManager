@@ -4,7 +4,7 @@ CREATE PROCEDURE [dbo].[sp_ProjectTeams_GetByProjectIdAndTeamId]
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT Id, ProjectId, TeamId
+    SELECT Id, ProjectId, TeamId, ProjectManagerId
     FROM [dbo].[ProjectTeams]
     WHERE ProjectId = @ProjectId AND TeamId = @TeamId;
 END

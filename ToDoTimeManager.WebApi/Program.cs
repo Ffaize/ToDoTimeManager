@@ -48,6 +48,7 @@ public class Program
         builder.Services.AddScoped<IStatisticService, StatisticService>();
         builder.Services.AddScoped<ITeamsService, TeamsService>();
         builder.Services.AddScoped<IProjectsService, ProjectsService>();
+        builder.Services.AddScoped<IAccessControlService, AccessControlService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
