@@ -56,7 +56,7 @@ public class TwoFactorService : ITwoFactorService
 
         var upsertSucceeded = await _twoFactorCodesDataController.UpsertCode(entity);
         if (!upsertSucceeded)
-            throw new ServiceException("Failed to persist verification code.");
+            throw new ConflictException("Failed to persist verification code.");
         await _emailService.SendTwoFactorCodeAsync(userEntity.Email, code);
 
         return new TwoFactorPendingModel
@@ -86,7 +86,7 @@ public class TwoFactorService : ITwoFactorService
 
         var deleted = await _twoFactorCodesDataController.DeleteByUserId(userId);
         if (!deleted)
-            throw new ServiceException("Failed to invalidate verification code. Please try again.");
+            throw new ConflictException("Failed to invalidate verification code. Please try again.");
 
         var userEntity = await _usersDataController.GetUserById(userId);
         if (userEntity == null)
