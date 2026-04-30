@@ -1,13 +1,14 @@
-CREATE PROCEDURE [dbo].[sp_ToDos_Update] @Id UNIQUEIDENTIFIER,
-                                         @Title NVARCHAR(100),
+CREATE PROCEDURE [dbo].[sp_ToDos_Update] @Id          UNIQUEIDENTIFIER,
+                                         @Title       NVARCHAR(100),
                                          @Description NVARCHAR(MAX),
-                                         @CreatedAt DATETIME,
-                                         @DueDate DATETIME,
-                                         @Status INT,
-                                         @AssignedTo UNIQUEIDENTIFIER,
-                                         @NumberedId INT,
-                                         @TeamId UNIQUEIDENTIFIER,
-                                         @ProjectId UNIQUEIDENTIFIER
+                                         @CreatedAt   DATETIME,
+                                         @DueDate     DATETIME,
+                                         @Status      INT,
+                                         @AssignedTo  UNIQUEIDENTIFIER,
+                                         @NumberedId  INT,
+                                         @TeamId      UNIQUEIDENTIFIER,
+                                         @ProjectId   UNIQUEIDENTIFIER,
+                                         @Type        INT
 AS
 UPDATE [dbo].[ToDos]
 SET Title       = @Title,
@@ -17,5 +18,6 @@ SET Title       = @Title,
     Status      = @Status,
     AssignedTo  = @AssignedTo,
     TeamId      = @TeamId,
-    ProjectId   = @ProjectId
+    ProjectId   = @ProjectId,
+    Type        = @Type
 WHERE Id = @Id

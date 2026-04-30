@@ -89,6 +89,7 @@ public class ToDosController : BaseController
             CreatedAt = request.CreatedAt!.Value,
             DueDate = request.DueDate,
             Status = request.Status!.Value,
+            Type = request.Type,
             AssignedTo = request.AssignedTo,
             TeamId = request.TeamId,
             ProjectId = request.ProjectId
@@ -121,6 +122,7 @@ public class ToDosController : BaseController
             CreatedAt = request.CreatedAt!.Value,
             DueDate = request.DueDate,
             Status = request.Status!.Value,
+            Type = request.Type,
             AssignedTo = request.AssignedTo,
             TeamId = request.TeamId,
             ProjectId = request.ProjectId

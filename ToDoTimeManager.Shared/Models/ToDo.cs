@@ -17,6 +17,10 @@ public class ToDo
         : "-";
 
     public ToDoStatus Status { get; set; } = ToDoStatus.New;
+
+    /// <summary>Gets or sets the work classification of this to-do item.</summary>
+    public TaskType? Type { get; set; }
+
     public Guid? AssignedTo { get; set; }
     public Guid? TeamId { get; set; }
     public Guid? ProjectId { get; set; }

@@ -17,6 +17,7 @@ public class ToDoEntity
         CreatedAt = toDo.CreatedAt;
         DueDate = toDo.DueDate;
         Status = toDo.Status;
+        Type = toDo.Type;
         AssignedTo = toDo.AssignedTo;
         NumberedId = toDo.NumberedId;
         TeamId = toDo.TeamId;
@@ -31,6 +32,7 @@ public class ToDoEntity
     public DateTime CreatedAt { get; set; }
     public DateTime? DueDate { get; set; }
     public ToDoStatus Status { get; set; }
+    public TaskType? Type { get; set; }
     public Guid? AssignedTo { get; set; }
     public Guid? TeamId { get; set; }
     public Guid? ProjectId { get; set; }
@@ -45,6 +47,7 @@ public class ToDoEntity
             CreatedAt = CreatedAt,
             DueDate = DueDate,
             Status = Status,
+            Type = Type,
             AssignedTo = AssignedTo,
             NumberedId = NumberedId,
             TeamId = TeamId,

@@ -12,7 +12,8 @@ BEGIN
            AssignedTo,
            NumberedId,
            TeamId,
-           ProjectId
+           ProjectId,
+           Type
     FROM [dbo].[ToDos]
     WHERE AssignedTo = @UserId
       AND DueDate IS NOT NULL

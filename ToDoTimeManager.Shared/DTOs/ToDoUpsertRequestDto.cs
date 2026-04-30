@@ -24,6 +24,9 @@ public sealed class ToDoUpsertRequestDto
 
     [Required] public ToDoStatus? Status { get; set; }
 
+    /// <summary>The work classification. Optional; null means unclassified.</summary>
+    public TaskType? Type { get; set; }
+
     public Guid? AssignedTo { get; set; }
 
     public Guid? TeamId { get; set; }
