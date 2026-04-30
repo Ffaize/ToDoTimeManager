@@ -26,20 +26,12 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
 
             var toastsService = circuitServicesAccesor.Service.GetRequiredService<IToastsService>();
 
-            if (TryExtractProblemDetails(content, out var message))
-            {
-                await toastsService.ShowToast(message!, ToastType.Error);
-                response.Content = new StringContent("null", Encoding.UTF8, "application/json");
-                return response;
-            }
+            var toastMessage = TryExtractProblemDetails(content, out var extracted)
+                ? extracted!
+                : "Smth went wrong";
 
-            // Non-ProblemDetails error: restore body for downstream and show raw text as toast.
-            var mediaType = response.Content.Headers.ContentType?.MediaType;
-            response.Content = new StringContent(content, Encoding.UTF8);
-            if (!string.IsNullOrWhiteSpace(mediaType))
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
-
-            await toastsService.ShowToast(content.Replace("\"", string.Empty).Trim(), ToastType.Error);
+            await toastsService.ShowToast(toastMessage, ToastType.Error);
+            response.Content = new StringContent("null", Encoding.UTF8, "application/json");
             return response;
         }
         catch (Exception e)
@@ -90,13 +82,6 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
                         return true;
                     }
                 }
-            }
-
-            if (root.TryGetProperty("title", out var titleProp) &&
-                titleProp.ValueKind == JsonValueKind.String)
-            {
-                message = titleProp.GetString();
-                return true;
             }
 
             return false;
