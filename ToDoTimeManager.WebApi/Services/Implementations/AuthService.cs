@@ -67,18 +67,18 @@ public class AuthService : IAuthService
         }
     }
 
-    public TokenModel? RefreshAuthToken(TokenModel tokenModel)
+    public TokenModel? RefreshAuthToken(TokenModel? tokenModel)
     {
         if (tokenModel == null || string.IsNullOrWhiteSpace(tokenModel.RefreshToken))
-            throw new ValidationException("Token data is null or invalid");
+            return null;
         if (tokenModel.RefreshTokenExpiresAt < DateTime.UtcNow)
-            throw new ValidationException("Refresh token has expired");
+            return null;
 
         try
         {
             var (userId, userRole) = ValidateAndReadToken(tokenModel.AccessToken!);
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
-                throw new ValidationException("Could not refresh token");
+                throw new ValidationException("Smth went wrong");
 
             return new TokenModel
             {

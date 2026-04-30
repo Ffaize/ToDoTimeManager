@@ -31,7 +31,8 @@ public class StatisticService : IStatisticService
             throw new ForbiddenException();
 
         var result = new List<ToDoCountStatisticsOfAllTime>();
-        foreach (var status in Enum.GetValues<ToDoStatus>()) await GetCountOfStatusesByStatus(userId, status, result);
+        foreach (var status in Enum.GetValues<ToDoStatus>()) 
+            await GetCountOfStatusesByStatus(userId, status, result);
         return result;
     }
 

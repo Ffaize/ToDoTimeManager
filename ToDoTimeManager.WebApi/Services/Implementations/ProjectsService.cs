@@ -44,7 +44,7 @@ public class ProjectsService : IProjectsService
             if (entity == null)
                 throw new NotFoundException("Project was not found");
 
-            if (currentUserRole < UserRole.Admin && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
+            if (currentUserRole < UserRole.ProjectManager && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
                 throw new ForbiddenException();
 
             List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
@@ -103,8 +103,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            // ProjectManager+ can update projects they created; Admin bypasses the creator check
-            if (currentUserRole < UserRole.Admin)
+            if (currentUserRole < UserRole.ProjectManager)
             {
                 var project = await _projectsDataController.GetProjectById(request.Id);
                 if (project == null)
@@ -159,8 +158,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            // ProjectManager+ can manage teams on projects they created; Admin bypasses the creator check
-            if (currentUserRole < UserRole.Admin)
+            if (currentUserRole < UserRole.ProjectManager)
             {
                 var project = await _projectsDataController.GetProjectById(request.ProjectId);
                 if (project == null)
@@ -199,8 +197,6 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            // ProjectManager+ can manage teams on projects they created; Admin bypasses the creator check
-            if (currentUserRole < UserRole.Admin)
             {
                 var project = await _projectsDataController.GetProjectById(projectId);
                 if (project == null)
@@ -229,15 +225,15 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (currentUserRole < UserRole.Admin)
-            {
-                var project = await _projectsDataController.GetProjectById(projectId);
-                if (project == null)
-                    throw new NotFoundException("Project was not found");
+            if (currentUserRole >= UserRole.ProjectManager) 
+                return await _toDosService.GetToDosByProjectId(projectId);
+            
+            var project = await _projectsDataController.GetProjectById(projectId);
+            if (project == null)
+                throw new NotFoundException("Project was not found");
 
-                if (!await UserHasAccess(projectId, currentUserId, project.CreatedBy))
-                    throw new ForbiddenException();
-            }
+            if (!await UserHasAccess(projectId, currentUserId, project.CreatedBy))
+                throw new ForbiddenException();
 
             return await _toDosService.GetToDosByProjectId(projectId);
         }

@@ -181,7 +181,6 @@ public class TeamsService : ITeamsService
 
         try
         {
-            // Manager+ can add members to any team; others must be the team Owner
             if (currentUserRole < UserRole.Manager)
             {
                 var callerMembership =
@@ -221,7 +220,6 @@ public class TeamsService : ITeamsService
 
         try
         {
-            // Manager+ can remove members from any team; others must be the team Owner
             if (currentUserRole < UserRole.Manager)
             {
                 var callerMembership =
