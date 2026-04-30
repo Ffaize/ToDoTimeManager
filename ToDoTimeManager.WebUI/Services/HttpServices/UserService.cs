@@ -1,4 +1,5 @@
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices;
 
@@ -122,6 +123,21 @@ public class UserService : BaseHttpService
         try
         {
             var response = await _httpClient.DeleteAsync(Url($"Delete/{id}"));
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return false;
+        }
+    }
+
+    public async Task<bool> ChangeUserRole(Guid id, ChangeUserRoleRequestDto request)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync(Url($"ChangeRole/{id}"), request);
             response.EnsureSuccessStatusCode();
             return true;
         }
