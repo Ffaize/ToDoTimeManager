@@ -1,13 +1,14 @@
-CREATE PROCEDURE [dbo].[sp_ToDos_Create] @Id UNIQUEIDENTIFIER,
-                                         @NumberedId INT,
-                                         @Title NVARCHAR(100),
+CREATE PROCEDURE [dbo].[sp_ToDos_Create] @Id          UNIQUEIDENTIFIER,
+                                         @NumberedId  INT,
+                                         @Title       NVARCHAR(100),
                                          @Description NVARCHAR(MAX),
-                                         @CreatedAt DATETIME,
-                                         @DueDate DATETIME,
-                                         @Status INT,
-                                         @AssignedTo UNIQUEIDENTIFIER,
-                                         @TeamId UNIQUEIDENTIFIER,
-                                         @ProjectId UNIQUEIDENTIFIER
+                                         @CreatedAt   DATETIME,
+                                         @DueDate     DATETIME,
+                                         @Status      INT,
+                                         @AssignedTo  UNIQUEIDENTIFIER,
+                                         @TeamId      UNIQUEIDENTIFIER,
+                                         @ProjectId   UNIQUEIDENTIFIER,
+                                         @Type        INT
 AS
 INSERT INTO [dbo].[ToDos] (Id,
                            Title,
@@ -18,7 +19,8 @@ INSERT INTO [dbo].[ToDos] (Id,
                            AssignedTo,
                            NumberedId,
                            TeamId,
-                           ProjectId)
+                           ProjectId,
+                           Type)
 VALUES (@Id,
         @Title,
         @Description,
@@ -28,4 +30,5 @@ VALUES (@Id,
         @AssignedTo,
         (SELECT ISNULL(MAX(NumberedId), 0) + 1 FROM [dbo].[ToDos]),
         @TeamId,
-        @ProjectId)
+        @ProjectId,
+        @Type)

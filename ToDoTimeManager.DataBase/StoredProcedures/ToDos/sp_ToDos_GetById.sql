@@ -9,6 +9,7 @@ SELECT Id,
        AssignedTo,
        NumberedId,
        TeamId,
-       ProjectId
+       ProjectId,
+       Type
 FROM [dbo].[ToDos]
 WHERE Id = @Id

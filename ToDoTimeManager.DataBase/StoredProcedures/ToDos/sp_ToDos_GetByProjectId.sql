@@ -13,7 +13,8 @@ BEGIN
         AssignedTo,
         NumberedId,
         TeamId,
-        ProjectId
+        ProjectId,
+        Type
     FROM [dbo].[ToDos]
     WHERE ProjectId = @ProjectId;
 END

@@ -1,10 +1,20 @@
-﻿CREATE PROCEDURE [dbo].[sp_ToDos_GetCountByUserIdAndStatus] @UserId UNIQUEIDENTIFIER,
+CREATE PROCEDURE [dbo].[sp_ToDos_GetCountByUserIdAndStatus] @UserId     UNIQUEIDENTIFIER,
                                                             @ToDoStatus INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT *
-    FROM ToDos
+    SELECT Id,
+           Title,
+           Description,
+           CreatedAt,
+           DueDate,
+           Status,
+           AssignedTo,
+           NumberedId,
+           TeamId,
+           ProjectId,
+           Type
+    FROM [dbo].[ToDos]
     WHERE [AssignedTo] = @UserId
-      AND [Status] = @ToDoStatus;
+      AND [Status]     = @ToDoStatus;
 END
