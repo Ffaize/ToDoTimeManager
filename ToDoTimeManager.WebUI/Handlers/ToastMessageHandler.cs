@@ -14,7 +14,6 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
     {
         var response = await base.SendAsync(request, cancellationToken);
 
-        // We only show toasts on non-success responses.
         if (response.IsSuccessStatusCode || circuitServicesAccesor.Service == null)
             return response;
 
@@ -22,21 +21,25 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
         {
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
-            // Restore content for downstream readers (e.g. ReadFromJsonAsync in services).
-            var mediaType = response.Content.Headers.ContentType?.MediaType;
-            response.Content = new StringContent(content ?? string.Empty, Encoding.UTF8);
-            if (!string.IsNullOrWhiteSpace(mediaType))
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
-
             if (string.IsNullOrWhiteSpace(content))
                 return response;
 
-            var message = ExtractMessageFromJsonOrPlainText(content);
-            if (string.IsNullOrWhiteSpace(message))
-                message = content.Replace("\"", string.Empty);
+            var toastsService = circuitServicesAccesor.Service.GetRequiredService<IToastsService>();
 
-            var toastMessagesService = circuitServicesAccesor.Service.GetRequiredService<IToastsService>();
-            await toastMessagesService.ShowToast(message, ToastType.Error);
+            if (TryExtractProblemDetails(content, out var message))
+            {
+                await toastsService.ShowToast(message!, ToastType.Error);
+                response.Content = new StringContent("null", Encoding.UTF8, "application/json");
+                return response;
+            }
+
+            // Non-ProblemDetails error: restore body for downstream and show raw text as toast.
+            var mediaType = response.Content.Headers.ContentType?.MediaType;
+            response.Content = new StringContent(content, Encoding.UTF8);
+            if (!string.IsNullOrWhiteSpace(mediaType))
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+
+            await toastsService.ShowToast(content.Replace("\"", string.Empty).Trim(), ToastType.Error);
             return response;
         }
         catch (Exception e)
@@ -46,48 +49,61 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
         }
     }
 
-    private static string? ExtractMessageFromJsonOrPlainText(string content)
+    private static bool TryExtractProblemDetails(string content, out string? message)
     {
-        // Fast path: plain text
-        var trimmed = content.TrimStart();
-        if (!(trimmed.StartsWith("{") || trimmed.StartsWith("[")))
-            return content.Replace("\"", string.Empty).Trim();
+        message = null;
+
+        if (!content.TrimStart().StartsWith("{"))
+            return false;
 
         try
         {
             using var doc = JsonDocument.Parse(content);
-            if (doc.RootElement.ValueKind != JsonValueKind.Object)
-                return content.Replace("\"", string.Empty).Trim();
+            var root = doc.RootElement;
 
-            // ProblemDetails: { "title": "...", "detail": "...", "status": ... }
-            if (doc.RootElement.TryGetProperty("detail", out var detailProp) &&
+            if (root.ValueKind != JsonValueKind.Object)
+                return false;
+
+            // ProblemDetails must have a numeric "status" field.
+            if (!root.TryGetProperty("status", out var statusProp) ||
+                statusProp.ValueKind != JsonValueKind.Number)
+                return false;
+
+            if (root.TryGetProperty("detail", out var detailProp) &&
                 detailProp.ValueKind == JsonValueKind.String)
-                return detailProp.GetString();
+            {
+                message = detailProp.GetString();
+                return true;
+            }
 
-            if (doc.RootElement.TryGetProperty("title", out var titleProp) &&
-                titleProp.ValueKind == JsonValueKind.String)
-                return titleProp.GetString();
-
-            // ValidationProblemDetails: { "errors": { "Field": [ "msg1", ... ] } }
-            if (doc.RootElement.TryGetProperty("errors", out var errorsProp) &&
+            // ValidationProblemDetails: { "errors": { "Field": ["msg", ...] } }
+            if (root.TryGetProperty("errors", out var errorsProp) &&
                 errorsProp.ValueKind == JsonValueKind.Object)
-                foreach (var property in errorsProp.EnumerateObject())
+            {
+                foreach (var prop in errorsProp.EnumerateObject())
                 {
-                    var arr = property.Value;
-                    if (arr.ValueKind == JsonValueKind.Array && arr.GetArrayLength() > 0)
+                    var arr = prop.Value;
+                    if (arr.ValueKind == JsonValueKind.Array && arr.GetArrayLength() > 0 &&
+                        arr[0].ValueKind == JsonValueKind.String)
                     {
-                        var first = arr[0];
-                        if (first.ValueKind == JsonValueKind.String)
-                            return first.GetString();
+                        message = arr[0].GetString();
+                        return true;
                     }
                 }
+            }
 
-            // Fallback: whole JSON as string
-            return content.Replace("\"", string.Empty).Trim();
+            if (root.TryGetProperty("title", out var titleProp) &&
+                titleProp.ValueKind == JsonValueKind.String)
+            {
+                message = titleProp.GetString();
+                return true;
+            }
+
+            return false;
         }
         catch
         {
-            return content.Replace("\"", string.Empty).Trim();
+            return false;
         }
     }
 }
