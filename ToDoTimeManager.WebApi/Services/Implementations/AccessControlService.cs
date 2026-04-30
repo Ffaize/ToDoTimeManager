@@ -1,15 +1,9 @@
-using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations;
 
-/// <summary>
-/// Determines whether a user has access to a resource based on entity relationships.
-/// Admins bypass all checks. For regular users access is derived from ownership,
-/// team membership, and project-team links (including the ProjectManagerId role).
-/// </summary>
 public class AccessControlService : IAccessControlService
 {
     private readonly IProjectsDataController _projectsDataController;
@@ -35,10 +29,8 @@ public class AccessControlService : IAccessControlService
         _logger = logger;
     }
 
-    public async Task<bool> CanAccessProject(Guid userId, UserRole userRole, Guid projectId)
+    public async Task<bool> CanAccessProject(Guid userId, Guid projectId)
     {
-        if (userRole >= UserRole.Admin) return true;
-
         try
         {
             ProjectEntity? project = await _projectsDataController.GetProjectById(projectId);
@@ -50,10 +42,8 @@ public class AccessControlService : IAccessControlService
 
             foreach (ProjectTeamEntity pt in projectTeams)
             {
-                // user is explicitly assigned as project manager for this project-team link
                 if (pt.ProjectManagerId == userId) return true;
 
-                // user is a member of a team linked to this project
                 TeamMemberEntity? membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(pt.TeamId, userId);
                 if (membership != null) return true;
             }
@@ -67,10 +57,8 @@ public class AccessControlService : IAccessControlService
         }
     }
 
-    public async Task<bool> CanAccessToDo(Guid userId, UserRole userRole, Guid toDoId)
+    public async Task<bool> CanAccessToDo(Guid userId, Guid toDoId)
     {
-        if (userRole >= UserRole.Admin) return true;
-
         try
         {
             ToDoEntity? todo = await _toDosDataController.GetToDoById(toDoId);
@@ -85,9 +73,7 @@ public class AccessControlService : IAccessControlService
             }
 
             if (todo.ProjectId.HasValue)
-            {
-                return await CanAccessProject(userId, userRole, todo.ProjectId.Value);
-            }
+                return await CanAccessProject(userId, todo.ProjectId.Value);
 
             return false;
         }
@@ -98,10 +84,8 @@ public class AccessControlService : IAccessControlService
         }
     }
 
-    public async Task<bool> CanAccessTimeLog(Guid userId, UserRole userRole, Guid timeLogId)
+    public async Task<bool> CanAccessTimeLog(Guid userId, Guid timeLogId)
     {
-        if (userRole >= UserRole.Admin) return true;
-
         try
         {
             TimeLogEntity? timeLog = await _timeLogsDataController.GetTimeLogById(timeLogId);
@@ -109,7 +93,7 @@ public class AccessControlService : IAccessControlService
 
             if (timeLog.UserId == userId) return true;
 
-            return await CanAccessToDo(userId, userRole, timeLog.ToDoId);
+            return await CanAccessToDo(userId, timeLog.ToDoId);
         }
         catch (Exception e)
         {
