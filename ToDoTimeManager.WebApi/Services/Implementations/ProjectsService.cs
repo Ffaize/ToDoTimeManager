@@ -1,4 +1,5 @@
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -32,7 +33,7 @@ public class ProjectsService : IProjectsService
         return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
     }
 
-    public async Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, bool isAdmin)
+    public async Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, UserRole currentUserRole)
     {
         if (projectId == Guid.Empty)
             throw new ValidationException("Invalid project ID");
@@ -43,7 +44,7 @@ public class ProjectsService : IProjectsService
             if (entity == null)
                 throw new NotFoundException("Project was not found");
 
-            if (!isAdmin && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
+            if (currentUserRole < UserRole.Admin && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
                 throw new ForbiddenException();
 
             List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
@@ -95,14 +96,15 @@ public class ProjectsService : IProjectsService
         }
     }
 
-    public async Task<bool> UpdateProject(UpdateProjectRequestDto request, Guid currentUserId, bool isAdmin)
+    public async Task<bool> UpdateProject(UpdateProjectRequestDto request, Guid currentUserId, UserRole currentUserRole)
     {
         if (request.Id == Guid.Empty)
             throw new ValidationException("Invalid project ID");
 
         try
         {
-            if (!isAdmin)
+            // ProjectManager+ can update projects they created; Admin bypasses the creator check
+            if (currentUserRole < UserRole.Admin)
             {
                 var project = await _projectsDataController.GetProjectById(request.Id);
                 if (project == null)
@@ -150,14 +152,15 @@ public class ProjectsService : IProjectsService
         }
     }
 
-    public async Task<bool> AddTeam(ProjectTeamUpsertRequestDto request, Guid currentUserId, bool isAdmin)
+    public async Task<bool> AddTeam(ProjectTeamUpsertRequestDto request, Guid currentUserId, UserRole currentUserRole)
     {
         if (request.ProjectId == Guid.Empty)
             throw new ValidationException("Invalid project ID");
 
         try
         {
-            if (!isAdmin)
+            // ProjectManager+ can manage teams on projects they created; Admin bypasses the creator check
+            if (currentUserRole < UserRole.Admin)
             {
                 var project = await _projectsDataController.GetProjectById(request.ProjectId);
                 if (project == null)
@@ -189,14 +192,15 @@ public class ProjectsService : IProjectsService
         }
     }
 
-    public async Task<bool> RemoveTeam(Guid projectId, Guid teamId, Guid currentUserId, bool isAdmin)
+    public async Task<bool> RemoveTeam(Guid projectId, Guid teamId, Guid currentUserId, UserRole currentUserRole)
     {
         if (projectId == Guid.Empty || teamId == Guid.Empty)
             throw new ValidationException("Invalid project or team ID");
 
         try
         {
-            if (!isAdmin)
+            // ProjectManager+ can manage teams on projects they created; Admin bypasses the creator check
+            if (currentUserRole < UserRole.Admin)
             {
                 var project = await _projectsDataController.GetProjectById(projectId);
                 if (project == null)
@@ -218,14 +222,14 @@ public class ProjectsService : IProjectsService
         }
     }
 
-    public async Task<List<ToDo>> GetToDosByProjectId(Guid projectId, Guid currentUserId, bool isAdmin)
+    public async Task<List<ToDo>> GetToDosByProjectId(Guid projectId, Guid currentUserId, UserRole currentUserRole)
     {
         if (projectId == Guid.Empty)
             throw new ValidationException("Invalid project ID");
 
         try
         {
-            if (!isAdmin)
+            if (currentUserRole < UserRole.Admin)
             {
                 var project = await _projectsDataController.GetProjectById(projectId);
                 if (project == null)

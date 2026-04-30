@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -12,8 +13,14 @@ public abstract class BaseController : ControllerBase
         return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     }
 
-    protected bool IsAdmin()
+    protected UserRole GetCurrentUserRole()
     {
-        return User.IsInRole("Admin");
+        var roleClaim = User.FindFirstValue(ClaimTypes.Role);
+        return Enum.TryParse<UserRole>(roleClaim, out var role) ? role : UserRole.User;
     }
+
+    protected bool IsAdmin()          => GetCurrentUserRole() >= UserRole.Admin;
+    protected bool IsManager()        => GetCurrentUserRole() >= UserRole.Manager;
+    protected bool IsProjectManager() => GetCurrentUserRole() >= UserRole.ProjectManager;
+    protected bool IsDeveloper()      => GetCurrentUserRole() >= UserRole.Developer;
 }

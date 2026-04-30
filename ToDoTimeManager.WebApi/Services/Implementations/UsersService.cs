@@ -37,7 +37,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<User?> GetUserById(Guid userId, Guid currentUserId, bool isAdmin)
+    public async Task<User?> GetUserById(Guid userId, Guid currentUserId, UserRole currentUserRole)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
@@ -48,7 +48,8 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            if (userId != currentUserId && !isAdmin)
+            // Manager+ can read any user profile; others can only read their own
+            if (userId != currentUserId && currentUserRole < UserRole.Manager)
                 throw new ForbiddenException();
 
             return res.ToUser();

@@ -66,7 +66,7 @@ public class ProjectsController : BaseController
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetProjectById(Guid id)
     {
-        var project = await _projectsService.GetProjectById(id, GetCurrentUserId(), IsAdmin());
+        var project = await _projectsService.GetProjectById(id, GetCurrentUserId(), GetCurrentUserRole());
         return project != null ? Ok(project) : StatusCode(500);
     }
 
@@ -80,7 +80,7 @@ public class ProjectsController : BaseController
     [HttpGet("GetToDosByProjectId/{projectId}")]
     public async Task<IActionResult> GetToDosByProjectId(Guid projectId)
     {
-        List<ToDo> todos = await _projectsService.GetToDosByProjectId(projectId, GetCurrentUserId(), IsAdmin());
+        List<ToDo> todos = await _projectsService.GetToDosByProjectId(projectId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(todos);
     }
 
@@ -96,7 +96,7 @@ public class ProjectsController : BaseController
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateProject([FromBody] UpdateProjectRequestDto request)
     {
-        var result = await _projectsService.UpdateProject(request, GetCurrentUserId(), IsAdmin());
+        var result = await _projectsService.UpdateProject(request, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -112,7 +112,7 @@ public class ProjectsController : BaseController
     [HttpPost("AddTeam")]
     public async Task<IActionResult> AddTeam([FromBody] ProjectTeamUpsertRequestDto request)
     {
-        var result = await _projectsService.AddTeam(request, GetCurrentUserId(), IsAdmin());
+        var result = await _projectsService.AddTeam(request, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -129,7 +129,7 @@ public class ProjectsController : BaseController
     [HttpDelete("RemoveTeam/{projectId}/{teamId}")]
     public async Task<IActionResult> RemoveTeam(Guid projectId, Guid teamId)
     {
-        var result = await _projectsService.RemoveTeam(projectId, teamId, GetCurrentUserId(), IsAdmin());
+        var result = await _projectsService.RemoveTeam(projectId, teamId, GetCurrentUserId(), GetCurrentUserRole());
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -155,6 +155,8 @@ public class ProjectsController : BaseController
     [HttpPost("Create")]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
     {
+        if (!IsProjectManager())
+            return Forbid();
         var result = await _projectsService.CreateProject(request, GetCurrentUserId());
         return result ? Ok(result) : StatusCode(500);
     }

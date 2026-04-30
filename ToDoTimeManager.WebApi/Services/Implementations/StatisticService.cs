@@ -23,11 +23,11 @@ public class StatisticService : IStatisticService
     }
 
     public async Task<List<ToDoCountStatisticsOfAllTime>> GetToDoCountStatisticsOfAllTimeByUserId(Guid userId,
-        Guid currentUserId, bool isAdmin)
+        Guid currentUserId, UserRole currentUserRole)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (userId != currentUserId && !isAdmin)
+        if (userId != currentUserId && currentUserRole < UserRole.Admin)
             throw new ForbiddenException();
 
         var result = new List<ToDoCountStatisticsOfAllTime>();
@@ -36,11 +36,11 @@ public class StatisticService : IStatisticService
     }
 
     public async Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequestDto filter,
-        Guid currentUserId, bool isAdmin)
+        Guid currentUserId, UserRole currentUserRole)
     {
         if (filter.UserId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (filter.UserId != currentUserId && !isAdmin)
+        if (filter.UserId != currentUserId && currentUserRole < UserRole.Admin)
             throw new ForbiddenException();
 
         try

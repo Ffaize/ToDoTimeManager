@@ -32,7 +32,7 @@ public class ToDosService : IToDosService
         }
     }
 
-    public async Task<ToDo?> GetToDoById(Guid toDoId, Guid currentUserId, bool isAdmin)
+    public async Task<ToDo?> GetToDoById(Guid toDoId, Guid currentUserId, UserRole currentUserRole)
     {
         if (toDoId == Guid.Empty)
             throw new ValidationException("Invalid to-do ID");
@@ -43,7 +43,7 @@ public class ToDosService : IToDosService
             if (res == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (res.AssignedTo != currentUserId && !isAdmin)
+            if (res.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
                 throw new ForbiddenException();
 
             return res.ToToDo();
@@ -59,11 +59,11 @@ public class ToDosService : IToDosService
         }
     }
 
-    public async Task<List<ToDo>> GetToDosByUserId(Guid userId, Guid currentUserId, bool isAdmin)
+    public async Task<List<ToDo>> GetToDosByUserId(Guid userId, Guid currentUserId, UserRole currentUserRole)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (userId != currentUserId && !isAdmin)
+        if (userId != currentUserId && currentUserRole < UserRole.Admin)
             throw new ForbiddenException();
 
         try
@@ -156,7 +156,7 @@ public class ToDosService : IToDosService
         }
     }
 
-    public async Task<bool> UpdateToDo(ToDo updatedToDo, Guid currentUserId, bool isAdmin)
+    public async Task<bool> UpdateToDo(ToDo updatedToDo, Guid currentUserId, UserRole currentUserRole)
     {
         try
         {
@@ -164,7 +164,7 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (existing.AssignedTo != currentUserId && !isAdmin)
+            if (existing.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
                 throw new ForbiddenException();
 
             return await _toDosDataController.UpdateToDo(new ToDoEntity(updatedToDo));
@@ -180,7 +180,7 @@ public class ToDosService : IToDosService
         }
     }
 
-    public async Task<bool> DeleteToDo(Guid toDoId, Guid currentUserId, bool isAdmin)
+    public async Task<bool> DeleteToDo(Guid toDoId, Guid currentUserId, UserRole currentUserRole)
     {
         if (toDoId == Guid.Empty)
             throw new ValidationException("Invalid to-do ID");
@@ -191,7 +191,7 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (existing.AssignedTo != currentUserId && !isAdmin)
+            if (existing.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
                 throw new ForbiddenException();
 
             return await _toDosDataController.DeleteToDo(toDoId);
