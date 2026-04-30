@@ -20,13 +20,9 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
         try
         {
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(content))
-                return response;
-
             var toastsService = circuitServicesAccesor.Service.GetRequiredService<IToastsService>();
 
-            var toastMessage = TryExtractProblemDetails(content, out var extracted)
+            var toastMessage = !string.IsNullOrWhiteSpace(content) && TryExtractProblemDetails(content, out var extracted)
                 ? extracted!
                 : "Smth went wrong";
 
