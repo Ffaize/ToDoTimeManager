@@ -7,7 +7,8 @@ public interface ITimeLogsService
 {
     Task<List<TimeLog>> GetAllTimeLogs();
     Task<TimeLog?> GetTimeLogById(Guid timeLogId, Guid currentUserId, UserRole currentUserRole);
-    Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId);
+    Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId, Guid currentUserId, UserRole currentUserRole);
+
     Task<List<TimeLog>> GetTimeLogsByUserId(Guid userId, Guid currentUserId, UserRole currentUserRole);
     Task<List<TimeLog>> GetTimeLogsByUserIdAndToDoId(Guid toDoId, Guid userId, Guid currentUserId, UserRole currentUserRole);
     Task<List<TimeLog>> GetTimeLogsByUserIdAndTime(Guid userId, int daysAgo);

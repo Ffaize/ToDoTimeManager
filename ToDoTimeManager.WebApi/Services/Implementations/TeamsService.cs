@@ -13,17 +13,20 @@ public class TeamsService : ITeamsService
     private readonly ITeamsDataController _teamsDataController;
     private readonly ITeamMembersDataController _teamMembersDataController;
     private readonly IToDosService _toDosService;
+    private readonly IAccessControlService _accessControlService;
     private readonly ILogger<TeamsService> _logger;
 
     public TeamsService(
         ITeamsDataController teamsDataController,
         ITeamMembersDataController teamMembersDataController,
         IToDosService toDosService,
+        IAccessControlService accessControlService,
         ILogger<TeamsService> logger)
     {
         _teamsDataController = teamsDataController;
         _teamMembersDataController = teamMembersDataController;
         _toDosService = toDosService;
+        _accessControlService = accessControlService;
         _logger = logger;
     }
 
@@ -44,12 +47,8 @@ public class TeamsService : ITeamsService
             if (entity == null)
                 throw new NotFoundException("Team was not found");
 
-            if (currentUserRole < UserRole.Admin)
-            {
-                var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
-                if (membership == null)
-                    throw new ForbiddenException();
-            }
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, teamId, nameof(GetTeamById)))
+                throw new ForbiddenException();
 
             List<TeamMemberEntity> memberEntities = await _teamMembersDataController.GetMembersByTeamId(teamId);
             List<TeamMember> members = memberEntities.Select(m => m.ToTeamMember()).ToList();
@@ -127,14 +126,6 @@ public class TeamsService : ITeamsService
 
         try
         {
-            // Manager+ can update any team; others must be the team Owner
-            if (currentUserRole < UserRole.Manager)
-            {
-                var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.Id, currentUserId);
-                if (membership == null || membership.Role != TeamMemberRole.Owner)
-                    throw new ForbiddenException();
-            }
-
             var entity = new TeamEntity
             {
                 Id = request.Id,
@@ -181,14 +172,6 @@ public class TeamsService : ITeamsService
 
         try
         {
-            if (currentUserRole < UserRole.Manager)
-            {
-                var callerMembership =
-                    await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.TeamId, currentUserId);
-                if (callerMembership == null || callerMembership.Role != TeamMemberRole.Owner)
-                    throw new ForbiddenException();
-            }
-
             var existing = await _teamMembersDataController.GetMemberByTeamIdAndUserId(request.TeamId, request.UserId);
             if (existing != null)
                 throw new ConflictException("User is already a member of this team");
@@ -220,14 +203,6 @@ public class TeamsService : ITeamsService
 
         try
         {
-            if (currentUserRole < UserRole.Manager)
-            {
-                var callerMembership =
-                    await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
-                if (callerMembership == null || callerMembership.Role != TeamMemberRole.Owner)
-                    throw new ForbiddenException();
-            }
-
             List<TeamMemberEntity> members = await _teamMembersDataController.GetMembersByTeamId(teamId);
             var targetMember = members.FirstOrDefault(m => m.UserId == userId);
             if (targetMember == null)
@@ -257,12 +232,8 @@ public class TeamsService : ITeamsService
 
         try
         {
-            if (currentUserRole < UserRole.Admin)
-            {
-                var membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(teamId, currentUserId);
-                if (membership == null)
-                    throw new ForbiddenException();
-            }
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, teamId, nameof(GetToDosByTeamId)))
+                throw new ForbiddenException();
 
             return await _toDosService.GetToDosByTeamId(teamId);
         }

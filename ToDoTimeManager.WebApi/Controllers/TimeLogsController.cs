@@ -30,7 +30,7 @@ public class TimeLogsController : BaseController
     /// Restricted to administrators.
     /// </summary>
     /// <returns>200 OK with a list of all <see cref="TimeLog"/> entries.</returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllTimeLogs()
     {
@@ -59,10 +59,11 @@ public class TimeLogsController : BaseController
     /// </summary>
     /// <param name="toDoId">The unique identifier of the to-do item.</param>
     /// <returns>200 OK with a list of <see cref="TimeLog"/> entries for the given to-do.</returns>
+    [Authorize(Roles = "Manager,Admin,ProjectManager")]
     [HttpGet("GetByToDoId/{toDoId}")]
     public async Task<IActionResult> GetTimeLogsByToDoId(Guid toDoId)
     {
-        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByToDoId(toDoId);
+        List<TimeLog> timeLogs = await _timeLogsService.GetTimeLogsByToDoId(toDoId, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(timeLogs);
     }
 

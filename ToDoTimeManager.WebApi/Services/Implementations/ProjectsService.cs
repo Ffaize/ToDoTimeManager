@@ -13,24 +13,34 @@ public class ProjectsService : IProjectsService
     private readonly IProjectsDataController _projectsDataController;
     private readonly IProjectTeamsDataController _projectTeamsDataController;
     private readonly IToDosService _toDosService;
+    private readonly IAccessControlService _accessControlService;
     private readonly ILogger<ProjectsService> _logger;
 
     public ProjectsService(
         IProjectsDataController projectsDataController,
         IProjectTeamsDataController projectTeamsDataController,
         IToDosService toDosService,
+        IAccessControlService accessControlService,
         ILogger<ProjectsService> logger)
     {
         _projectsDataController = projectsDataController;
         _projectTeamsDataController = projectTeamsDataController;
         _toDosService = toDosService;
+        _accessControlService = accessControlService;
         _logger = logger;
     }
 
-    public async Task<List<ProjectResponseDto>> GetAllProjects()
+    public async Task<List<ProjectResponseDto>> GetAllProjects(Guid currentUserId, UserRole currentUserRole)
     {
-        List<ProjectEntity> entities = await _projectsDataController.GetAllProjects();
-        return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
+        if (currentUserRole >= UserRole.Manager)
+        {
+            List<ProjectEntity> all = await _projectsDataController.GetAllProjects();
+            return all.Select(e => MapToDto(e.ToProject(), null)).ToList();
+        }
+
+        // ProjectManager sees only accessible projects
+        List<ProjectEntity> accessible = await _projectsDataController.GetProjectsByUserId(currentUserId);
+        return accessible.Select(e => MapToDto(e.ToProject(), null)).ToList();
     }
 
     public async Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, UserRole currentUserRole)
@@ -44,7 +54,7 @@ public class ProjectsService : IProjectsService
             if (entity == null)
                 throw new NotFoundException("Project was not found");
 
-            if (currentUserRole < UserRole.ProjectManager && !await UserHasAccess(projectId, currentUserId, entity.CreatedBy))
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(GetProjectById)))
                 throw new ForbiddenException();
 
             List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
@@ -103,14 +113,8 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (currentUserRole < UserRole.ProjectManager)
-            {
-                var project = await _projectsDataController.GetProjectById(request.Id);
-                if (project == null)
-                    throw new NotFoundException("Project was not found");
-                if (project.CreatedBy != currentUserId)
-                    throw new ForbiddenException();
-            }
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.Id, nameof(UpdateProject)))
+                throw new ForbiddenException();
 
             var entity = new ProjectEntity
             {
@@ -158,14 +162,8 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (currentUserRole < UserRole.ProjectManager)
-            {
-                var project = await _projectsDataController.GetProjectById(request.ProjectId);
-                if (project == null)
-                    throw new NotFoundException("Project was not found");
-                if (project.CreatedBy != currentUserId)
-                    throw new ForbiddenException();
-            }
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.ProjectId, nameof(AddTeam)))
+                throw new ForbiddenException();
 
             var existing = await _projectTeamsDataController.GetByProjectIdAndTeamId(request.ProjectId, request.TeamId);
             if (existing != null)
@@ -197,13 +195,8 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            {
-                var project = await _projectsDataController.GetProjectById(projectId);
-                if (project == null)
-                    throw new NotFoundException("Project was not found");
-                if (project.CreatedBy != currentUserId)
-                    throw new ForbiddenException();
-            }
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(RemoveTeam)))
+                throw new ForbiddenException();
 
             return await _projectTeamsDataController.RemoveTeam(projectId, teamId);
         }
@@ -225,14 +218,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (currentUserRole >= UserRole.ProjectManager) 
-                return await _toDosService.GetToDosByProjectId(projectId);
-            
-            var project = await _projectsDataController.GetProjectById(projectId);
-            if (project == null)
-                throw new NotFoundException("Project was not found");
-
-            if (!await UserHasAccess(projectId, currentUserId, project.CreatedBy))
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(GetToDosByProjectId)))
                 throw new ForbiddenException();
 
             return await _toDosService.GetToDosByProjectId(projectId);
@@ -246,13 +232,6 @@ public class ProjectsService : IProjectsService
             _logger.LogError(e, e.Message);
             return [];
         }
-    }
-
-    private async Task<bool> UserHasAccess(Guid projectId, Guid userId, Guid createdBy)
-    {
-        if (createdBy == userId) return true;
-        List<ProjectEntity> accessible = await _projectsDataController.GetProjectsByUserId(userId);
-        return accessible.Any(p => p.Id == projectId);
     }
 
     private static ProjectResponseDto MapToDto(Project project, List<ProjectTeam>? teams)

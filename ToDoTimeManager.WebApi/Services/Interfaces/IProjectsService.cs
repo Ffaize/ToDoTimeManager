@@ -6,7 +6,7 @@ namespace ToDoTimeManager.WebApi.Services.Interfaces;
 
 public interface IProjectsService
 {
-    Task<List<ProjectResponseDto>> GetAllProjects();
+    Task<List<ProjectResponseDto>> GetAllProjects(Guid currentUserId, UserRole currentUserRole);
     Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, UserRole currentUserRole);
     Task<List<ProjectResponseDto>> GetProjectsByUserId(Guid userId);
     Task<bool> CreateProject(CreateProjectRequestDto request, Guid createdByUserId);

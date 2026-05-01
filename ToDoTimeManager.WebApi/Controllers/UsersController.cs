@@ -62,44 +62,45 @@ public class UsersController : BaseController
     /// 200 OK with a <see cref="UserResponseDto"/> on success;
     /// 500 Internal Server Error if no matching user is found.
     /// </returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpGet("GetByUsername/{userName}")]
     public async Task<IActionResult> GetUserByUsername(string userName)
     {
-        var user = await _usersService.GetUserByUsername(userName);
+        var user = await _usersService.GetUserByUsername(userName, GetCurrentUserId(), GetCurrentUserRole());
         return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
     }
 
     /// <summary>
-    /// Retrieves a user account by their email address. Restricted to administrators.
+    /// Retrieves a user account by their email address.
+    /// Managers and Admins may access any account; other users may only access their own.
     /// </summary>
     /// <param name="email">The email address to search for.</param>
     /// <returns>
     /// 200 OK with a <see cref="UserResponseDto"/> on success;
     /// 500 Internal Server Error if no matching user is found.
     /// </returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpGet("GetByEmail/{email}")]
     public async Task<IActionResult> GetUserByEmail(string email)
     {
-        var user = await _usersService.GetUserByEmail(email);
+        var user = await _usersService.GetUserByEmail(email, GetCurrentUserId(), GetCurrentUserRole());
         return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
     }
 
     /// <summary>
     /// Retrieves a user account by a login parameter that may be either a username or email address.
-    /// Restricted to administrators.
+    /// Managers and Admins may access any account; other users may only access their own.
     /// </summary>
     /// <param name="loginParameter">The username or email address to search for.</param>
     /// <returns>
     /// 200 OK with a <see cref="UserResponseDto"/> on success;
     /// 500 Internal Server Error if no matching user is found.
     /// </returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpGet("GetByLoginParameter/{loginParameter}")]
     public async Task<IActionResult> GetUserByLoginParameter(string loginParameter)
     {
-        var user = await _usersService.GetUserByLoginParameter(loginParameter);
+        var user = await _usersService.GetUserByLoginParameter(loginParameter, GetCurrentUserId(), GetCurrentUserRole());
         return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
     }
 

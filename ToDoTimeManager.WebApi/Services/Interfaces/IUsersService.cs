@@ -8,9 +8,9 @@ public interface IUsersService
 {
     Task<List<User>> GetAllUsers();
     Task<User?> GetUserById(Guid userId, Guid currentUserId, UserRole currentUserRole);
-    Task<User?> GetUserByUsername(string username);
-    Task<User?> GetUserByEmail(string email);
-    Task<User?> GetUserByLoginParameter(string loginParameter);
+    Task<User?> GetUserByUsername(string username, Guid currentUserId, UserRole currentUserRole);
+    Task<User?> GetUserByEmail(string email, Guid currentUserId, UserRole currentUserRole);
+    Task<User?> GetUserByLoginParameter(string loginParameter, Guid currentUserId, UserRole currentUserRole);
     Task<bool> CreateUser(CreateUserRequestDto request);
     Task<bool> UpdateUser(UpdateUserRequestDto request, Guid currentUserId);
     Task<bool> ChangeUserRole(Guid userId, UserRole newRole);

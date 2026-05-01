@@ -33,7 +33,10 @@ public class Program
 
         builder.Services.AddScoped<IDbAccessService, DbAccessService>();
 
+        builder.Services.AddHttpContextAccessor();
+
         builder.Services.AddScoped<IUsersDataController, UsersDataController>();
+        builder.Services.AddScoped<IAccessControlDataController, AccessControlDataController>();
         builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
         builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
         builder.Services.AddScoped<ITeamsDataController, TeamsDataController>();

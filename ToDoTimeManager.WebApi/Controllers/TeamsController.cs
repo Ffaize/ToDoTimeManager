@@ -29,7 +29,7 @@ public class TeamsController : BaseController
     /// Retrieves all teams in the system. Restricted to administrators.
     /// </summary>
     /// <returns>200 OK with a list of all teams.</returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllTeams()
     {
@@ -45,7 +45,7 @@ public class TeamsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if deletion fails.
     /// </returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteTeam(Guid id)
     {
@@ -91,6 +91,7 @@ public class TeamsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if the update fails or the caller lacks access.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPut("Update")]
     public async Task<IActionResult> UpdateTeam([FromBody] UpdateTeamRequestDto request)
     {
@@ -107,6 +108,7 @@ public class TeamsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if the operation fails or the caller lacks access.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPost("AddMember")]
     public async Task<IActionResult> AddMember([FromBody] TeamMemberUpsertRequestDto request)
     {
@@ -124,6 +126,7 @@ public class TeamsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if the operation fails or the caller lacks access.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin")]
     [HttpDelete("RemoveMember/{teamId}/{userId}")]
     public async Task<IActionResult> RemoveMember(Guid teamId, Guid userId)
     {
@@ -150,11 +153,10 @@ public class TeamsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if creation fails.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPost("Create")]
     public async Task<IActionResult> CreateTeam([FromBody] CreateTeamRequestDto request)
     {
-        if (!IsManager())
-            return Forbid();
         var result = await _teamsService.CreateTeam(request, GetCurrentUserId());
         return result ? Ok(result) : StatusCode(500);
     }

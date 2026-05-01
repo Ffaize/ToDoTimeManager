@@ -1,0 +1,11 @@
+CREATE OR ALTER PROCEDURE sp_AccessControl_CanUserAccessTeam
+    @UserId UNIQUEIDENTIFIER,
+    @TeamId UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT CAST(CASE WHEN EXISTS (
+        SELECT 1 FROM TeamMembers WHERE TeamId = @TeamId AND UserId = @UserId
+    ) THEN 1 ELSE 0 END AS BIT);
+END

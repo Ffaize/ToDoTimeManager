@@ -1,4 +1,5 @@
-using ToDoTimeManager.WebApi.Entities;
+using System.Security.Claims;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -6,49 +7,69 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 
 public class AccessControlService : IAccessControlService
 {
-    private readonly IProjectsDataController _projectsDataController;
-    private readonly IProjectTeamsDataController _projectTeamsDataController;
-    private readonly ITeamMembersDataController _teamMembersDataController;
-    private readonly IToDosDataController _toDosDataController;
-    private readonly ITimeLogsDataController _timeLogsDataController;
+    private readonly IAccessControlDataController _accessControlDataController;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AccessControlService> _logger;
 
     public AccessControlService(
-        IProjectsDataController projectsDataController,
-        IProjectTeamsDataController projectTeamsDataController,
-        ITeamMembersDataController teamMembersDataController,
-        IToDosDataController toDosDataController,
-        ITimeLogsDataController timeLogsDataController,
+        IAccessControlDataController accessControlDataController,
+        IHttpContextAccessor httpContextAccessor,
         ILogger<AccessControlService> logger)
     {
-        _projectsDataController = projectsDataController;
-        _projectTeamsDataController = projectTeamsDataController;
-        _teamMembersDataController = teamMembersDataController;
-        _toDosDataController = toDosDataController;
-        _timeLogsDataController = timeLogsDataController;
+        _accessControlDataController = accessControlDataController;
+        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
+    }
+
+    public async Task<bool> IsAccessibleToUser(Guid userId, Guid objectId, string methodName)
+    {
+        try
+        {
+            var roleClaim = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
+            if (Enum.TryParse<UserRole>(roleClaim, out var role) && role >= UserRole.Manager)
+                return true;
+
+            return methodName switch
+            {
+                // Project-level checks (objectId = projectId)
+                "GetProjectById" or "GetToDosByProjectId" or "UpdateProject"
+                    or "AddTeam" or "RemoveTeam" or "CreateToDo" or "UpdateToDo"
+                    => objectId == Guid.Empty || await _accessControlDataController.CanAccessProject(userId, objectId),
+
+                // Team-level checks (objectId = teamId)
+                "GetTeamById" or "GetToDosByTeamId"
+                    => await _accessControlDataController.CanAccessTeam(userId, objectId),
+
+                // ToDo-level checks (objectId = toDoId)
+                "GetToDoById" or "DeleteToDo" or "GetTimeLogsByToDoId"
+                    or "GetTimeLogsByUserIdAndToDoId" or "CreateTimeLog"
+                    => await _accessControlDataController.CanAccessToDo(userId, objectId),
+
+                // TimeLog-level checks (objectId = timeLogId)
+                "GetTimeLogById" or "UpdateTimeLog" or "DeleteTimeLog"
+                    => await _accessControlDataController.CanAccessTimeLog(userId, objectId),
+
+                // Self-access checks (objectId = targetUserId)
+                "GetToDosByUserId" or "GetTimeLogsByUserId" or "GetUserById"
+                    or "GetUserByUsername" or "GetUserByEmail"
+                    or "GetUserByLoginParameter" or "UpdateUser"
+                    => userId == objectId,
+
+                _ => false
+            };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
     }
 
     public async Task<bool> CanAccessProject(Guid userId, Guid projectId)
     {
         try
         {
-            ProjectEntity? project = await _projectsDataController.GetProjectById(projectId);
-            if (project == null) return false;
-
-            if (project.CreatedBy == userId) return true;
-
-            List<ProjectTeamEntity> projectTeams = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
-
-            foreach (ProjectTeamEntity pt in projectTeams)
-            {
-                if (pt.ProjectManagerId == userId) return true;
-
-                TeamMemberEntity? membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(pt.TeamId, userId);
-                if (membership != null) return true;
-            }
-
-            return false;
+            return await _accessControlDataController.CanAccessProject(userId, projectId);
         }
         catch (Exception e)
         {
@@ -61,21 +82,7 @@ public class AccessControlService : IAccessControlService
     {
         try
         {
-            ToDoEntity? todo = await _toDosDataController.GetToDoById(toDoId);
-            if (todo == null) return false;
-
-            if (todo.AssignedTo == userId) return true;
-
-            if (todo.TeamId.HasValue)
-            {
-                TeamMemberEntity? membership = await _teamMembersDataController.GetMemberByTeamIdAndUserId(todo.TeamId.Value, userId);
-                if (membership != null) return true;
-            }
-
-            if (todo.ProjectId.HasValue)
-                return await CanAccessProject(userId, todo.ProjectId.Value);
-
-            return false;
+            return await _accessControlDataController.CanAccessToDo(userId, toDoId);
         }
         catch (Exception e)
         {
@@ -88,12 +95,20 @@ public class AccessControlService : IAccessControlService
     {
         try
         {
-            TimeLogEntity? timeLog = await _timeLogsDataController.GetTimeLogById(timeLogId);
-            if (timeLog == null) return false;
+            return await _accessControlDataController.CanAccessTimeLog(userId, timeLogId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
 
-            if (timeLog.UserId == userId) return true;
-
-            return await CanAccessToDo(userId, timeLog.ToDoId);
+    public async Task<bool> CanAccessTeam(Guid userId, Guid teamId)
+    {
+        try
+        {
+            return await _accessControlDataController.CanAccessTeam(userId, teamId);
         }
         catch (Exception e)
         {

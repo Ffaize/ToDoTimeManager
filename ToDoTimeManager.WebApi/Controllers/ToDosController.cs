@@ -29,7 +29,7 @@ public class ToDosController : BaseController
     /// Restricted to administrators.
     /// </summary>
     /// <returns>200 OK with a list of all <see cref="ToDo"/> items.</returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllToDos()
     {
@@ -95,7 +95,7 @@ public class ToDosController : BaseController
             ProjectId = request.ProjectId
         };
 
-        var created = await _toDosService.CreateToDo(toDo);
+        var created = await _toDosService.CreateToDo(toDo, GetCurrentUserId(), GetCurrentUserRole());
         return created ? Ok(created) : StatusCode(500);
     }
 
@@ -141,6 +141,7 @@ public class ToDosController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if deletion fails or the caller lacks access.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin,ProjectManager")]
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteToDo(Guid id)
     {

@@ -10,11 +10,16 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 public class ToDosService : IToDosService
 {
     private readonly IToDosDataController _toDosDataController;
+    private readonly IAccessControlService _accessControlService;
     private readonly ILogger<ToDosService> _logger;
 
-    public ToDosService(IToDosDataController toDosDataController, ILogger<ToDosService> logger)
+    public ToDosService(
+        IToDosDataController toDosDataController,
+        IAccessControlService accessControlService,
+        ILogger<ToDosService> logger)
     {
         _toDosDataController = toDosDataController;
+        _accessControlService = accessControlService;
         _logger = logger;
     }
 
@@ -43,7 +48,7 @@ public class ToDosService : IToDosService
             if (res == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (res.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetToDoById)))
                 throw new ForbiddenException();
 
             return res.ToToDo();
@@ -63,11 +68,12 @@ public class ToDosService : IToDosService
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (userId != currentUserId && currentUserRole < UserRole.Admin)
-            throw new ForbiddenException();
 
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetToDosByUserId)))
+                throw new ForbiddenException();
+
             List<ToDoEntity> res = await _toDosDataController.GetToDosByUserId(userId);
             return res.Select(tde => tde.ToToDo()).ToList();
         }
@@ -136,13 +142,17 @@ public class ToDosService : IToDosService
         }
     }
 
-    public async Task<bool> CreateToDo(ToDo newToDo)
+    public async Task<bool> CreateToDo(ToDo newToDo, Guid currentUserId, UserRole currentUserRole)
     {
         if (string.IsNullOrWhiteSpace(newToDo.Title))
             throw new ValidationException("To-do title is required");
 
         try
         {
+            var projectId = newToDo.ProjectId ?? Guid.Empty;
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(CreateToDo)))
+                throw new ForbiddenException();
+
             return await _toDosDataController.CreateToDo(new ToDoEntity(newToDo));
         }
         catch (ServiceException)
@@ -164,7 +174,8 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (existing.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
+            var projectId = existing.ProjectId ?? Guid.Empty;
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(UpdateToDo)))
                 throw new ForbiddenException();
 
             return await _toDosDataController.UpdateToDo(new ToDoEntity(updatedToDo));
@@ -191,7 +202,7 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (existing.AssignedTo != currentUserId && currentUserRole < UserRole.Admin)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(DeleteToDo)))
                 throw new ForbiddenException();
 
             return await _toDosDataController.DeleteToDo(toDoId);

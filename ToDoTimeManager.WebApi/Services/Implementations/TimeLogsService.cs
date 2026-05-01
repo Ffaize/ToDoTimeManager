@@ -10,11 +10,16 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 public class TimeLogsService : ITimeLogsService
 {
     private readonly ITimeLogsDataController _timeLogsDataController;
+    private readonly IAccessControlService _accessControlService;
     private readonly ILogger<TimeLogsService> _logger;
 
-    public TimeLogsService(ITimeLogsDataController timeLogsDataController, ILogger<TimeLogsService> logger)
+    public TimeLogsService(
+        ITimeLogsDataController timeLogsDataController,
+        IAccessControlService accessControlService,
+        ILogger<TimeLogsService> logger)
     {
         _timeLogsDataController = timeLogsDataController;
+        _accessControlService = accessControlService;
         _logger = logger;
     }
 
@@ -43,7 +48,7 @@ public class TimeLogsService : ITimeLogsService
             if (res == null)
                 throw new NotFoundException("Time log was not found");
 
-            if (res.UserId != currentUserId && currentUserRole < UserRole.Admin)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, timeLogId, nameof(GetTimeLogById)))
                 throw new ForbiddenException();
 
             return res.ToTimeLog();
@@ -59,13 +64,16 @@ public class TimeLogsService : ITimeLogsService
         }
     }
 
-    public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId)
+    public async Task<List<TimeLog>> GetTimeLogsByToDoId(Guid toDoId, Guid currentUserId, UserRole currentUserRole)
     {
         if (toDoId == Guid.Empty)
             throw new ValidationException("Invalid to-do ID");
 
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetTimeLogsByToDoId)))
+                throw new ForbiddenException();
+
             List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByToDoId(toDoId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
@@ -84,11 +92,12 @@ public class TimeLogsService : ITimeLogsService
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (userId != currentUserId && currentUserRole < UserRole.Admin)
-            throw new ForbiddenException();
 
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetTimeLogsByUserId)))
+                throw new ForbiddenException();
+
             List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByUserId(userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
@@ -110,11 +119,12 @@ public class TimeLogsService : ITimeLogsService
             throw new ValidationException("Invalid user ID");
         if (toDoId == Guid.Empty)
             throw new ValidationException("Invalid to-do ID");
-        if (userId != currentUserId && currentUserRole < UserRole.Admin)
-            throw new ForbiddenException();
 
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetTimeLogsByUserIdAndToDoId)))
+                throw new ForbiddenException();
+
             List<TimeLogEntity> res = await _timeLogsDataController.GetTimeLogsByUserIdAndToDoId(toDoId, userId);
             return res.Select(tle => tle.ToTimeLog()).ToList()!;
         }
@@ -147,7 +157,14 @@ public class TimeLogsService : ITimeLogsService
     {
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(newTimeLog.UserId, newTimeLog.ToDoId, nameof(CreateTimeLog)))
+                throw new ForbiddenException();
+
             return await _timeLogsDataController.CreateTimeLog(new TimeLogEntity(newTimeLog));
+        }
+        catch (ServiceException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -164,7 +181,7 @@ public class TimeLogsService : ITimeLogsService
             if (existing == null)
                 throw new NotFoundException("Time log was not found");
 
-            if (existing.UserId != currentUserId && currentUserRole < UserRole.Admin)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, updatedTimeLog.Id, nameof(UpdateTimeLog)))
                 throw new ForbiddenException();
 
             return await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
@@ -191,7 +208,7 @@ public class TimeLogsService : ITimeLogsService
             if (existing == null)
                 throw new NotFoundException("Time log was not found");
 
-            if (existing.UserId != currentUserId && currentUserRole < UserRole.Admin)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, timeLogId, nameof(DeleteTimeLog)))
                 throw new ForbiddenException();
 
             return await _timeLogsDataController.DeleteTimeLog(timeLogId);

@@ -29,11 +29,11 @@ public class ProjectsController : BaseController
     /// Retrieves all projects in the system. Restricted to administrators.
     /// </summary>
     /// <returns>200 OK with a list of all projects.</returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin,ProjectManager")]
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAllProjects()
     {
-        List<ProjectResponseDto> projects = await _projectsService.GetAllProjects();
+        List<ProjectResponseDto> projects = await _projectsService.GetAllProjects(GetCurrentUserId(), GetCurrentUserRole());
         return Ok(projects);
     }
 
@@ -45,7 +45,7 @@ public class ProjectsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if deletion fails.
     /// </returns>
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager,Admin")]
     [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> DeleteProject(Guid id)
     {
@@ -152,11 +152,10 @@ public class ProjectsController : BaseController
     /// 200 OK with <c>true</c> on success;
     /// 500 Internal Server Error if creation fails.
     /// </returns>
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPost("Create")]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
     {
-        if (!IsProjectManager())
-            return Forbid();
         var result = await _projectsService.CreateProject(request, GetCurrentUserId());
         return result ? Ok(result) : StatusCode(500);
     }

@@ -12,13 +12,18 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 public class UsersService : IUsersService
 {
     private readonly IUsersDataController _usersDataController;
+    private readonly IAccessControlService _accessControlService;
     private readonly ILogger<UsersService> _logger;
     private readonly IPasswordHelperService _passwordHelperService;
 
-    public UsersService(IUsersDataController usersDataController, ILogger<UsersService> logger,
+    public UsersService(
+        IUsersDataController usersDataController,
+        IAccessControlService accessControlService,
+        ILogger<UsersService> logger,
         IPasswordHelperService passwordHelperService)
     {
         _usersDataController = usersDataController;
+        _accessControlService = accessControlService;
         _logger = logger;
         _passwordHelperService = passwordHelperService;
     }
@@ -48,8 +53,7 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            // Manager+ can read any user profile; others can only read their own
-            if (userId != currentUserId && currentUserRole < UserRole.Manager)
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetUserById)))
                 throw new ForbiddenException();
 
             return res.ToUser();
@@ -65,7 +69,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<User?> GetUserByUsername(string username)
+    public async Task<User?> GetUserByUsername(string username, Guid currentUserId, UserRole currentUserRole)
     {
         if (string.IsNullOrWhiteSpace(username))
             throw new ValidationException("Invalid username");
@@ -75,6 +79,10 @@ public class UsersService : IUsersService
             var res = await _usersDataController.GetUserByUsername(username);
             if (res == null)
                 throw new NotFoundException("User was not found");
+
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByUsername)))
+                throw new ForbiddenException();
+
             return res.ToUser();
         }
         catch (ServiceException)
@@ -88,7 +96,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<User?> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email, Guid currentUserId, UserRole currentUserRole)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ValidationException("Invalid email");
@@ -98,6 +106,10 @@ public class UsersService : IUsersService
             var res = await _usersDataController.GetUserByEmail(email);
             if (res == null)
                 throw new NotFoundException("User was not found");
+
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByEmail)))
+                throw new ForbiddenException();
+
             return res.ToUser();
         }
         catch (ServiceException)
@@ -111,7 +123,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<User?> GetUserByLoginParameter(string loginParameter)
+    public async Task<User?> GetUserByLoginParameter(string loginParameter, Guid currentUserId, UserRole currentUserRole)
     {
         if (string.IsNullOrWhiteSpace(loginParameter))
             throw new ValidationException("Invalid login parameter");
@@ -121,6 +133,10 @@ public class UsersService : IUsersService
             var res = await _usersDataController.GetUserByLoginParameter(loginParameter);
             if (res == null)
                 throw new NotFoundException("User was not found");
+
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByLoginParameter)))
+                throw new ForbiddenException();
+
             return res.ToUser();
         }
         catch (ServiceException)
@@ -179,11 +195,12 @@ public class UsersService : IUsersService
     {
         if (request.Id == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (request.Id != currentUserId)
-            throw new ForbiddenException();
 
         try
         {
+            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.Id, nameof(UpdateUser)))
+                throw new ForbiddenException();
+
             var existing = await _usersDataController.GetUserById(request.Id);
             if (existing == null)
                 throw new NotFoundException("User was not found");
