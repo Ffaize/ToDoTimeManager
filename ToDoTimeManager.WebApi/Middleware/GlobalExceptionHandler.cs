@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ToDoTimeManager.WebApi.Exceptions;
+using ToDoTimeManager.WebApi.Extensions;
 
 namespace ToDoTimeManager.WebApi.Middleware;
 
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IM
                 exception.StatusCode, stopwatch.ElapsedMilliseconds);
 
             var problemDetails =
-                CreateProblemDetails(exception.StatusCode, GetTitle(exception.StatusCode), exception.Message);
+                ProblemDetailsFactory.Create(exception.StatusCode, ProblemDetailsFactory.GetTitle(exception.StatusCode), exception.Message);
             context.Response.StatusCode = exception.StatusCode;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
@@ -32,31 +33,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IM
                 stopwatch.ElapsedMilliseconds);
 
             var problemDetails =
-                CreateProblemDetails(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
+                ProblemDetailsFactory.Create(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
-    }
-
-    private static string GetTitle(int statusCode)
-    {
-        return statusCode switch
-        {
-            400 => "Validation Error",
-            403 => "Forbidden",
-            404 => "Not Found",
-            409 => "Conflict",
-            var _ => "Error"
-        };
-    }
-
-    private static ProblemDetails CreateProblemDetails(int status, string title, string? detail = null)
-    {
-        return new ProblemDetails
-        {
-            Status = status,
-            Title = title,
-            Detail = detail
-        };
     }
 }

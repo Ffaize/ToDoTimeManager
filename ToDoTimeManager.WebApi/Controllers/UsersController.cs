@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Extensions;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
@@ -34,7 +35,7 @@ public class UsersController : BaseController
     public async Task<IActionResult> GetAllUsers()
     {
         List<User> users = await _usersService.GetAllUsers();
-        return Ok(users.Select(ToUserResponseDto));
+        return Ok(users.Select(u => u.ToResponseDto()));
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ public class UsersController : BaseController
     public async Task<IActionResult> GetUserById(Guid id)
     {
         var user = await _usersService.GetUserById(id, GetCurrentUserId(), GetCurrentUserRole());
-        return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
+        return user != null ? Ok(user.ToResponseDto()) : StatusCode(500);
     }
 
     /// <summary>
@@ -67,7 +68,7 @@ public class UsersController : BaseController
     public async Task<IActionResult> GetUserByUsername(string userName)
     {
         var user = await _usersService.GetUserByUsername(userName, GetCurrentUserId(), GetCurrentUserRole());
-        return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
+        return user != null ? Ok(user.ToResponseDto()) : StatusCode(500);
     }
 
     /// <summary>
@@ -84,7 +85,7 @@ public class UsersController : BaseController
     public async Task<IActionResult> GetUserByEmail(string email)
     {
         var user = await _usersService.GetUserByEmail(email, GetCurrentUserId(), GetCurrentUserRole());
-        return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
+        return user != null ? Ok(user.ToResponseDto()) : StatusCode(500);
     }
 
     /// <summary>
@@ -101,7 +102,7 @@ public class UsersController : BaseController
     public async Task<IActionResult> GetUserByLoginParameter(string loginParameter)
     {
         var user = await _usersService.GetUserByLoginParameter(loginParameter, GetCurrentUserId(), GetCurrentUserRole());
-        return user != null ? Ok(ToUserResponseDto(user)) : StatusCode(500);
+        return user != null ? Ok(user.ToResponseDto()) : StatusCode(500);
     }
 
     /// <summary>
@@ -172,14 +173,4 @@ public class UsersController : BaseController
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 
-    private static UserResponseDto ToUserResponseDto(User user)
-    {
-        return new UserResponseDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            UserRole = user.UserRole
-        };
-    }
 }

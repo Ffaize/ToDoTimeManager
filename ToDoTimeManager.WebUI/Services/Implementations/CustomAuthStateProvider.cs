@@ -38,7 +38,7 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
                         await MarkUserAsAuthenticated(res);
                         if (res?.AccessToken != null)
                         {
-                            var claimsPrincipals = GetClaimsPrincipalFromJwt(res.AccessToken);
+                            var claimsPrincipals = JwtTokenHelper.GetClaimsPrincipal(res.AccessToken);
                             return new AuthenticationState(claimsPrincipals);
                         }
                     }
@@ -53,7 +53,7 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
 
             if (result.AccessToken != null)
             {
-                var claimsPrincipal = GetClaimsPrincipalFromJwt(result.AccessToken);
+                var claimsPrincipal = JwtTokenHelper.GetClaimsPrincipal(result.AccessToken);
                 return new AuthenticationState(claimsPrincipal);
             }
 
@@ -65,15 +65,6 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
         }
     }
 
-    private static ClaimsPrincipal GetClaimsPrincipalFromJwt(string accessToken)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(accessToken);
-
-        var identity = new ClaimsIdentity(token.Claims, "jwt");
-        return new ClaimsPrincipal(identity);
-    }
-
     public async Task MarkUserAsAuthenticated(TokenModel tokens)
     {
         var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
@@ -81,7 +72,7 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
 
         if (tokens.AccessToken != null)
         {
-            var principal = GetClaimsPrincipalFromJwt(tokens.AccessToken);
+            var principal = JwtTokenHelper.GetClaimsPrincipal(tokens.AccessToken);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
         }
     }

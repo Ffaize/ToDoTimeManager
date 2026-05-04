@@ -1,5 +1,6 @@
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Extensions;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -47,7 +48,7 @@ public class StatisticService : IStatisticService
         try
         {
             List<TimeLog> timeLogsForFilterTime =
-                await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, GetFilterDaysAgo(filter.TimeFilter));
+                await _timeLogsService.GetTimeLogsByUserIdAndTime(filter.UserId, filter.TimeFilter.ToDaysAgo());
             var daysIntoCurrentMonth =
                 (int)(DateTime.UtcNow - new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0,
                     DateTimeKind.Utc)).TotalDays;
@@ -90,15 +91,4 @@ public class StatisticService : IStatisticService
         });
     }
 
-    private static int GetFilterDaysAgo(TimeFilter filterTimeFilter)
-    {
-        return filterTimeFilter switch
-        {
-            TimeFilter.DayAgo => 1,
-            TimeFilter.WeekAgo => 7,
-            TimeFilter.MonthAgo => 30,
-            TimeFilter.YearAgo => 365,
-            var _ => -1
-        };
-    }
 }

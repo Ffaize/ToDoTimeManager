@@ -1,5 +1,6 @@
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Extensions;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -33,7 +34,7 @@ public class TeamsService : ITeamsService
     public async Task<List<TeamResponseDto>> GetAllTeams()
     {
         List<TeamEntity> entities = await _teamsDataController.GetAllTeams();
-        return entities.Select(e => MapToDto(e.ToTeam(), null)).ToList();
+        return entities.Select(e => e.ToTeam().ToResponseDto(null)).ToList();
     }
 
     public async Task<TeamResponseDto?> GetTeamById(Guid teamId, Guid currentUserId, UserRole currentUserRole)
@@ -52,7 +53,7 @@ public class TeamsService : ITeamsService
 
             List<TeamMemberEntity> memberEntities = await _teamMembersDataController.GetMembersByTeamId(teamId);
             List<TeamMember> members = memberEntities.Select(m => m.ToTeamMember()).ToList();
-            return MapToDto(entity.ToTeam(), members);
+            return entity.ToTeam().ToResponseDto(members);
         }
         catch (ServiceException)
         {
@@ -68,7 +69,7 @@ public class TeamsService : ITeamsService
     public async Task<List<TeamResponseDto>> GetTeamsByUserId(Guid userId)
     {
         List<TeamEntity> entities = await _teamsDataController.GetTeamsByUserId(userId);
-        return entities.Select(e => MapToDto(e.ToTeam(), null)).ToList();
+        return entities.Select(e => e.ToTeam().ToResponseDto(null)).ToList();
     }
 
     public async Task<bool> CreateTeam(CreateTeamRequestDto request, Guid createdByUserId)
@@ -248,17 +249,4 @@ public class TeamsService : ITeamsService
         }
     }
 
-    private static TeamResponseDto MapToDto(Team team, List<TeamMember>? members)
-    {
-        return new TeamResponseDto
-        {
-            Id = team.Id,
-            Name = team.Name,
-            Description = team.Description,
-            CreatedAt = team.CreatedAt,
-            CreatedBy = team.CreatedBy,
-            MemberCount = team.MemberCount,
-            Members = members
-        };
-    }
 }

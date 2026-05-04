@@ -1,6 +1,7 @@
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
+using ToDoTimeManager.WebApi.Extensions;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
@@ -62,7 +63,7 @@ public class TwoFactorService : ITwoFactorService
         return new TwoFactorPendingModel
         {
             UserId = userId,
-            MaskedEmail = MaskEmail(userEntity.Email)
+            MaskedEmail = userEntity.Email.MaskAsEmail()
         };
     }
 
@@ -102,10 +103,4 @@ public class TwoFactorService : ITwoFactorService
         };
     }
 
-    private static string MaskEmail(string email)
-    {
-        var atIndex = email.IndexOf('@');
-        if (atIndex <= 1) return email;
-        return $"{email[0]}***{email[atIndex..]}";
-    }
 }

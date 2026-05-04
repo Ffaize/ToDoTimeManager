@@ -1,5 +1,6 @@
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Extensions;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -35,12 +36,12 @@ public class ProjectsService : IProjectsService
         if (currentUserRole >= UserRole.Manager)
         {
             List<ProjectEntity> all = await _projectsDataController.GetAllProjects();
-            return all.Select(e => MapToDto(e.ToProject(), null)).ToList();
+            return all.Select(e => e.ToProject().ToResponseDto(null)).ToList();
         }
 
         // ProjectManager sees only accessible projects
         List<ProjectEntity> accessible = await _projectsDataController.GetProjectsByUserId(currentUserId);
-        return accessible.Select(e => MapToDto(e.ToProject(), null)).ToList();
+        return accessible.Select(e => e.ToProject().ToResponseDto(null)).ToList();
     }
 
     public async Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, UserRole currentUserRole)
@@ -59,7 +60,7 @@ public class ProjectsService : IProjectsService
 
             List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
             List<ProjectTeam> teams = teamEntities.Select(t => t.ToProjectTeam()).ToList();
-            return MapToDto(entity.ToProject(), teams);
+            return entity.ToProject().ToResponseDto(teams);
         }
         catch (ServiceException)
         {
@@ -75,7 +76,7 @@ public class ProjectsService : IProjectsService
     public async Task<List<ProjectResponseDto>> GetProjectsByUserId(Guid userId)
     {
         List<ProjectEntity> entities = await _projectsDataController.GetProjectsByUserId(userId);
-        return entities.Select(e => MapToDto(e.ToProject(), null)).ToList();
+        return entities.Select(e => e.ToProject().ToResponseDto(null)).ToList();
     }
 
     public async Task<bool> CreateProject(CreateProjectRequestDto request, Guid createdByUserId)
@@ -234,17 +235,4 @@ public class ProjectsService : IProjectsService
         }
     }
 
-    private static ProjectResponseDto MapToDto(Project project, List<ProjectTeam>? teams)
-    {
-        return new ProjectResponseDto
-        {
-            Id = project.Id,
-            Name = project.Name,
-            Description = project.Description,
-            CreatedAt = project.CreatedAt,
-            CreatedBy = project.CreatedBy,
-            TeamCount = project.TeamCount,
-            Teams = teams
-        };
-    }
 }

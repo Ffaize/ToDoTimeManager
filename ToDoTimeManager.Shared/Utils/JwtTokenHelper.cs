@@ -15,4 +15,11 @@ public static class JwtTokenHelper
 
         return (userId, role);
     }
+
+    public static ClaimsPrincipal GetClaimsPrincipal(string accessToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(accessToken);
+        return new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
+    }
 }
