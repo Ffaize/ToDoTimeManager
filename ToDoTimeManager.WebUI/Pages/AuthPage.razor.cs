@@ -24,18 +24,6 @@ public partial class AuthPage
     {
         if (firstRender)
         {
-            await Task.Delay(1000);
-            await ToastsService.ShowToast(Localizer["AuthPageLoaded"], ToastType.Error);
-            await Task.Delay(1000);
-            await ToastsService.ShowToast(Localizer["AuthPageLoaded"], ToastType.Success);
-            await Task.Delay(1000);
-            await ToastsService.ShowToast(Localizer["AuthPageLoaded"], ToastType.Warning);
-            await Task.Delay(5000);
-            var parameters = new ModalParameters();
-            parameters.Add("MessageDetails", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-            var modal = ModalService.Show<ConfirmModal>("Заголовок", parameters);
-            var confirmed = await modal.Result;
 
         }
         await base.OnAfterRenderAsync(firstRender);

@@ -12,98 +12,188 @@
     width: fit-content;
 }
 
+/* ── TOAST ── */
 .custom-toast {
-    width: 40vw;
-    justify-self: center;
-    align-self: center;
-    display: flex;
-    flex-wrap: nowrap;
-    border-radius: var(--border-radius-box);
-    padding: 10px 10px 10px 15px;
-    gap: 20px;
-    justify-content: center;
-    opacity: 0;
-}
-
-@media (max-width: 1500px) {
-    .custom-toast {
-        width: 50vw;
-    }
-}
-
-@media (max-width: 1100px) {
-    .custom-toast {
-        width: 60vw;
-    }
-}
-
-@media (max-width: 900px) {
-    .custom-toast {
-        width: 70vw;
-    }
-}
-
-@media (max-width: 640px) {
-    .custom-toast {
-        width: 80vw;
-    }
-}
-
-@media (max-width: 500px) {
-    .custom-toast {
-        width: 90vw;
-    }
-}
-
-.custom-toast svg {
-    align-content: center;
-    justify-content: center;
-    align-self: center;
-}
-
-.custom-toast .toast-message {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: stretch;
     width: 100%;
-    height: 100%;
-    margin: 0;
-    text-wrap-mode: wrap;
-    line-height: 38px;
-    font-size: clamp(16px, 20px, 23px);
-    color: var(--white-color);
-    font-weight: 550;
+    border-radius: 12px;
+    width: 90vw;
+    max-width: 800px;
+    overflow: hidden;
+    border: 1px solid var(--toast-border);
+    background: linear-gradient(180deg, var(--toast-bg-1) 0%, var(--toast-bg-2) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 0 0 1px rgba(0, 0, 0, 0.3), 0 18px 40px -16px rgba(0, 0, 0, 0.7), 0 0 50px -16px var(--toast-glow);
+    color: var(--text-0);
+    font-family: 'Inter', sans-serif;
+    isolation: isolate;
+    padding-bottom: 1px;
 }
-
-
-.i-white {
-    fill: var(--white-color);
-}
-
-.success {
-    background: var(--toast-success-color)
-}
-
-    .success .toast-close-button {
-        background: #227338;
+    /* Subtle hot-bar shimmer at the bottom */
+    .custom-toast::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--toast-accent), transparent);
+        opacity: 0.7;
+        animation: toastBar 4s linear infinite;
     }
 
-.error {
-    background: var(--toast-error-color)
-}
-
-    .error .toast-close-button {
-        background: #ad2a2a;
+@keyframes toastBar {
+    0% {
+        transform: scaleX(0.3);
+        transform-origin: left;
+        opacity: 0.4;
     }
 
-.warning {
-    background: var(--toast-warning-color)
-}
-
-    .warning .toast-close-button {
-        background: #c69500;
+    25% {
+        transform: scaleX(0.5);
+        transform-origin: center;
+        opacity: 0.9;
     }
 
-.toast-close-button {
-    border-radius: var(--border-radius-box);
-    border: 2px solid transparent;
+
+    50% {
+        transform: scaleX(0.3);
+        transform-origin: right;
+        opacity: 0.4;
+    }
+
+    75% {
+        transform: scaleX(0.5);
+        transform-origin: center;
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: scaleX(0.3);
+        transform-origin: left;
+        opacity: 0.4;
+    }
+}
+
+.custom-toast .icon-wrap {
+    position: relative;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(ellipse 80% 90% at 50% 50%, var(--toast-icon-bg), transparent 75%), linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
+    border-right: 1px solid var(--toast-divider);
+}
+
+    .custom-toast .icon-wrap svg {
+        width: 22px;
+        height: 22px;
+        color: var(--toast-accent);
+        filter: drop-shadow(0 0 6px var(--toast-glow));
+    }
+
+.custom-toast .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 16px;
+    min-width: 0;
+}
+
+.custom-toast .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--toast-accent);
+    opacity: 0.85;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .custom-toast .label::after {
+        content: '';
+        flex: 0 0 14px;
+        height: 1px;
+        background: var(--toast-accent);
+        opacity: 0.4;
+    }
+
+.custom-toast .heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+    .custom-toast .heading code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0.28);
+        padding: 1px 6px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #fff;
+        margin-left: 2px;
+    }
+
+.custom-toast .close {
+    background: rgba(0,0,0,0.2);
+    border: none;
+    border-left: 1px solid var(--toast-divider);
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.5s, color 0.5s;
+}
+
+    .custom-toast .close:hover {
+        background: rgba(0,0,0,0.4);
+        color: #fff;
+    }
+
+    .custom-toast .close svg {
+        width: 16px;
+        height: 16px;
+    }
+
+/* Variants */
+.custom-toast.success {
+    --toast-bg-1: #2a6644;
+    --toast-bg-2: #1d4a30;
+    --toast-border: #3a8458;
+    --toast-divider: rgba(0, 0, 0, 0.28);
+    --toast-accent: var(--tf-success-accent);
+    --toast-glow: var(--tf-success-glow);
+    --toast-icon-bg: rgba(95, 212, 154, 0.18);
+}
+
+.custom-toast.warning {
+    --toast-bg-1: #c08418;
+    --toast-bg-2: #8c5a0e;
+    --toast-border: #d99526;
+    --toast-divider: rgba(0, 0, 0, 0.32);
+    --toast-accent: #fff1c2;
+    --toast-glow: var(--tf-warning-glow);
+    --toast-icon-bg: rgba(255, 220, 130, 0.22);
+}
+
+.custom-toast.error {
+    --toast-bg-1: #b8323a;
+    --toast-bg-2: #802027;
+    --toast-border: #cf4148;
+    --toast-divider: rgba(0, 0, 0, 0.32);
+    --toast-accent: #ffd1c2;
+    --toast-glow: var(--tf-error-glow);
+    --toast-icon-bg: rgba(255, 110, 90, 0.22);
 }
 
 .toast-fade-in {
@@ -118,6 +208,7 @@
     opacity: 1 !important;
     transform: translateY(0) !important;
 }
+
 
 @keyframes fadeIn {
     0% {
@@ -143,9 +234,110 @@
     }
 }
 
-.secondary-button svg {
-    margin-bottom: 3px;
-    margin-right: 5px;
-    color: var(--white-color);
-    fill: var(--white-color)
+/* ── Live demo controls ── */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
 }
+
+.ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--bg-1);
+    border: 1px solid var(--line-2);
+    border-radius: 9px;
+    color: var(--text-1);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+    .ctrl-btn:hover {
+        background: var(--bg-2);
+        border-color: var(--steel, #6b7585);
+        color: var(--text-0);
+        transform: translateY(-1px);
+    }
+
+    .ctrl-btn .swatch {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        box-shadow: 0 0 8px currentColor;
+    }
+
+    .ctrl-btn.s .swatch {
+        background: var(--tf-success-accent);
+        color: var(--tf-success-accent);
+    }
+
+    .ctrl-btn.w .swatch {
+        background: var(--tf-warning-accent);
+        color: var(--tf-warning-accent);
+    }
+
+    .ctrl-btn.e .swatch {
+        background: var(--tf-error-accent);
+        color: var(--tf-error-accent);
+    }
+
+/* Live toast container — bottom right */
+.live-stack {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(420px, calc(100vw - 48px));
+    z-index: 50;
+}
+
+/* Spec card */
+.spec {
+    border: 1px dashed var(--line-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text-2);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.7;
+    background: rgba(255,255,255,0.015);
+    margin-top: 28px;
+}
+
+    .spec b {
+        color: var(--text-1);
+        font-weight: 500;
+    }
+
+@media (max-width: 560px) {
+    .page {
+        padding: 28px 18px 60px;
+    }
+
+    h1.title {
+        font-size: 24px;
+    }
+
+    .custom-toast {
+        grid-template-columns: 48px 1fr 48px;
+    }
+
+        .custom-toast .heading {
+            font-size: 14px;
+        }
+
+    .controls .ctrl-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
+

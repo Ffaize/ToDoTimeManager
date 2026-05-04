@@ -1,33 +1,37 @@
 ﻿:root {
-    /*custom colors*/
-    --midnight-green: #052f33;
-    --dark-slate-gray: #284D4C;
-    --feldgrau: #496665;
-    --battleship-gray: #8e9491;
-    --chestnut: #9C3A24;
-    /*black-white colors*/
-    --black-color: #000000;
-    --white-color: #ffffff;
-    /*grey colors*/
-    --dark-gray-color: #666;
-    --light-gray: rgba(0, 0, 0, 0.4);
-    /*text-colors*/
-    --light-text-color: white;
-    --dark-text-color: black;
-    --spacer: 1rem;
-    --border-radius-box: 0.4rem;
-    --border-radius-bth: 0.25rem;
-    --border-radius-container: 1rem;
-    --shadow-card: 0 0 10px rgba(0, 0, 0, 0.3);
-    --shadow-card-big: 0 0 20px rgba(0, 0, 0, 0.3);
-    --shadow-card-very-big: 0 0 50px rgba(0, 0, 0, 0.6);
-    --shadow-button: 0 0 10px rgba(0, 0, 0, 0.3);
-    
-    
-    
-    
-    /*toast colors*/
-    --toast-success-color: #4CAF50;
-    --toast-warning-color: #ffc107;
-    --toast-error-color: #dc3545;
+    --steel: #6b7585;
+    /* Background */
+    --bg-0: #0a0b0d;
+    --bg-1: #111317;
+    --bg-2: #161a20;
+    --bg-3: #1c2129;
+    /******************************************************************************************/
+    /* line */
+    --line: #252b35;
+    --line-2: #2f3641;
+    /******************************************************************************************/
+    /* Text */
+    --text-0: #f4f5f7;
+    --text-1: #c9cdd4;
+    --text-2: #8a909c;
+    --text-3: #5a6271;
+    /******************************************************************************************/
+    /* Embers */
+    --ember: #ff6a2b;
+    --ember-2: #ffb14a;
+    --ember-glow: rgba(255, 106, 43, 0.55);
+    /******************************************************************************************/
+    /* Toast palette — forge-aligned */
+    --tf-success-1: #1f3a2c;
+    --tf-success-2: #2f6b46;
+    --tf-success-accent: #5fd49a;
+    --tf-success-glow: rgba(95, 212, 154, 0.35);
+    --tf-warning-1: #4a2a0a;
+    --tf-warning-2: #b56a1a;
+    --tf-warning-accent: #ffb14a;
+    --tf-warning-glow: rgba(255, 177, 74, 0.45);
+    --tf-error-1: #3d0e10;
+    --tf-error-2: #a3261c;
+    --tf-error-accent: #ff7a5e;
+    --tf-error-glow: rgba(232, 69, 50, 0.5);
 }

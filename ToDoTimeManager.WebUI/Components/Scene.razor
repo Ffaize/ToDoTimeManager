@@ -1,0 +1,27 @@
+﻿<div class="scene">
+    @if (UsePattern)
+    {
+        <div class="pattern">
+        </div>
+    }
+    @if (UseEmbers)
+    {
+        <div class="embers" id="embers">
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Parameter] public bool UsePattern { get; set; } = true;
+    [Parameter] public bool UseEmbers { get; set; } = true;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && UseEmbers)
+        {
+            _ = JSRuntime.InvokeVoidAsync("initializeEmbers");
+        }
+    }
+
+}

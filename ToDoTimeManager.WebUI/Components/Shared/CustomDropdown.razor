@@ -1,0 +1,76 @@
+@typeparam TItem
+
+<div class="cd-host @AdditionalCssClass" @onclick:stopPropagation="true">
+
+    @if (_isOpen)
+    {
+        <div class="cd-backdrop" @onclick="CloseDropdown"></div>
+    }
+
+    <button type="button"
+            class="cd-trigger @(_isOpen ? "cd-trigger--open" : "")"
+            @onclick="ToggleDropdown"
+            aria-haspopup="listbox"
+            aria-expanded="@_isOpen.ToString().ToLowerInvariant()">
+        @if (ItemIcon is not null && !MultiSelect && SelectedItem is not null)
+        {
+            <span class="cd-item__icon">@ItemIcon(SelectedItem)</span>
+        }
+        <span class="cd-trigger__label">@GetTriggerLabel()</span>
+        <span class="cd-trigger__chevron">
+            <ChevronDownIcon IconSize="14" />
+        </span>
+    </button>
+
+    @if (_isOpen)
+    {
+        <div class="cd-panel" role="listbox">
+
+            @if (Searchable)
+            {
+                <div class="cd-search-wrap">
+                    <input class="cd-search"
+                           type="text"
+                           placeholder="Search…"
+                           @bind-value="_searchText"
+                           @bind-value:event="oninput"
+                           autocomplete="off" />
+                </div>
+            }
+
+            <ul class="cd-list">
+                @foreach (var item in FilteredItems)
+                {
+                    var isSelected = IsSelected(item);
+                    <li class="cd-item @(isSelected ? "cd-item--selected" : "")"
+                        role="option"
+                        aria-selected="@isSelected.ToString().ToLowerInvariant()"
+                        @onclick="() => OnItemClick(item)">
+
+                        @if (MultiSelect)
+                        {
+                            <span class="cd-checkbox @(isSelected ? "cd-checkbox--checked" : "")">
+                                @if (isSelected)
+                                {
+                                    <CheckmarkIcon />
+                                }
+                            </span>
+                        }
+
+                        @if (ItemIcon is not null)
+                        {
+                            <span class="cd-item__icon">@ItemIcon(item)</span>
+                        }
+
+                        <span class="cd-item__label">@ItemLabel(item)</span>
+                    </li>
+                }
+
+                @if (!FilteredItems.Any())
+                {
+                    <li class="cd-item cd-item--empty">No results</li>
+                }
+            </ul>
+        </div>
+    }
+</div>

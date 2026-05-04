@@ -1,12 +1,17 @@
 ﻿@using ToDoTimeManager.WebUI.Components.Shared.Icons
 @using ToDoTimeManager.WebUI.Models
+@using ToDoTimeManager.WebUI.Models.Enums
 @using ToDoTimeManager.WebUI.Services.Implementations
 
-<div class="custom-toast @ToastModel.AdditionalClass @ToastModel.AnimationClass @(ToastModel.ToastType.ToString().ToLower())">
-    <EnvelopeIcon IconSize="35" IconColor="#ffffff"/>
-    <div class="toast-message">@ToastModel.Message</div>
-    <button class="toast-close-button" @onclick="@ToastModel.RemoveToast">
-        <CloseIcon IconSize="35" IconStyle="i-white"/>
+<div class="custom-toast @ToastModel.AdditionalClass @ToastModel.AnimationClass @GetClassType() show">
+    <div class="icon-wrap">
+        @GetIcon()
+    </div>
+    <div class="body">
+        <div class="heading">@ToastModel.Message</div>
+    </div>
+    <button class="close" @onclick="@ToastModel.RemoveToast">
+        <CloseIcon />
     </button>
 </div>
 
@@ -14,4 +19,32 @@
 {
     [Parameter]
     public ToastModel ToastModel { get; set; } = null!;
+
+    private RenderFragment GetIcon() => ToastModel.ToastType switch
+    {
+        ToastType.Success => builder =>
+        {
+            builder.OpenComponent<SuccessToastIcon>(0);
+            builder.CloseComponent();
+        }
+        ,
+        ToastType.Error => builder =>
+        {
+            builder.OpenComponent<ErrorToastIcon>(0);
+            builder.CloseComponent();
+        }
+        ,
+        ToastType.Warning => builder =>
+        {
+            builder.OpenComponent<WarningToastIcon>(0);
+            builder.CloseComponent();
+        }
+        ,
+        _ => builder => { }
+    };
+
+    private string GetClassType()
+    {
+        return ToastModel.ToastType.ToString().ToLower();
+    }
 }

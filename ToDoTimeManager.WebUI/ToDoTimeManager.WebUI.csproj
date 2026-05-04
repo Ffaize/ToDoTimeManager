@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\scene.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.21" />
   </ItemGroup>
@@ -32,8 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Auth\" />
     <Folder Include="wwwroot\font\" />
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\js\scene.js" />
   </ItemGroup>
 
 </Project>

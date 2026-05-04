@@ -1,11 +1,28 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Ubuntu-Light' !important;
+    margin: 0;
+    padding: 0;
+    background: var(--bg-0);
+    color: var(--text-0);
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
 }
 
-.page { background: var(--battleship-gray); }
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2JL7SUc.woff2) format('woff2');
+    unicode-range: U +0460 -052F, U +1C80 -1C8A, U +20B4, U +2DE0 -2DFF, U + A640-A69F, U + FE2E-FE2F;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 
 h1:focus { outline: none; }
 
@@ -37,7 +54,6 @@ a, .btn-link { color: #0071c1; }
 }
 
 main {
-    background-color: var(--battleship-gray) !important;
     height: 100vh;
 }
 
