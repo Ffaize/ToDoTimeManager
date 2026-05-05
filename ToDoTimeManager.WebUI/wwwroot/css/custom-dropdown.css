@@ -167,24 +167,13 @@
     border-bottom: 1px solid var(--line);
 }
 
-.cd-search {
-    width: 100%;
-    padding: 6px 10px;
-    background: var(--bg-1);
-    border: 1px solid var(--line);
+.cd-search-wrap .input-shell {
     border-radius: 6px;
-    color: var(--text-0);
-    font-size: 12px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cd-search::placeholder { color: var(--text-3); }
-
-.cd-search:focus {
-    border-color: var(--ember);
-    box-shadow: 0 0 0 2px var(--ember-glow), 0 0 10px -2px var(--ember-glow);
+.cd-search-wrap .input-shell input {
+    padding: 6px 0;
+    font-size: 12px;
 }
 
 /* ── Item list ───────────────────────────────────────────── */

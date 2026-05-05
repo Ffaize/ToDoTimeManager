@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
+using ToDoTimeManager.WebUI.Components.Base;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Resources;
@@ -24,28 +26,13 @@ public partial class AuthPage
     {
         if (firstRender)
         {
-
+            await Loading(async () =>
+            {
+                await Task.Delay(10000);
+            });
         }
         await base.OnAfterRenderAsync(firstRender);
     }
 
 
-    #region BaseForComponent
-
-    [Inject] private IStringLocalizer<Resource> Localizer { get; set; } = null!;
-    public bool IsLoading { get; set; }
-
-    public void ShowLoader()
-    {
-        IsLoading = true;
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void HideLoader()
-    {
-        IsLoading = false;
-        InvokeAsync(StateHasChanged);
-    }
-
-    #endregion
 }

@@ -1,11 +1,16 @@
-﻿@using ToDoTimeManager.WebUI.Components.Shared
+﻿@using ToDoTimeManager.WebUI.Components.Base
+@using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Shared
 @layout AuthLayout
+@inherits BaseComponent
 
 @page "/auth"
-<PageTitle>@Localizer["Authorization"] - TaskForge</PageTitle>
-<CultureSelector/>
-<div class="auth-page">
+@GetPageTitle(nameof(AuthPage))
 
+<div class="auth-page">
+    <CultureSelector AdditionalCssClass="culture-selector"/>
+    <div class="auth-page__content">
+        <LoginForm />
+    </div>
 </div>
 

@@ -29,12 +29,7 @@
             @if (Searchable)
             {
                 <div class="cd-search-wrap">
-                    <input class="cd-search"
-                           type="text"
-                           placeholder="Search…"
-                           @bind-value="_searchText"
-                           @bind-value:event="oninput"
-                           autocomplete="off" />
+                    <Input @bind-Value="_searchText" Placeholder="Search…"/>
                 </div>
             }
 

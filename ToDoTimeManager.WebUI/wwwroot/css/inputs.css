@@ -1,0 +1,59 @@
+.input-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg-1);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0 14px;
+    transition: all 0.2s;
+}
+
+.input-shell:focus-within {
+    border-color: var(--ember);
+    box-shadow: 0 0 0 3px rgba(255, 106, 43, 0.12), 0 0 20px -8px var(--ember-glow);
+    background: var(--bg-2);
+}
+
+.input-shell svg { color: var(--text-3); flex-shrink: 0; }
+.input-shell:focus-within svg { color: var(--ember); }
+
+.input-shell input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-0);
+    font-size: 14px;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 14px 12px;
+    width: 100%;
+}
+
+.input-shell input::placeholder { color: var(--text-3); }
+
+.input-shell input:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Ghost variant */
+.input-shell--ghost {
+    background: transparent;
+    border-color: transparent;
+}
+
+/* Eye button */
+.eye-btn {
+    background: none;
+    border: none;
+    color: var(--text-3);
+    cursor: pointer;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    transition: color 0.15s;
+    flex-shrink: 0;
+}
+
+.eye-btn:hover { color: var(--text-1); }
