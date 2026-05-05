@@ -8,17 +8,18 @@ const uglify = require("gulp-uglify-es").default;
 // End imports section
 // Define the paths to your CSS files
 const paths = {
-    css: ["wwwroot/css/**/*.css", "!wwwroot/css/site.min.css"],
+    css: [
+        "wwwroot/css/**/*.css",
+        "!wwwroot/css/site.min.css",
+        "!wwwroot/css/bootstrap/**",
+        "!wwwroot/css/open-iconic/**",
+    ],
     cssDest: "wwwroot/css/",
 };
 
 // Combine and minify CSS task
 function combineAndMinifyCSS() {
-    return gulp.src([
-                "wwwroot/css/*.css",
-                "!wwwroot/css/site.min.css"
-            ],
-            { sourcemaps: true })
+    return gulp.src(paths.css, { sourcemaps: true })
         .pipe(concat("site.css")) // Combine all CSS files into one file named site.css
         .pipe(cleanCSS({ compatibility: "ie8" })) // Minify the combined CSS file
         .pipe(rename({ suffix: ".min" })) // Rename the minified file to styles.min.css

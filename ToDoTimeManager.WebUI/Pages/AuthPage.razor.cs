@@ -22,17 +22,57 @@ public partial class AuthPage
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
     [Inject] private IModalService ModalService { get; set; } = null!;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private static readonly AuthPageCurrentState[] NavOrder =
+    [
+        AuthPageCurrentState.Login,
+        AuthPageCurrentState.Registration,
+        AuthPageCurrentState.TwoFA,
+    ];
+
+    private AuthPageCurrentState AuthPageCurrentState { get; set; } = AuthPageCurrentState.Login;
+
+    private bool _isAnimating = false;
+
+    private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
     {
-        if (firstRender)
+        { AuthPageCurrentState.Login,         "auth-form-slide--active"       },
+        { AuthPageCurrentState.Registration,  "auth-form-slide--hidden-right" },
+        { AuthPageCurrentState.TwoFA,         "auth-form-slide--hidden-right" },
+    };
+
+    public async void GoTo(AuthPageCurrentState target)
+    {
+        if (_isAnimating) return;
+        var current = this.AuthPageCurrentState;
+        if (current == target) return;
+
+        _isAnimating = true;
+        bool isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
+
+        _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
+        _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
+        this.AuthPageCurrentState = target;
+
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(450);
+
+        foreach (var state in NavOrder)
         {
-            await Loading(async () =>
-            {
-                await Task.Delay(10000);
-            });
+            if (state == target) continue;
+            bool isOnRight = Array.IndexOf(NavOrder, state) > Array.IndexOf(NavOrder, target);
+            _slideClasses[state] = isOnRight ? "auth-form-slide--hidden-right" : "auth-form-slide--hidden-left";
         }
-        await base.OnAfterRenderAsync(firstRender);
+        _slideClasses[target] = "auth-form-slide--active";
+
+        _isAnimating = false;
+        await InvokeAsync(StateHasChanged);
     }
 
+    private string GetSlideClass(AuthPageCurrentState state) =>
+        $"auth-form-slide {_slideClasses[state]}";
 
+    private bool IsCurrent(AuthPageCurrentState state)
+    {
+        return AuthPageCurrentState == state;
+    }
 }

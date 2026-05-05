@@ -1,0 +1,41 @@
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Models.Enums
+<div class="auth-page__form">
+    <div className="forge">
+        <div className="brand-row">
+            <div className="brand-logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 16h18v3H3z" fill="#ff6a2b" />
+                    <path d="M7 16l2-6h6l2 6" stroke="#c9cdd4" strokeWidth="1.5" strokeLinejoin="round" fill="#252b35" />
+                    <path d="M11 10V4M11 4L8 6M11 4l3 2" stroke="#c9cdd4" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+            </div>
+            <span className="brand-name">Task<span>Forge</span></span>
+        </div>
+
+        <div className="anvil-stage">
+            <div className="anvil-glow"></div>
+            <Visual />
+        </div>
+
+        <div>
+            <div className="tagline">
+                {tweaks.tagline.split(/(\bclarity\b|\bchaos\b|\bship\b|\bflow\b|\bforge\b)/i).map((part, i) =>
+                /clarity|ship|flow|forge/i.test(part) ? <em key={i}>{part}</em> : <span key={i}>{part}</span>
+                )}
+            </div>
+            <div className="tagline-sub">{tweaks.subTagline}</div>
+            <div className="ladder">
+                <div className="ladder-step active">
+                    <span className="num">01</span>
+                    <span className="label">01 · Sign in</span>
+                    <span className="meta">in progress</span>
+                </div>
+                <div className="ladder-step">
+                    <span className="num">02</span>
+                    <span className="label">02 · Two-factor check</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
