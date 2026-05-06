@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx gulp *)"
+      "Bash(npx gulp *)",
+      "Bash(dotnet build *)"
     ]
   }
 }

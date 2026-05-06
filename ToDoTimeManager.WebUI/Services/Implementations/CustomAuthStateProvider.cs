@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,7 +10,9 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Services.Implementations;
 
-public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAccesor circuitServicesAccesor)
+public class CustomAuthStateProvider(
+    CircuitServicesAccesor.CircuitServicesAccesor circuitServicesAccesor,
+    ILogger<CustomAuthStateProvider> logger)
     : AuthenticationStateProvider
 {
     private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
@@ -21,28 +23,12 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
         {
             var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
             if (localStorage == null) return new AuthenticationState(_anonymous);
-            var result = await localStorage.GetTokenAsync();
-            if (result is null)
-                return new AuthenticationState(_anonymous);
+
+            var tokens = await localStorage.GetTokenAsync();
+            if (tokens is null) return new AuthenticationState(_anonymous);
 
             var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(result.AccessToken) as JwtSecurityToken;
-
-            if (jsonToken != null)
-                if (jsonToken.ValidTo < DateTime.UtcNow && result.RefreshTokenExpiresAt > DateTime.UtcNow)
-                {
-                    var authService = circuitServicesAccesor?.Service?.GetRequiredService<AuthService>();
-                    var res = await authService?.RefreshToken(result)!;
-                    if (res != null)
-                    {
-                        await MarkUserAsAuthenticated(res);
-                        if (res?.AccessToken != null)
-                        {
-                            var claimsPrincipals = JwtTokenHelper.GetClaimsPrincipal(res.AccessToken);
-                            return new AuthenticationState(claimsPrincipals);
-                        }
-                    }
-                }
+            var jsonToken = handler.ReadToken(tokens.AccessToken) as JwtSecurityToken;
 
             if (jsonToken == null)
             {
@@ -50,17 +36,54 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
                 return new AuthenticationState(_anonymous);
             }
 
+            // Access token is still valid — fast path.
+            if (jsonToken.ValidTo >= DateTime.UtcNow)
+                return new AuthenticationState(JwtTokenHelper.GetClaimsPrincipal(tokens.AccessToken!));
 
-            if (result.AccessToken != null)
+            // Access token expired — check whether the refresh token can save us.
+            if (tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
             {
-                var claimsPrincipal = JwtTokenHelper.GetClaimsPrincipal(result.AccessToken);
-                return new AuthenticationState(claimsPrincipal);
+                logger.LogInformation("Both access and refresh tokens are expired. Clearing session.");
+                await localStorage.RemoveTokenAsync();
+                return new AuthenticationState(_anonymous);
             }
 
+            // Attempt a token refresh, serialised through TokenRefreshService.
+            var authService = circuitServicesAccesor?.Service?.GetRequiredService<AuthService>();
+            if (authService == null)
+            {
+                logger.LogError("AuthService not available. Cannot refresh token.");
+                return new AuthenticationState(_anonymous);
+            }
+
+            var refreshService = circuitServicesAccesor?.Service?.GetService<TokenRefreshService>();
+
+            TokenModel? refreshed;
+            if (refreshService != null)
+            {
+                refreshed = await refreshService.TryRefreshAsync(
+                    tokens,
+                    t => authService.RefreshToken(t),
+                    () => localStorage.GetTokenAsync());
+            }
+            else
+            {
+                refreshed = await authService.RefreshToken(tokens);
+            }
+
+            if (refreshed?.AccessToken != null)
+            {
+                await MarkUserAsAuthenticated(refreshed);
+                return new AuthenticationState(JwtTokenHelper.GetClaimsPrincipal(refreshed.AccessToken));
+            }
+
+            logger.LogWarning("Token refresh returned null. Clearing session.");
+            await localStorage.RemoveTokenAsync();
             return new AuthenticationState(_anonymous);
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Unexpected error in GetAuthenticationStateAsync.");
             return new AuthenticationState(_anonymous);
         }
     }
@@ -88,13 +111,18 @@ public class CustomAuthStateProvider(CircuitServicesAccesor.CircuitServicesAcces
     {
         var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
         if (localStorage == null) return null;
-        var accessToken = (await localStorage.GetTokenAsync())?.AccessToken;
-        if (accessToken is null)
+
+        var tokens = await localStorage.GetTokenAsync();
+        if (tokens?.AccessToken is null) return null;
+
+        // Reject expired access tokens — callers should not act on stale identity data.
+        var handler = new JwtSecurityTokenHandler();
+        if (handler.ReadToken(tokens.AccessToken) is JwtSecurityToken jwt && jwt.ValidTo < DateTime.UtcNow)
             return null;
-        var (userId, role) =
-            JwtTokenHelper.GetUserDataFromAccessToken(accessToken);
-        if (userId is null || role is null)
-            return null;
+
+        var (userId, role) = JwtTokenHelper.GetUserDataFromAccessToken(tokens.AccessToken);
+        if (userId is null || role is null) return null;
+
         return (Guid.Parse(userId), Enum.Parse<UserRole>(role));
     }
 }

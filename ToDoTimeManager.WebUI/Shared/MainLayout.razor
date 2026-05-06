@@ -1,4 +1,4 @@
-﻿@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Toast
 @using ToDoTimeManager.WebUI.Components.Modals
 @inherits LayoutComponentBase
@@ -7,7 +7,6 @@
 <PageTitle>ToDoTimeManager.WebUI</PageTitle>
 <ToastBox/>
 <ModalContainer/>
-
 
 <AuthorizeView>
     <Authorized>
@@ -30,34 +29,22 @@
     </Authorizing>
 
     <NotAuthorized>
-        @if (!_navigated) {
-            @NavigateToAuth()
-        }
+        <RedirectToLogin/>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    private bool _navigated;
     public bool ColapseNavMenu { get; set; }
 
-    private RenderFragment NavigateToAuth() {
-        return builder => {
-            _ = Task.Run(async () => {
-                await Task.Yield();
-                _navigated = true;
-                NavigationManager.NavigateTo("/auth");
-            });
-        };
-    }
-
-    private void HideNavMenu() {
+    private void HideNavMenu()
+    {
         ColapseNavMenu = true;
         StateHasChanged();
     }
 
-    private void OnCollapseNavMenuChanged(bool obj) {
+    private void OnCollapseNavMenuChanged(bool obj)
+    {
         ColapseNavMenu = obj;
         StateHasChanged();
     }
-
 }

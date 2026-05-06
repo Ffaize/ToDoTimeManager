@@ -13,13 +13,13 @@ public class AuthService : BaseHttpService
         ApiControllerName = "Auth";
     }
 
-    public async Task<TokenModel?> RefreshToken(TokenModel tokens)
+    public async Task<TokenModel?> RefreshToken(TokenModel tokens, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(Url("RefreshToken"), tokens);
+            var response = await _httpClient.PostAsJsonAsync(Url("RefreshToken"), tokens, cancellationToken);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TokenModel>();
+            return await response.Content.ReadFromJsonAsync<TokenModel>(cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {

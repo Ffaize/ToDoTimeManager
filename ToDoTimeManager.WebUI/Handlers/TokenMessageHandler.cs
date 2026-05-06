@@ -13,56 +13,126 @@ namespace ToDoTimeManager.WebUI.Handlers;
 public class TokenMessageHandler : DelegatingHandler
 {
     private readonly CircuitServicesAccesor _circuitServicesAccesor;
-    private readonly CustomAuthStateProvider? _authenticationStateProvider;
+    private readonly CustomAuthStateProvider? _authStateProvider;
+    private readonly ILogger<TokenMessageHandler> _logger;
 
-    public TokenMessageHandler(CircuitServicesAccesor circuitServicesAccesor,
-        AuthenticationStateProvider authenticationStateProvider)
+    public TokenMessageHandler(
+        CircuitServicesAccesor circuitServicesAccesor,
+        AuthenticationStateProvider authenticationStateProvider,
+        ILogger<TokenMessageHandler> logger)
     {
-        _authenticationStateProvider = authenticationStateProvider as CustomAuthStateProvider;
+        _authStateProvider = authenticationStateProvider as CustomAuthStateProvider;
         _circuitServicesAccesor = circuitServicesAccesor;
+        _logger = logger;
     }
 
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+    protected override async Task<HttpResponseMessage> SendAsync(
+        HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
+        // Buffer request body before the first send so it can be replayed on retry.
+        // Without this, POST/PUT/PATCH bodies are consumed and lost on the first attempt.
+        await BufferRequestBodyAsync(request);
+
         try
         {
-            var tokens = await ConfigureRequest(request);
-
+            var tokens = await AttachBearerTokenAsync(request);
             var response = await base.SendAsync(request, cancellationToken);
 
-            if (response.StatusCode != HttpStatusCode.Unauthorized || tokens == null) return response;
-            DateTime? refreshExpiry = tokens.RefreshTokenExpiresAt;
-            if (refreshExpiry < DateTime.UtcNow)
-                throw new UnauthorizedAccessException("Refresh token expired");
+            if (response.StatusCode != HttpStatusCode.Unauthorized || tokens == null)
+                return response;
 
-            var authService = _circuitServicesAccesor.Service?.GetRequiredService<AuthService>();
-            var tokenModel = await authService?.RefreshToken(tokens)!;
-            if (tokenModel != null) await _authenticationStateProvider?.MarkUserAsAuthenticated(tokenModel)!;
-            await ConfigureRequest(request);
+            if (tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
+            {
+                _logger.LogWarning("Received 401 and refresh token is already expired. Logging out.");
+                await LogOutAsync();
+                return response;
+            }
 
+            var refreshed = await RefreshTokenAsync(tokens, cancellationToken);
+            if (refreshed == null)
+            {
+                _logger.LogWarning("Token refresh failed after 401. Logging out.");
+                await LogOutAsync();
+                return response;
+            }
+
+            if (_authStateProvider != null)
+                await _authStateProvider.MarkUserAsAuthenticated(refreshed);
+
+            // Replay the original request with the new access token.
             response.Dispose();
-            response = await base.SendAsync(request, cancellationToken);
-
-            return response;
+            await AttachBearerTokenAsync(request, refreshed);
+            return await base.SendAsync(request, cancellationToken);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await _authenticationStateProvider?.MarkUserAsLoggedOut()!;
+            _logger.LogError(ex, "Unexpected error in TokenMessageHandler.");
             throw;
         }
     }
 
-    private async Task<TokenModel?> ConfigureRequest(HttpRequestMessage request)
+    // Reads the entire body into a byte array so it survives multiple SendAsync calls.
+    private static async Task BufferRequestBodyAsync(HttpRequestMessage request)
     {
-        var localStorage = _circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
-        if (localStorage == null) return null;
-        var tokens = await localStorage.GetTokenAsync();
+        if (request.Content == null) return;
+        var bytes = await request.Content.ReadAsByteArrayAsync();
+        var contentType = request.Content.Headers.ContentType;
+        request.Content = new ByteArrayContent(bytes);
+        if (contentType != null)
+            request.Content.Headers.ContentType = contentType;
+    }
+
+    // Reads the current token from storage (or uses the supplied override) and sets the Authorization header.
+    private async Task<TokenModel?> AttachBearerTokenAsync(
+        HttpRequestMessage request,
+        TokenModel? tokensOverride = null)
+    {
+        TokenModel? tokens;
+
+        if (tokensOverride != null)
+        {
+            tokens = tokensOverride;
+        }
+        else
+        {
+            var localStorage = _circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
+            if (localStorage == null) return null;
+            tokens = await localStorage.GetTokenAsync();
+        }
+
         if (tokens is null) return null;
-        var token = tokens.AccessToken;
-        if (!string.IsNullOrWhiteSpace(token))
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (!string.IsNullOrWhiteSpace(tokens.AccessToken))
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
 
         return tokens;
+    }
+
+    private async Task<TokenModel?> RefreshTokenAsync(TokenModel expiredTokens, CancellationToken cancellationToken)
+    {
+        var authService = _circuitServicesAccesor.Service?.GetRequiredService<AuthService>();
+        if (authService == null)
+        {
+            _logger.LogError("AuthService not available for token refresh.");
+            return null;
+        }
+
+        var refreshService = _circuitServicesAccesor.Service?.GetService<TokenRefreshService>();
+        if (refreshService == null)
+            return await authService.RefreshToken(expiredTokens, cancellationToken);
+
+        var localStorage = _circuitServicesAccesor.Service?.GetRequiredService<ProtectedLocalStorage>();
+        return await refreshService.TryRefreshAsync(
+            expiredTokens,
+            t => authService.RefreshToken(t, cancellationToken),
+            async () => localStorage != null ? await localStorage.GetTokenAsync() : null,
+            cancellationToken);
+    }
+
+    private async Task LogOutAsync()
+    {
+        if (_authStateProvider != null)
+            await _authStateProvider.MarkUserAsLoggedOut();
     }
 }

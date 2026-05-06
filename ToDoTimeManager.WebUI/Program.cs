@@ -27,6 +27,7 @@ public class Program
 
         builder.Services.AddSingleton<IToastsService, ToastsService>();
         builder.Services.AddScoped<IModalService, ModalService>();
+        builder.Services.AddScoped<TokenRefreshService>();
         builder.Services.AddScoped<TokenMessageHandler>();
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();
