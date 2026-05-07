@@ -1,0 +1,15 @@
+﻿<div class="row-extras @AdditionalCssClass">
+    <label class="check">
+        <input type="checkbox" disabled="@Disabled" value="Value"/>
+        <span class="box"></span>
+        <span>@Text</span>
+    </label>
+</div>
+
+@code {
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
+    [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public string AdditionalCssClass { get; set; } = string.Empty;
+    [Parameter] public bool Disabled { get; set; }
+}

@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(npx gulp *)",
-      "Bash(dotnet build *)"
+      "Bash(dotnet build *)",
+      "PowerShell($content = Get-Content \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\wwwroot\\\\css\\\\site.min.css\" -Raw; $idx = $content.IndexOf\\(\"brand-logo\"\\); $content.Substring\\([Math]::Max\\(0, $idx - 20\\), 250\\))",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__navigate"
     ]
   }
 }

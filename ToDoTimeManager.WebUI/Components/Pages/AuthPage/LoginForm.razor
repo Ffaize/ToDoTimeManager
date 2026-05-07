@@ -1,41 +1,59 @@
+ï»¿@using System.ComponentModel.DataAnnotations
 @using ToDoTimeManager.WebUI.Components.Shared
-@using ToDoTimeManager.WebUI.Models.Enums
-<div class="auth-page__form">
-    <div className="forge">
-        <div className="brand-row">
-            <div className="brand-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 16h18v3H3z" fill="#ff6a2b" />
-                    <path d="M7 16l2-6h6l2 6" stroke="#c9cdd4" strokeWidth="1.5" strokeLinejoin="round" fill="#252b35" />
-                    <path d="M11 10V4M11 4L8 6M11 4l3 2" stroke="#c9cdd4" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-            </div>
-            <span className="brand-name">Task<span>Forge</span></span>
-        </div>
+@using ToDoTimeManager.WebUI.Models.Enums.Button
+@using ToDoTimeManager.WebUI.Models.Enums.Input
+@inherits BaseComponent
 
-        <div className="anvil-stage">
-            <div className="anvil-glow"></div>
-            <Visual />
-        </div>
+<div class="form-eyebrow">@Localizer["SIGN IN"] Â· @Localizer["STEP"] 1</div>
+<h1 class="form-title">@Localizer["Welcome back, smith."]</h1>
+<p class="form-sub">@Localizer["New to TaskForge?"] <a @onclick="OnCreateAccountClicked">@Localizer["Create an account"]</a> Â· @Localizer["takes 30s."]</p>
+    
+<div class="auth-field">
+    <label class="field-label">@Localizer["Email or username"]</label>
+    <Input Placeholder="email@emil.com"
+           Style="@InputStyle.Default"
+           Type="email"
+           @bind-Value="Email"
+           IconPosition="InputIconPosition.Left"
+           Disabled="@IsLoading">
+        <Icon>
+            <EmailIcon IconSize="16"/>
+        </Icon>
+    </Input>
+</div>
 
-        <div>
-            <div className="tagline">
-                {tweaks.tagline.split(/(\bclarity\b|\bchaos\b|\bship\b|\bflow\b|\bforge\b)/i).map((part, i) =>
-                /clarity|ship|flow|forge/i.test(part) ? <em key={i}>{part}</em> : <span key={i}>{part}</span>
-                )}
-            </div>
-            <div className="tagline-sub">{tweaks.subTagline}</div>
-            <div className="ladder">
-                <div className="ladder-step active">
-                    <span className="num">01</span>
-                    <span className="label">01 · Sign in</span>
-                    <span className="meta">in progress</span>
-                </div>
-                <div className="ladder-step">
-                    <span className="num">02</span>
-                    <span className="label">02 · Two-factor check</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="auth-field">
+    <label class="field-label">@Localizer["Password"]</label>
+    <Input Placeholder="password"
+           Style="@InputStyle.Default"
+           Type="email"
+           @bind-Value="Password"
+           IconPosition="InputIconPosition.Left"
+           IsPassword="true"
+        Disabled="@IsLoading">
+        <Icon>
+            <LockIcon IconSize="16" />
+        </Icon>
+    </Input>
+</div>
+
+<CheckInput @bind-Value="KeepSignedIn"
+            Text="@Localizer["Keep me signed in"]"
+            AdditionalCssClass="auth-check-input" 
+            Disabled="@IsLoading" />
+            
+<Button Disabled="@IsLoading"
+        OnClick="@OnSignInClicked"
+        IsLoading="@IsLoading"
+        UseLoading="true"
+        Style="@ButtonStyle.Primary"
+        IconPosition="ButtonIconPosition.Right"
+        Text="@Localizer["Strike the anvile"]">
+    <Icon>
+        <ArrowRightIcon IconSize="14"/>
+    </Icon>
+</Button>
+
+<div class="footer-line">
+    @Localizer["Trouble signing in?"] <a href="#">@Localizer["Contact your forge admin"]</a>
 </div>

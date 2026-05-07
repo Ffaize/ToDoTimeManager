@@ -12,8 +12,9 @@ namespace ToDoTimeManager.WebUI.Components.Base
         protected string SkeletonLoading => IsLoading ? "skeleton-loading" : string.Empty;
         protected bool IsLoading { get; private set; }
 
-        protected async Task Loading(Func<Task> task)
+        protected async Task Loading(Func<Task> task, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             IsLoading = true;
             await InvokeAsync(StateHasChanged);
 

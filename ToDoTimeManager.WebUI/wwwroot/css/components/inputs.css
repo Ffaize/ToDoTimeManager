@@ -26,14 +26,18 @@
     color: var(--text-0);
     font-size: 14px;
     font-family: 'Inter', system-ui, sans-serif;
-    padding: 14px 12px;
+    padding: 12px 12px;
     width: 100%;
 }
 
 .input-shell input::placeholder { color: var(--text-3); }
 
-.input-shell input:disabled {
+.input-shell:has(input:disabled) {
     opacity: 0.45;
+    cursor: not-allowed !important;
+}
+
+.input-shell:has(input:disabled) input {
     cursor: not-allowed;
 }
 

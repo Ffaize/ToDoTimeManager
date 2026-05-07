@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Extensions;

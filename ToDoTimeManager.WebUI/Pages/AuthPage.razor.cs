@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Localization;
-using ToDoTimeManager.WebUI.Components.Base;
-using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Models.Enums;
-using ToDoTimeManager.WebUI.Resources;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Interfaces;
-using ToDoTimeManager.WebUI.Services.Modal;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
@@ -30,6 +24,8 @@ public partial class AuthPage
     ];
 
     private AuthPageCurrentState AuthPageCurrentState { get; set; } = AuthPageCurrentState.Login;
+    protected const string SignInStepName = "sign-in";
+    protected const string TwoFaStepName = "two-fa";
 
     private bool _isAnimating = false;
 

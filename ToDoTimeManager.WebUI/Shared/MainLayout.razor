@@ -1,15 +1,10 @@
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Components.Toast
-@using ToDoTimeManager.WebUI.Components.Modals
 @inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-
-<PageTitle>ToDoTimeManager.WebUI</PageTitle>
-<ToastBox/>
-<ModalContainer/>
-
 <AuthorizeView>
     <Authorized>
+        <ToastBox/>
+        <ModalContainer/>
         <div class="page">
             <div class="sidebar">
                 <NavMenu CollapseNavMenu="ColapseNavMenu" CollapseNavMenuChanged="OnCollapseNavMenuChanged"/>
@@ -24,10 +19,6 @@
             </main>
         </div>
     </Authorized>
-    <Authorizing>
-        @* <Loader IsLoading="true"/> *@
-    </Authorizing>
-
     <NotAuthorized>
         <RedirectToLogin/>
     </NotAuthorized>

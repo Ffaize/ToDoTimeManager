@@ -1,0 +1,32 @@
+@inherits BaseComponent   
+<div class="ladder">
+    @if (Steps is {Count: > 0 })
+    {
+        @for (var i = 0; i < Steps.Count; i++)
+        {
+            var step = Steps[i];
+            var isActive = step.Equals(CurrentStep, StringComparison.OrdinalIgnoreCase);
+            var isDone = i < Steps.IndexOf(CurrentStep);
+            <div class="ladder-step @(isActive ? "active" : isDone ? "done" : string.Empty)">
+                @if(isDone) {
+                    <span class="num"><CheckmarkIcon IconSize="10"/> </span>
+                }
+                else {
+                    <span class="num">@($"{i + 1:00}")</span>
+                }
+                
+                <span class="label">· @Localizer[step + "_step-label"]</span>
+                @if (isActive) {
+                    <span class="meta">@Localizer["InProgress"]</span>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<string>? Steps { get; set; }
+    [Parameter]
+    public string? CurrentStep { get; set; }
+}

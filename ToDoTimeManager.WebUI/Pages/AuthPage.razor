@@ -1,4 +1,3 @@
-@using ToDoTimeManager.WebUI.Components.Base
 @using ToDoTimeManager.WebUI.Components.Pages.AuthPage
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Models.Enums
@@ -13,13 +12,55 @@
     <CultureSelector AdditionalCssClass="auth-page__culture-selector" />
     <div class="auth-page__forms">
         <div class="@GetSlideClass(AuthPageCurrentState.Login)">
-            <LoginForm GoTo="@GoTo" />
+            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+                <MainIcon>
+                    <CheckGridIcon IconSize="200"/>
+                </MainIcon>
+                <MainText>
+                    <em>@Localizer["Forge clarity"]</em>
+                    <span>@Localizer["from chaos."]</span>
+                </MainText>
+                <SubText>
+                    @Localizer["Track, prioritize, and ship work with the precision of a master smith."]
+                </SubText>
+                <FormContent>
+                    <LoginForm GoTo="@GoTo" />
+                </FormContent>
+            </BaseAuthForm> 
         </div>
         <div class="@GetSlideClass(AuthPageCurrentState.Registration)">
-            <RegisterForm GoTo="@GoTo" />
+            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+                <MainIcon>
+                    <AnvilIcon IconSize="200"/>
+                </MainIcon>
+                <MainText>
+                    <em>@Localizer["Build something worth shipping."]</em>
+                </MainText>
+                <SubText>
+                    @Localizer["Free for solo smiths. No card required. Bring your team when you're ready."]
+                </SubText>
+                <FormContent>
+                    <RegisterForm GoTo="@GoTo" />
+                </FormContent>
+            </BaseAuthForm> 
         </div>
         <div class="@GetSlideClass(AuthPageCurrentState.TwoFA)">
-            <TwoFaForm GoTo="@GoTo" />
+            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+                <MainIcon>
+                    <LockShieldIcon IconSize="200"/>
+                </MainIcon>
+                <MainText>
+                    <span>@Localizer["Two-factor"]</span>
+                    <em>@Localizer["authentication"]</em>
+                    <span>@Localizer["keeps your account safe."]</span>
+                </MainText>
+                <SubText>
+                    @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
+                </SubText>
+                <FormContent>
+                    <TwoFaForm GoTo="@GoTo" />
+                </FormContent>
+            </BaseAuthForm> 
         </div>
     </div>
 </div>
