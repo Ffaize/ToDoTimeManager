@@ -138,4 +138,70 @@
   <data name="TimeLogs" xml:space="preserve">
     <value>Time logs</value>
   </data>
+  <data name="SIGN IN" xml:space="preserve">
+    <value>SIGN IN</value>
+  </data>
+  <data name="STEP" xml:space="preserve">
+    <value>STEP</value>
+  </data>
+  <data name="Welcome back, smith." xml:space="preserve">
+    <value>Welcome back, smith.</value>
+  </data>
+  <data name="New to TaskForge?" xml:space="preserve">
+    <value>New to TaskForge?</value>
+  </data>
+  <data name="Create an account" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="takes 30s." xml:space="preserve">
+    <value>takes 30s.</value>
+  </data>
+  <data name="Email or username" xml:space="preserve">
+    <value>Email or username</value>
+  </data>
+  <data name="Keep me signed in" xml:space="preserve">
+    <value>Keep me signed in</value>
+  </data>
+  <data name="Strike the anvile" xml:space="preserve">
+    <value>Strike the anvil</value>
+  </data>
+  <data name="Trouble signing in?" xml:space="preserve">
+    <value>Trouble signing in?</value>
+  </data>
+  <data name="Contact your forge admin" xml:space="preserve">
+    <value>Contact your forge admin</value>
+  </data>
+  <data name="Forge clarity" xml:space="preserve">
+    <value>Forge clarity</value>
+  </data>
+  <data name="from chaos." xml:space="preserve">
+    <value>from chaos.</value>
+  </data>
+  <data name="Track, prioritize, and ship work with the precision of a master smith." xml:space="preserve">
+    <value>Track, prioritize, and ship work with the precision of a master smith.</value>
+  </data>
+  <data name="Build something worth shipping." xml:space="preserve">
+    <value>Build something worth shipping.</value>
+  </data>
+  <data name="Free for solo smiths. No card required. Bring your team when you're ready." xml:space="preserve">
+    <value>Free for solo smiths. No card required. Bring your team when you're ready.</value>
+  </data>
+  <data name="Two-factor" xml:space="preserve">
+    <value>Two-factor</value>
+  </data>
+  <data name="authentication" xml:space="preserve">
+    <value>authentication</value>
+  </data>
+  <data name="keeps your account safe." xml:space="preserve">
+    <value>keeps your account safe.</value>
+  </data>
+  <data name="We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it." xml:space="preserve">
+    <value>We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it.</value>
+  </data>
+  <data name="sign-in_step-label" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="two-fa_step-label" xml:space="preserve">
+    <value>Two-factor auth</value>
+  </data>
 </root>
