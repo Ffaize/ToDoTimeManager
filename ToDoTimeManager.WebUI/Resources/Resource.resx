@@ -117,44 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SignIn" xml:space="preserve">
-    <value>Sign in</value>
-  </data>
-  <data name="PasswordsDontMatch" xml:space="preserve">
-    <value>Passwords don`t match</value>
-  </data>
-  <data name="PleaseEnterAllCredentials" xml:space="preserve">
-    <value>Please enter all credentials</value>
-  </data>
-  <data name="PleaseEnterCredentials" xml:space="preserve">
-    <value>Please enter сredentials</value>
-  </data>
-  <data name="Email/Username" xml:space="preserve">
-    <value>Email/Username</value>
-  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
-  </data>
-  <data name="GoToRegistration" xml:space="preserve">
-    <value>Go to registration</value>
-  </data>
-  <data name="GoToSignIn" xml:space="preserve">
-    <value>Go to sign in</value>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Register</value>
-  </data>
-  <data name="Email" xml:space="preserve">
-    <value>Email</value>
-  </data>
-  <data name="UserName" xml:space="preserve">
-    <value>Username</value>
-  </data>
-  <data name="Enter..." xml:space="preserve">
-    <value>Enter...</value>
-  </data>
-  <data name="ConfirmPassword" xml:space="preserve">
-    <value>Confirm password</value>
   </data>
   <data name="Authorization" xml:space="preserve">
     <value>Authorization</value>
@@ -165,202 +129,79 @@
   <data name="Profile" xml:space="preserve">
     <value>Profile</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="UserEdit" xml:space="preserve">
-    <value>User editing</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  <data name="LogOut" xml:space="preserve">
-    <value>Log out</value>
-  </data>
-  <data name="DeleteAccount" xml:space="preserve">
-    <value>Delete account</value>
-  </data>
-  <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="ConfirmLogOut" xml:space="preserve">
-    <value>Are you sure you want to log out?</value>
-  </data>
-  <data name="Confirmation" xml:space="preserve">
-    <value>Confirmation</value>
-  </data>
-  <data name="ConfirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete your account?</value>
-  </data>
-  <data name="New" xml:space="preserve">
-    <value>New</value>
-  </data>
   <data name="InProgress" xml:space="preserve">
     <value>In progress</value>
-  </data>
-  <data name="Completed" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="OnHold" xml:space="preserve">
-    <value>On hold</value>
-  </data>
-  <data name="Cancelled" xml:space="preserve">
-    <value>Cancelled</value>
   </data>
   <data name="Tasks" xml:space="preserve">
     <value>Tasks</value>
   </data>
-  <data name="Filter..." xml:space="preserve">
-    <value>Filter...</value>
-  </data>
-  <data name="AllTime" xml:space="preserve">
-    <value>All time</value>
-  </data>
-  <data name="DayAgo" xml:space="preserve">
-    <value>Day ago</value>
-  </data>
-  <data name="WeekAgo" xml:space="preserve">
-    <value>Week ago</value>
-  </data>
-  <data name="MonthAgo" xml:space="preserve">
-    <value>Month ago</value>
-  </data>
-  <data name="YearAgo" xml:space="preserve">
-    <value>Year ago</value>
-  </data>
-  <data name="LogTime" xml:space="preserve">
-    <value>Log time</value>
-  </data>
-  <data name="CreateNewTask" xml:space="preserve">
-    <value>Create new task</value>
-  </data>
-  <data name="Number" xml:space="preserve">
-    <value>Number</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Title</value>
-  </data>
-  <data name="Status" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="CreatedAt" xml:space="preserve">
-    <value>Created at</value>
-  </data>
-  <data name="DueDate" xml:space="preserve">
-    <value>Due date</value>
-  </data>
-  <data name="NewStatus" xml:space="preserve">
-    <value>New</value>
-  </data>
-  <data name="InProgressStatus" xml:space="preserve">
-    <value>In progress</value>
-  </data>
-  <data name="CompletedStatus" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="OnHoldStatus" xml:space="preserve">
-    <value>On hold</value>
-  </data>
-  <data name="CancelledStatus" xml:space="preserve">
-    <value>Cancelled</value>
-  </data>
-  <data name="NoTasksFound" xml:space="preserve">
-    <value>No tasks found</value>
-  </data>
-  <data name="TasksNumber" xml:space="preserve">
-    <value>Task number</value>
-  </data>
-  <data name="TaskDetails" xml:space="preserve">
-    <value>Task details</value>
-  </data>
-  <data name="TaskTitle" xml:space="preserve">
-    <value>Task title</value>
-  </data>
-  <data name="TaskDescription" xml:space="preserve">
-    <value>Task description</value>
-  </data>
-  <data name="TaskCreate" xml:space="preserve">
-    <value>Task create</value>
-  </data>
-  <data name="EditTask" xml:space="preserve">
-    <value>Edit task</value>
-  </data>
-  <data name="TaskCreated" xml:space="preserve">
-    <value>Task created</value>
-  </data>
-  <data name="UserUpdated" xml:space="preserve">
-    <value>User updated</value>
-  </data>
-  <data name="TaskEdit" xml:space="preserve">
-    <value>Task editing</value>
-  </data>
-  <data name="HoursSpent" xml:space="preserve">
-    <value>Hours spent</value>
-  </data>
-  <data name="LogDescription" xml:space="preserve">
-    <value>Log description</value>
-  </data>
-  <data name="TimeLog" xml:space="preserve">
-    <value>Time log</value>
-  </data>
-  <data name="TaskWithThatNumberWereNotFound" xml:space="preserve">
-    <value>Task with that number were not found</value>
-  </data>
-  <data name="TimeLogCreated" xml:space="preserve">
-    <value>Time loged</value>
-  </data>
-  <data name="SpentTime" xml:space="preserve">
-    <value>Spent time</value>
-  </data>
-  <data name="LogDate" xml:space="preserve">
-    <value>Log date</value>
-  </data>
-  <data name="TimeLogUpdated" xml:space="preserve">
-    <value>Time log updated</value>
-  </data>
-  <data name="TimeLogEdit" xml:space="preserve">
-    <value>Time log edit</value>
-  </data>
-  <data name="DeleteTimeLog" xml:space="preserve">
-    <value>Delete time log</value>
-  </data>
-  <data name="TimeLogDeleted" xml:space="preserve">
-    <value>Time log deleted</value>
-  </data>
-  <data name="DeleteTimeLogConfirm" xml:space="preserve">
-    <value>Do you really want to delete time log?</value>
-  </data>
   <data name="TimeLogs" xml:space="preserve">
     <value>Time logs</value>
   </data>
-  <data name="NoTimeLogsFound" xml:space="preserve">
-    <value>No time logs found</value>
+  <data name="SIGN IN" xml:space="preserve">
+    <value>SIGN IN</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+  <data name="STEP" xml:space="preserve">
+    <value>STEP</value>
   </data>
-  <data name="TimeLogged" xml:space="preserve">
-    <value>Total time logged</value>
+  <data name="Welcome back, smith." xml:space="preserve">
+    <value>Welcome back, smith.</value>
   </data>
-  <data name="TimeLogsByDataes" xml:space="preserve">
-    <value>Time logs by dates in this month</value>
+  <data name="New to TaskForge?" xml:space="preserve">
+    <value>New to TaskForge?</value>
   </data>
-  <data name="AllSpentTime" xml:space="preserve">
-    <value>All spent time</value>
+  <data name="Create an account" xml:space="preserve">
+    <value>Create an account</value>
   </data>
-  <data name="CountOfLogs" xml:space="preserve">
-    <value>Count of logs</value>
+  <data name="takes 30s." xml:space="preserve">
+    <value>takes 30s.</value>
   </data>
-  <data name="AverageTimeOfLogs" xml:space="preserve">
-    <value>Average time of logs</value>
+  <data name="Email or username" xml:space="preserve">
+    <value>Email or username</value>
   </data>
-  <data name="AverageTimePerDay" xml:space="preserve">
-    <value>Average time per day</value>
+  <data name="Keep me signed in" xml:space="preserve">
+    <value>Keep me signed in</value>
   </data>
-  <data name="UniqueTasks" xml:space="preserve">
-    <value>Unique tasks logged</value>
+  <data name="Strike the anvile" xml:space="preserve">
+    <value>Strike the anvil</value>
+  </data>
+  <data name="Trouble signing in?" xml:space="preserve">
+    <value>Trouble signing in?</value>
+  </data>
+  <data name="Contact your forge admin" xml:space="preserve">
+    <value>Contact your forge admin</value>
+  </data>
+  <data name="Forge clarity" xml:space="preserve">
+    <value>Forge clarity</value>
+  </data>
+  <data name="from chaos." xml:space="preserve">
+    <value>from chaos.</value>
+  </data>
+  <data name="Track, prioritize, and ship work with the precision of a master smith." xml:space="preserve">
+    <value>Track, prioritize, and ship work with the precision of a master smith.</value>
+  </data>
+  <data name="Build something worth shipping." xml:space="preserve">
+    <value>Build something worth shipping.</value>
+  </data>
+  <data name="Free for solo smiths. No card required. Bring your team when you're ready." xml:space="preserve">
+    <value>Free for solo smiths. No card required. Bring your team when you're ready.</value>
+  </data>
+  <data name="Two-factor" xml:space="preserve">
+    <value>Two-factor</value>
+  </data>
+  <data name="authentication" xml:space="preserve">
+    <value>authentication</value>
+  </data>
+  <data name="keeps your account safe." xml:space="preserve">
+    <value>keeps your account safe.</value>
+  </data>
+  <data name="We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it." xml:space="preserve">
+    <value>We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it.</value>
+  </data>
+  <data name="sign-in_step-label" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="two-fa_step-label" xml:space="preserve">
+    <value>Two-factor auth</value>
   </data>
 </root>
