@@ -24,12 +24,12 @@
                     @Localizer["Track, prioritize, and ship work with the precision of a master smith."]
                 </SubText>
                 <FormContent>
-                    <LoginForm GoTo="@GoTo" />
+                    <LoginForm GoTo="@GoTo" EmailChanged="@EmailChanged" />
                 </FormContent>
             </BaseAuthForm> 
         </div>
         <div class="@GetSlideClass(AuthPageCurrentState.Registration)">
-            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+            <BaseAuthForm Steps="@([RegisterStepName, TwoFaStepName])" CurrentStep="@RegisterStepName">
                 <MainIcon>
                     <AnvilIcon IconSize="200"/>
                 </MainIcon>
@@ -58,7 +58,7 @@
                     @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
                 </SubText>
                 <FormContent>
-                    <TwoFaForm GoTo="@GoTo" />
+                    <TwoFaForm GoTo="@GoTo" Email="@_email" />
                 </FormContent>
             </BaseAuthForm> 
         </div>

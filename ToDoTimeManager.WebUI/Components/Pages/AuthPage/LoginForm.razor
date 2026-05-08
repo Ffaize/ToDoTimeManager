@@ -2,55 +2,69 @@
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Models.Enums.Button
 @using ToDoTimeManager.WebUI.Models.Enums.Input
+@using ToDoTimeManager.WebUI.Utils
 @inherits BaseComponent
 
 <div class="form-eyebrow">@Localizer["SIGN IN"] · @Localizer["STEP"] 1</div>
-<h1 class="form-title">@Localizer["Welcome back, smith."]</h1>
-<p class="form-sub">@Localizer["New to TaskForge?"] <a @onclick="OnCreateAccountClicked">@Localizer["Create an account"]</a> · @Localizer["takes 30s."]</p>
+<div>
+    <h1 class="form-title">@Localizer[$"Welcome back, smith."]</h1>
+    <p class="form-sub">@Localizer["New to TaskForge?"] <a @onclick="OnCreateAccountClicked">@Localizer["Create an account"]</a> · @Localizer["takes 30s."]</p>
+</div>
+
     
 <div class="auth-field">
     <label class="field-label">@Localizer["Email or username"]</label>
-    <Input Placeholder="email@emil.com"
-           Style="@InputStyle.Default"
-           Type="email"
-           @bind-Value="Email"
-           IconPosition="InputIconPosition.Left"
-           Disabled="@IsLoading">
-        <Icon>
-            <EmailIcon IconSize="16"/>
-        </Icon>
-    </Input>
+    <Input Placeholder="email@email.com"
+        Style="@InputStyle.Default"
+        Type="email"
+        @bind-Value="LogInParameter"
+        @bind-IsValid="IsLogInParameterValid"
+        IconPosition="InputIconPosition.Left"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="StringValidationHelper.EmailOrUsernameValidation">
+    <Icon>
+        <EmailIcon IconSize="16" />
+    </Icon>
+</Input>
 </div>
 
 <div class="auth-field">
     <label class="field-label">@Localizer["Password"]</label>
     <Input Placeholder="password"
-           Style="@InputStyle.Default"
-           Type="email"
-           @bind-Value="Password"
-           IconPosition="InputIconPosition.Left"
-           IsPassword="true"
-        Disabled="@IsLoading">
-        <Icon>
-            <LockIcon IconSize="16" />
-        </Icon>
-    </Input>
+        Style="@InputStyle.Default"
+        Type="email"
+        @bind-Value="Password"
+        @bind-IsValid="IsPasswordValid"
+        IconPosition="InputIconPosition.Left"
+        IsPassword="true"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="StringValidationHelper.PasswordValidation">
+    <Icon>
+        <LockIcon IconSize="16" />
+    </Icon>
+</Input>
 </div>
 
 <CheckInput @bind-Value="KeepSignedIn"
-            Text="@Localizer["Keep me signed in"]"
-            AdditionalCssClass="auth-check-input" 
-            Disabled="@IsLoading" />
+    AdditionalCssClass="auth-check-input"
+    Disabled="@IsLoading">
+
+    <Text>
+        @Localizer["Keep me signed in"]
+    </Text>
+</CheckInput>
             
 <Button Disabled="@IsLoading"
-        OnClick="@OnSignInClicked"
-        IsLoading="@IsLoading"
-        UseLoading="true"
-        Style="@ButtonStyle.Primary"
-        IconPosition="ButtonIconPosition.Right"
-        Text="@Localizer["Strike the anvile"]">
+    OnClick="@OnSignInClicked"
+    IsLoading="@IsLoading"
+    UseLoading="true"
+    Style="@ButtonStyle.Primary"
+    IconPosition="ButtonIconPosition.Right"
+    Text="@Localizer["Strike the anvil"]">
     <Icon>
-        <ArrowRightIcon IconSize="14"/>
+        <ArrowRightIcon IconSize="14" />
     </Icon>
 </Button>
 

@@ -104,7 +104,7 @@
     max-height: 100%;
     min-height: 0;
     display: grid;
-    grid-template-columns: 1.05fr 1fr;
+    grid-template-columns: 1fr 1fr;
     background: linear-gradient(180deg, rgba(28, 33, 41, 0.85), rgba(17, 19, 23, 0.85));
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -136,6 +136,7 @@
     justify-content: space-between;
     min-height: 0;
     overflow: hidden;
+    width: 450px !important;
 }
 
     .form-panel::after {
@@ -308,10 +309,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: linear-gradient(180deg, rgba(22, 26, 32, 0.4), rgba(17, 19, 23, 0.4));
+    gap: 10px;
+    background: linear-gradient(180deg, rgba(22, 26, 32, .4), rgba(17, 19, 23, .4));
     position: relative;
     overflow-y: auto;
     scrollbar-width: none;
+    width: 450px !important;
 }
 
     .form-wrap::-webkit-scrollbar {
@@ -357,7 +360,7 @@
 .form-sub {
     color: var(--text-2);
     font-size: 14px;
-    margin-top: -20px !important;
+    margin: 0 !important
 }
 
     .form-sub a {
@@ -373,7 +376,6 @@
         }
 
 .auth-field {
-
 }
 
 .field-label {
@@ -424,3 +426,60 @@
         .footer-line a:hover {
             text-decoration: underline;
         }
+
+.form-sub strong {
+    color: var(--text-0);
+    font-weight: 600;
+    background: rgba(255, 106, 43, 0.08);
+    padding: 2px 8px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 106, 43, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+}
+
+.otp-row.with-dash {
+    grid-template-columns: repeat(3, 1fr) 14px repeat(3, 1fr);
+}
+
+.otp-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.otp-cell {
+    background: var(--bg-1);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    height: 56px;
+    width: 100%;
+    text-align: center;
+    color: var(--text-0);
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+    transition: all 0.15s;
+    caret-color: var(--ember);
+}
+
+    .otp-cell:focus {
+        border-color: var(--ember);
+        background: var(--bg-2);
+        box-shadow: 0 0 0 3px rgba(255, 106, 43, 0.12), 0 0 20px -8px var(--ember-glow);
+    }
+
+.otp-dash {
+    align-self: center;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    text-align: center;
+}
+
+.otp-cell.filled {
+    border-color: var(--line-2);
+    color: var(--ember-2);
+}

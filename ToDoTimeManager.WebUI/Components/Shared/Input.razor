@@ -1,6 +1,6 @@
 @using ToDoTimeManager.WebUI.Models.Enums.Input
 
-<div class="input-shell @GetStyleClass() @AdditionalCssClass">
+<div class="input-shell @GetStyleClass() @GetValidationClass() @AdditionalCssClass">
     @if (Icon is not null && IconPosition == InputIconPosition.Left)
     {
         @Icon
@@ -10,7 +10,8 @@
            placeholder="@Placeholder"
            disabled="@Disabled"
            autocomplete="off"
-           @oninput="HandleInput" />
+           @oninput="HandleInput"
+           @onfocusout="HandleFocusOut" />
     @if (Icon is not null && IconPosition == InputIconPosition.Right)
     {
         @Icon
@@ -27,5 +28,9 @@
                 <EyeFillIcon />
             }
         </button>
+    }
+    @if (HasValidationError)
+    {
+        <div class="input-error-bubble">@Localizer[_validationMessage]</div>
     }
 </div>

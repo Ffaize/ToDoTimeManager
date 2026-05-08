@@ -1,1 +1,109 @@
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Models.Enums.Button
+@using ToDoTimeManager.WebUI.Models.Enums.Input
+@using ToDoTimeManager.WebUI.Utils
+@inherits BaseComponent
 
+<div class="form-eyebrow">@Localizer["CREATE ACCOUNT"] · @Localizer["STEP"] 1</div>
+<div>
+    <h1 class="form-title">@Localizer["Light the forge."]</h1>
+    <p class="form-sub">@Localizer["Already a smith?"] <a @onclick="OnSignInClicked">@Localizer["Sign-In"]</a> · @Localizer["forge tasks."]</p>
+</div>
+
+
+<div class="auth-field">
+    <label class="field-label">@Localizer["Username"]</label>
+    <Input Placeholder="username"
+        Style="@InputStyle.Default"
+        Type="text"
+        @bind-Value="Username"
+        @bind-IsValid="IsUsernameValid"
+        IconPosition="InputIconPosition.Left"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="StringValidationHelper.UsernameValidation">
+    <Icon>
+        <UsernameIcon IconSize="16" />
+    </Icon>
+</Input>
+</div>
+
+<div class="auth-field">
+    <label class="field-label">@Localizer["Email"]</label>
+    <Input Placeholder="email@email.com"
+        Style="@InputStyle.Default"
+        Type="email"
+        @bind-Value="Email"
+        @bind-IsValid="IsEmailValid"
+        IconPosition="InputIconPosition.Left"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="StringValidationHelper.EmailValidation">
+    <Icon>
+        <EmailIcon IconSize="16" />
+    </Icon>
+</Input>
+</div>
+
+<div class="auth-field">
+    <label class="field-label">@Localizer["Password"]</label>
+    <Input Placeholder="@Localizer["At least 8 characters"]"
+        Style="@InputStyle.Default"
+        Type="email"
+        @bind-Value="Password"
+        @bind-IsValid="IsPasswordValid"
+        IconPosition="InputIconPosition.Left"
+        IsPassword="true"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="StringValidationHelper.PasswordValidation">
+    <Icon>
+        <LockIcon IconSize="16" />
+    </Icon>
+</Input>
+</div>
+
+<div class="auth-field">
+    <label class="field-label">@Localizer["Confirm password"]</label>
+    <Input Placeholder="@Localizer["Re-enter your password"]"
+        Style="@InputStyle.Default"
+        Type="email"
+        @bind-Value="ConfirmPassword"
+        @bind-IsValid="IsConfirmPasswordValid"
+        IconPosition="InputIconPosition.Left"
+        IsPassword="true"
+        Disabled="@IsLoading"
+        UseValidation="true"
+        ValidationFunc="(string? value) => StringValidationHelper.ConfirmPasswordValidation(value, Password)">
+    <Icon>
+        <LockIcon IconSize="16" />
+    </Icon>
+</Input>
+</div>
+
+<CheckInput @bind-Value="IsUseOfTermsAgreed"
+    AdditionalCssClass="auth-check-input"
+    Disabled="@IsLoading">
+    <Text>
+        <span>@Localizer["I agree to the"] </span>
+        <a href="#" style="color: var(--text-1);">
+            <span>@Localizer["Terms"]</span>
+        </a>
+        <span> @Localizer["and"] </span>
+        <a href="#" style="color: var(--text-1);">
+            <span>@Localizer["Privacy Policy"]</span>
+        </a>
+    </Text>
+</CheckInput>
+
+<Button Disabled="@IsLoading"
+    OnClick="@OnSignInClicked"
+    IsLoading="@IsLoading"
+    UseLoading="true"
+    Style="@ButtonStyle.Primary"
+    IconPosition="ButtonIconPosition.Right"
+    Text="@Localizer["Forge my account"]">
+    <Icon>
+        <ArrowRightIcon IconSize="14" />
+    </Icon>
+</Button>

@@ -1,1 +1,23 @@
+@inherits BaseComponent
 
+<div class="form-eyebrow">@Localizer["TWO-FACTOR"] · @Localizer["STEP"] 2</div>
+<div>
+    <h1 class="form-title">@Localizer["Light the forge."]</h1>
+    <p class="form-sub">
+        <span>@Localizer["We sent a 6-digit ember code to"]</span>
+        <strong>@Email</strong>
+        <span>@Localizer["Drop it in below to seal the session."]</span>
+    </p>
+</div>
+
+<div class="otp-row with-dash">
+    <input class="otp-cell @GetIsFilledCssClass(Value1)" type="text" maxlength="1" autocomplete="off" value="@Value1">
+    <input class="otp-cell @GetIsFilledCssClass(Value2)" type="text" maxlength="1" autocomplete="off" value="@Value2">
+    <input class="otp-cell @GetIsFilledCssClass(Value3)" type="text" maxlength="1" autocomplete="off" value="@Value3">
+    <span class="otp-dash">
+        <span>—</span>
+    </span>
+    <input class="otp-cell @GetIsFilledCssClass(Value4)" type="text" maxlength="1" autocomplete="off" value="@Value4">
+    <input class="otp-cell @GetIsFilledCssClass(Value5)" type="text" maxlength="1" autocomplete="off" value="@Value5">
+    <input class="otp-cell @GetIsFilledCssClass(Value6)" type="text" maxlength="1" autocomplete="off" value="@Value6">
+</div>

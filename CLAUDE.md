@@ -86,16 +86,20 @@ Blazor Pages/Components
 | `WebApi/Middleware/` | `GlobalExceptionHandler` |
 | `WebApi/Utils/` | `PasswordHelperService`, `JwtGeneratorService` |
 | `WebUI/Pages/` | Routed Blazor pages |
+| `WebUI/Components/Base/` | `BaseComponent`, `BaseAuthForm` — abstract base classes |
+| `WebUI/Components/Pages/AuthPage/` | Auth sub-components: `LoginForm`, `RegisterForm`, `TwoFaForm` |
 | `WebUI/Components/Modals/` | Modal dialog components |
-| `WebUI/Components/Shared/` | Reusable UI components (icons, loader, etc.) |
+| `WebUI/Components/Shared/` | Reusable UI components (Input, Button, CheckInput, CustomDropdown, StepsComponent, icons, etc.) |
 | `WebUI/Components/Toast/` | Toast notification components |
 | `WebUI/Handlers/` | HTTP message handlers |
+| `WebUI/Models/Enums/` | WebUI-only enums (InputStyle, ButtonStyle, AuthPageCurrentState, etc.) |
 | `WebUI/Services/HttpServices/` | Typed API client services |
 | `WebUI/Services/Implementations/` | `CustomAuthStateProvider`, `ToastsService` |
 | `WebUI/Services/CircuitServicesAccesor/` | Scoped-service accessor for Blazor circuits |
-| `WebUI/Utils/` | `TokenProtectedStorageHelper` |
+| `WebUI/Utils/` | `TokenProtectedStorageHelper`, `PageTitleHelper`, `CultureInfoHelper` |
 | `WebUI/Localization/` | `Resource.resx`, `Resource.en-US.resx`, `Resource.uk-UA.resx` |
 | `WebUI/Controllers/` | `CultureController` (MVC, handles culture switching) |
+| `WebUI/wwwroot/css/components/` | Per-component CSS files (inputs.css, etc.) |
 | `Shared/Models/` | Domain models (User, ToDo, TimeLog, Team, Project, …) |
 | `Shared/DTOs/` | Request/response DTOs |
 | `Shared/Enums/` | `ToDoStatus`, `UserRole`, `TimeFilter`, `TeamMemberRole` |
@@ -256,7 +260,7 @@ Naming convention: `sp_[EntityName]_[Operation]`
 
 | File | Route | Description |
 |------|-------|-------------|
-| `AuthPage.razor` | `/auth` | Login & registration with password visibility toggle |
+| `AuthPage.razor` | `/auth` | Multi-step auth: Login → (2FA), Registration → (2FA) with animated slide transitions |
 | `MainPage.razor` | `/dashboard` | Dashboard: time stats, heat-map calendar (color-coded by hours), upcoming due-date tasks |
 | `TasksPage.razor` | `/tasks` | To-do list with status filters and CRUD |
 | `TaskDetailsPage.razor` | `/taskDetails/{taskId}` | Single to-do detail view with time log history |
@@ -265,21 +269,44 @@ Naming convention: `sp_[EntityName]_[Operation]`
 
 Pages use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` (authenticated), `AuthLayout.razor` (unauthenticated).
 
+### AuthPage Flow
+
+`AuthPage` manages state via `AuthPageCurrentState` enum (`Login`, `Registration`, `TwoFA`) and drives animated CSS slide transitions between three sub-components:
+
+```
+AuthPage.razor
+  └── BaseAuthForm (template: icon, title, subtitle, step indicator)
+        ├── LoginForm      — credentials entry (step 1 of login)
+        ├── RegisterForm   — account creation (step 1 of registration)
+        └── TwoFaForm      — 2FA code entry (step 2 of both flows)
+```
+
+Animation uses CSS classes (`--active`, `--hidden-right`, `--hidden-left`, `--exiting-*`, `--entering-*`) applied with a 450 ms transition.
+
 ---
 
 ## WebUI Components
+
+### Base (`Components/Base/`)
+- **BaseComponent.cs** — Abstract base for all components. Provides injected `Localizer`, `IsLoading` state, `Loading(Func<Task>)` async wrapper, and `GetPageTitle(string)` that returns a `RenderFragment` with a localized title + "TaskForge" suffix.
+- **BaseAuthForm.razor** — Template layout for multi-step auth forms. Parameters: `FormContent` (RenderFragment), `Steps` (List\<string\>), `CurrentStep`, `MainIcon`, `MainText`, `SubText`.
+
+### Shared (`Components/Shared/`)
+- **Input.razor** — Validated text input with icon support. Key parameters: `Value`/`ValueChanged`, `Type`, `IsPassword` (toggleable eye button), `Icon`, `IconPosition` (Left/Right), `UseValidation`, `ValidationFunc`. `StringValidationHelper` provides pre-built validators: `DefaultValidation`, `EmailValidation`, `PasswordValidation`, `UsernameValidation`, `ConfirmPasswordValidation`, `EmailOrUsernameValidation`.
+- **Button.razor** — Reusable button with icon, style variants (`Primary`, `Secondary`, `Ghost`), and optional `IsLoading` spinner.
+- **CheckInput.razor** — Checkbox with label.
+- **CustomDropdown.razor** — Searchable dropdown with single/multi-select, icons, and templated items. Uses `Input` internally for the search field.
+- **StepsComponent.razor** — Multi-step form progress indicator. Renders current step with i18n label + "In Progress" status; completed steps show a checkmark.
+- `CultureSelector.razor` — Language switcher (en-US / uk-UA), posts to `CultureController`.
+- `Loader.razor` — Spinner displayed during async operations.
+- `Divider.razor` — Visual separator.
+- `Icons/` — Individual SVG icon components (Bootstrap Icons as Razor components).
 
 ### Modals (`Components/Modals/`)
 - **TaskCreateEditModal.razor** — Create/edit to-do (Title, Description, Status, DueDate). Parameters: `Show`, `Title`, `Task`, `IsEditMode`. Emits `ModalResult`.
 - **LogTimeModal.razor** — Create/edit time log (TaskNumber, HoursSpent, LogDescription). Parameters: `Show`, `Title`, `Task`, `BlockTaskNumberInput`, `IsEditMode`, `ExistingTimeLog`. Emits `ModalResult` with `TimeLog` and `TaskNumber`.
 - **ConfirmationModal.razor** — Generic confirmation dialog.
 - **UserEditModal.razor** — User profile editing.
-
-### Shared (`Components/Shared/`)
-- `CultureSelector.razor` — Language switcher (en-US / uk-UA), posts to `CultureController`.
-- `Loader.razor` — Spinner displayed during async operations.
-- `Divider.razor` — Visual separator.
-- `Icons/` — Individual SVG icon components (Bootstrap Icons as Razor components).
 
 ### Toast System (`Components/Toast/`)
 - `Toast.razor` — Single toast notification.
@@ -309,6 +336,20 @@ Pages use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` (authenti
 ### Circuit Services (`Services/CircuitServicesAccesor/`)
 - `CircuitServicesAccesor` — Provides `IServiceProvider` access from outside the Blazor circuit scope (used in `CustomAuthStateProvider`).
 - `ServicesAccessorCircuitHandler` — `CircuitHandler` that sets/clears the accessor on connect/disconnect.
+
+---
+
+## WebUI-Only Enums (`WebUI/Models/Enums/`)
+
+These are UI-layer enums that do **not** belong in the Shared project:
+
+| Enum | Values |
+|------|--------|
+| `InputStyle` | Default, Ghost |
+| `InputIconPosition` | Left, Right |
+| `ButtonStyle` | Primary, Secondary, Ghost |
+| `ButtonIconPosition` | Left, Right |
+| `AuthPageCurrentState` | Login, Registration, TwoFA |
 
 ---
 
@@ -342,6 +383,7 @@ Pages use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` (authenti
 ### CSS Build (`WebUI/gulpfile.js`)
 - Sources: `wwwroot/css/**/*.css` (excluding `site.min.css`)
 - Pipeline: concat → CleanCSS minify → rename to `site.min.css`
+- Per-component CSS files live in `wwwroot/css/components/` (e.g. `inputs.css`)
 - `gulp build` — one-shot build; `gulp` (default) — build + watch.
 
 ---
@@ -351,7 +393,9 @@ Pages use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` (authenti
 1. **New API endpoint** → add a stored procedure in `DataBase/StoredProcedures/`, implement a data controller method (interface + implementation), call it from a business service, expose via controller. Never write inline SQL.
 2. **New shared type** → add to `Shared/Models/` or `Shared/DTOs/`; never duplicate in WebApi or WebUI.
 3. **New UI page** → create `Pages/MyPage.razor` + `Pages/MyPage.razor.cs`; use `MainLayout` for authenticated pages, `AuthLayout` for public ones.
-4. **Localized strings** → add entries to `WebUI/Localization/Resource.resx` (default/uk-UA) and `Resource.en-US.resx`; inject `IStringLocalizer<Resource>` in the component.
-5. **Error responses** → throw a `CustomException` in service code; `GlobalExceptionHandler` middleware catches it on the API side. On the UI side, `ToastMessageHandler` converts HTTP errors into toast notifications automatically.
-6. **Authorization checks** → role guard with `[Authorize(Roles="Admin")]` on the controller action; ownership checks (is this the user's own resource?) inside the business service.
-7. **DTOs vs Models** → controllers accept/return DTOs; services operate on shared models; entities are internal to `WebApi` and never leak to `WebUI`.
+4. **New reusable component** → extend `BaseComponent` to inherit `Localizer`, `IsLoading`, and `Loading()`. Add component-specific CSS under `wwwroot/css/components/` — it will be picked up by the gulp pipeline automatically.
+5. **Localized strings** → add entries to `WebUI/Localization/Resource.resx` (default/uk-UA) and `Resource.en-US.resx`; inject `IStringLocalizer<Resource>` in the component.
+6. **Error responses** → throw a `CustomException` in service code; `GlobalExceptionHandler` middleware catches it on the API side. On the UI side, `ToastMessageHandler` converts HTTP errors into toast notifications automatically.
+7. **Authorization checks** → role guard with `[Authorize(Roles="Admin")]` on the controller action; ownership checks (is this the user's own resource?) inside the business service.
+8. **DTOs vs Models** → controllers accept/return DTOs; services operate on shared models; entities are internal to `WebApi` and never leak to `WebUI`.
+9. **UI-only enums** → place in `WebUI/Models/Enums/` — not in the Shared project.

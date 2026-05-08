@@ -7,7 +7,11 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "mcp__Claude_in_Chrome__browser_batch",
       "mcp__Claude_in_Chrome__computer",
-      "mcp__Claude_in_Chrome__navigate"
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(npm run *)",
+      "Bash(dir /b \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Components\")",
+      "PowerShell(ls \"D:\\\\Projects\\\\ToDoTimeManager\" -File | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github\\)'}; ls \"D:\\\\Projects\\\\ToDoTimeManager\" | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github|rules\\)'})",
+      "PowerShell(head -20)"
     ]
   }
 }

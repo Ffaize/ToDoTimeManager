@@ -25,9 +25,12 @@ public partial class AuthPage
 
     private AuthPageCurrentState AuthPageCurrentState { get; set; } = AuthPageCurrentState.Login;
     protected const string SignInStepName = "sign-in";
+    protected const string RegisterStepName = "register";
     protected const string TwoFaStepName = "two-fa";
 
     private bool _isAnimating = false;
+
+    private string _email = string.Empty;
 
     private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
     {
@@ -36,14 +39,14 @@ public partial class AuthPage
         { AuthPageCurrentState.TwoFA,         "auth-form-slide--hidden-right" },
     };
 
-    public async void GoTo(AuthPageCurrentState target)
+    protected async void GoTo(AuthPageCurrentState target)
     {
         if (_isAnimating) return;
         var current = this.AuthPageCurrentState;
         if (current == target) return;
 
         _isAnimating = true;
-        bool isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
+        var isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
 
         _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
         _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
@@ -55,7 +58,7 @@ public partial class AuthPage
         foreach (var state in NavOrder)
         {
             if (state == target) continue;
-            bool isOnRight = Array.IndexOf(NavOrder, state) > Array.IndexOf(NavOrder, target);
+            var isOnRight = Array.IndexOf(NavOrder, state) > Array.IndexOf(NavOrder, target);
             _slideClasses[state] = isOnRight ? "auth-form-slide--hidden-right" : "auth-form-slide--hidden-left";
         }
         _slideClasses[target] = "auth-form-slide--active";
@@ -64,11 +67,11 @@ public partial class AuthPage
         await InvokeAsync(StateHasChanged);
     }
 
-    private string GetSlideClass(AuthPageCurrentState state) =>
+    protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    private bool IsCurrent(AuthPageCurrentState state)
+    protected void EmailChanged(string obj)
     {
-        return AuthPageCurrentState == state;
+        _email = obj;
     }
 }

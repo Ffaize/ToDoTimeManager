@@ -47,6 +47,67 @@
     border-color: transparent;
 }
 
+/* Validation states — double-class specificity to override :focus-within */
+.input-shell.input-shell--valid {
+    border-color: var(--tf-success-accent);
+    box-shadow: 0 0 0 3px rgba(95, 212, 154, 0.12), 0 0 20px -8px var(--tf-success-glow);
+    background: var(--bg-2);
+}
+
+.input-shell.input-shell--valid svg { color: var(--tf-success-accent); }
+
+.input-shell.input-shell--invalid {
+    border-color: var(--tf-error-accent);
+    box-shadow: 0 0 0 3px rgba(232, 69, 50, 0.12), 0 0 20px -8px var(--tf-error-glow);
+    background: var(--bg-2);
+}
+
+.input-shell.input-shell--invalid svg { color: var(--tf-error-accent); }
+
+/* Error bubble tooltip */
+.input-error-bubble {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-left: 2px solid var(--tf-error-accent);
+    color: var(--text-1);
+    font-size: 12px;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 7px 12px 7px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-3px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 20;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.input-error-bubble::before {
+    content: '!';
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--tf-error-accent);
+    color: var(--bg-0);
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.input-shell.input-shell--invalid:hover .input-error-bubble {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Eye button */
 .eye-btn {
     background: none;
