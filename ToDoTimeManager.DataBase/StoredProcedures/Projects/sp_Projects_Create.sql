@@ -3,10 +3,11 @@ CREATE PROCEDURE [dbo].[sp_Projects_Create]
     @Name        NVARCHAR(100),
     @Description NVARCHAR(500),
     @CreatedAt   DATETIME,
-    @CreatedBy   UNIQUEIDENTIFIER
+    @CreatedBy   UNIQUEIDENTIFIER,
+    @Type        INT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO [dbo].[Projects] (Id, Name, Description, CreatedAt, CreatedBy)
-    VALUES (@Id, @Name, @Description, @CreatedAt, @CreatedBy);
+    INSERT INTO [dbo].[Projects] (Id, Name, Description, CreatedAt, CreatedBy, Type)
+    VALUES (@Id, @Name, @Description, @CreatedAt, @CreatedBy, @Type);
 END

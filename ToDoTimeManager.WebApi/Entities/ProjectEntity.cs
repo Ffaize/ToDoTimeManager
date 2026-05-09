@@ -1,3 +1,4 @@
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebApi.Entities;
@@ -15,6 +16,7 @@ public class ProjectEntity
         Description = project.Description;
         CreatedAt = project.CreatedAt;
         CreatedBy = project.CreatedBy;
+        Type = project.Type;
     }
 
     public Guid Id { get; set; }
@@ -23,6 +25,7 @@ public class ProjectEntity
     public DateTime CreatedAt { get; set; }
     public Guid CreatedBy { get; set; }
     public int TeamCount { get; set; }
+    public ProjectType? Type { get; set; }
 
     public Project ToProject()
     {
@@ -33,7 +36,8 @@ public class ProjectEntity
             Description = Description,
             CreatedAt = CreatedAt,
             CreatedBy = CreatedBy,
-            TeamCount = TeamCount
+            TeamCount = TeamCount,
+            Type = Type
         };
     }
 }

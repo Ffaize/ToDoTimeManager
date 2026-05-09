@@ -35,6 +35,7 @@ public static class MappingExtensions
             CreatedAt = project.CreatedAt,
             CreatedBy = project.CreatedBy,
             TeamCount = project.TeamCount,
+            Type = project.Type,
             Teams = teams
         };
 }

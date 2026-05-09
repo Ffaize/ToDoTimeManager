@@ -204,4 +204,31 @@
   <data name="two-fa_step-label" xml:space="preserve">
     <value>Двоетапна перевірка</value>
   </data>
+  <data name="ProjectType_Backend" xml:space="preserve">
+    <value>Бекенд</value>
+  </data>
+  <data name="ProjectType_Frontend" xml:space="preserve">
+    <value>Фронтенд</value>
+  </data>
+  <data name="ProjectType_DataBase" xml:space="preserve">
+    <value>База даних</value>
+  </data>
+  <data name="ProjectType_FullStack" xml:space="preserve">
+    <value>Повний стек</value>
+  </data>
+  <data name="ProjectType_Mobile" xml:space="preserve">
+    <value>Мобільна розробка</value>
+  </data>
+  <data name="ProjectType_DevOps" xml:space="preserve">
+    <value>DevOps</value>
+  </data>
+  <data name="ProjectType_DataScience" xml:space="preserve">
+    <value>Наука про дані</value>
+  </data>
+  <data name="ProjectType_Security" xml:space="preserve">
+    <value>Безпека</value>
+  </data>
+  <data name="ProjectType_Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
 </root>
