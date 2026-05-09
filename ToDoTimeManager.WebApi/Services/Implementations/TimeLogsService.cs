@@ -11,16 +11,19 @@ public class TimeLogsService : ITimeLogsService
 {
     private readonly ITimeLogsDataController _timeLogsDataController;
     private readonly IAccessControlService _accessControlService;
+    private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<TimeLogsService> _logger;
 
     public TimeLogsService(
         ITimeLogsDataController timeLogsDataController,
         IAccessControlService accessControlService,
+        IActivityLogsService activityLogsService,
         ILogger<TimeLogsService> logger)
     {
         _timeLogsDataController = timeLogsDataController;
-        _accessControlService = accessControlService;
-        _logger = logger;
+        _accessControlService   = accessControlService;
+        _activityLogsService    = activityLogsService;
+        _logger                 = logger;
     }
 
     public async Task<List<TimeLog>> GetAllTimeLogs()
@@ -160,7 +163,16 @@ public class TimeLogsService : ITimeLogsService
             if (!await _accessControlService.IsAccessibleToUser(newTimeLog.UserId, newTimeLog.ToDoId, nameof(CreateTimeLog)))
                 throw new ForbiddenException();
 
-            return await _timeLogsDataController.CreateTimeLog(new TimeLogEntity(newTimeLog));
+            var result = await _timeLogsDataController.CreateTimeLog(new TimeLogEntity(newTimeLog));
+            if (result)
+            {
+                var hours = newTimeLog.HoursSpent.TotalHours.ToString("F1");
+                var desc = string.IsNullOrWhiteSpace(newTimeLog.LogDescription)
+                    ? $"logged {hours}h"
+                    : $"logged {hours}h: {newTimeLog.LogDescription}";
+                _ = _activityLogsService.LogActivity(newTimeLog.ToDoId, newTimeLog.UserId, ActivityType.TimeLogged, desc);
+            }
+            return result;
         }
         catch (ServiceException)
         {
@@ -184,7 +196,13 @@ public class TimeLogsService : ITimeLogsService
             if (!await _accessControlService.IsAccessibleToUser(currentUserId, updatedTimeLog.Id, nameof(UpdateTimeLog)))
                 throw new ForbiddenException();
 
-            return await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
+            var result = await _timeLogsDataController.UpdateTimeLog(new TimeLogEntity(updatedTimeLog));
+            if (result)
+            {
+                var hours = updatedTimeLog.HoursSpent.TotalHours.ToString("F1");
+                _ = _activityLogsService.LogActivity(existing.ToDoId, currentUserId, ActivityType.TimeLogUpdated, $"updated time log ({hours}h)");
+            }
+            return result;
         }
         catch (ServiceException)
         {
@@ -211,7 +229,10 @@ public class TimeLogsService : ITimeLogsService
             if (!await _accessControlService.IsAccessibleToUser(currentUserId, timeLogId, nameof(DeleteTimeLog)))
                 throw new ForbiddenException();
 
-            return await _timeLogsDataController.DeleteTimeLog(timeLogId);
+            var result = await _timeLogsDataController.DeleteTimeLog(timeLogId);
+            if (result)
+                _ = _activityLogsService.LogActivity(existing.ToDoId, currentUserId, ActivityType.TimeLogDeleted, "deleted time log");
+            return result;
         }
         catch (ServiceException)
         {

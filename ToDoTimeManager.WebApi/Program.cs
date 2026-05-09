@@ -43,6 +43,7 @@ public class Program
         builder.Services.AddScoped<ITeamMembersDataController, TeamMembersDataController>();
         builder.Services.AddScoped<IProjectsDataController, ProjectsDataController>();
         builder.Services.AddScoped<IProjectTeamsDataController, ProjectTeamsDataController>();
+        builder.Services.AddScoped<IActivityLogsDataController, ActivityLogsDataController>();
 
         builder.Services.AddScoped<IUsersService, UsersService>();
         builder.Services.AddScoped<IToDosService, ToDosService>();
@@ -52,6 +53,7 @@ public class Program
         builder.Services.AddScoped<ITeamsService, TeamsService>();
         builder.Services.AddScoped<IProjectsService, ProjectsService>();
         builder.Services.AddScoped<IAccessControlService, AccessControlService>();
+        builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();

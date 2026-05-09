@@ -11,16 +11,19 @@ public class ToDosService : IToDosService
 {
     private readonly IToDosDataController _toDosDataController;
     private readonly IAccessControlService _accessControlService;
+    private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<ToDosService> _logger;
 
     public ToDosService(
         IToDosDataController toDosDataController,
         IAccessControlService accessControlService,
+        IActivityLogsService activityLogsService,
         ILogger<ToDosService> logger)
     {
-        _toDosDataController = toDosDataController;
+        _toDosDataController  = toDosDataController;
         _accessControlService = accessControlService;
-        _logger = logger;
+        _activityLogsService  = activityLogsService;
+        _logger               = logger;
     }
 
     public async Task<List<ToDo>> GetAllToDos()
@@ -153,7 +156,10 @@ public class ToDosService : IToDosService
             if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(CreateToDo)))
                 throw new ForbiddenException();
 
-            return await _toDosDataController.CreateToDo(new ToDoEntity(newToDo));
+            var result = await _toDosDataController.CreateToDo(new ToDoEntity(newToDo));
+            if (result)
+                _ = _activityLogsService.LogActivity(newToDo.Id, currentUserId, ActivityType.ToDoCreated, "opened");
+            return result;
         }
         catch (ServiceException)
         {
@@ -178,7 +184,15 @@ public class ToDosService : IToDosService
             if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(UpdateToDo)))
                 throw new ForbiddenException();
 
-            return await _toDosDataController.UpdateToDo(new ToDoEntity(updatedToDo));
+            bool statusChanged = existing.Status != updatedToDo.Status;
+            var result = await _toDosDataController.UpdateToDo(new ToDoEntity(updatedToDo));
+            if (result)
+            {
+                _ = _activityLogsService.LogActivity(updatedToDo.Id, currentUserId, ActivityType.ToDoUpdated, "updated");
+                if (statusChanged)
+                    _ = _activityLogsService.LogActivity(updatedToDo.Id, currentUserId, ActivityType.StatusChanged, $"moved to {updatedToDo.Status}");
+            }
+            return result;
         }
         catch (ServiceException)
         {
@@ -205,7 +219,10 @@ public class ToDosService : IToDosService
             if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(DeleteToDo)))
                 throw new ForbiddenException();
 
-            return await _toDosDataController.DeleteToDo(toDoId);
+            var result = await _toDosDataController.DeleteToDo(toDoId);
+            if (result)
+                _ = _activityLogsService.LogActivity(toDoId, currentUserId, ActivityType.ToDoDeleted, $"deleted \"{existing.Title}\"");
+            return result;
         }
         catch (ServiceException)
         {
