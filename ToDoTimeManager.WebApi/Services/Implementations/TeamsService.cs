@@ -127,6 +127,9 @@ public class TeamsService : ITeamsService
 
         try
         {
+            if (!await _accessControlService.CanAccessTeam(currentUserId, request.Id))
+                throw new ForbiddenException();
+
             var entity = new TeamEntity
             {
                 Id = request.Id,

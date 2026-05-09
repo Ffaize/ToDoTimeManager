@@ -13,9 +13,9 @@ public partial class ToastBox : IDisposable
         base.OnInitialized();
     }
 
-    private void OnChange()
+    private async void OnChange()
     {
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

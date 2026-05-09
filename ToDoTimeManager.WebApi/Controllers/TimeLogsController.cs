@@ -113,13 +113,13 @@ public class TimeLogsController : BaseController
         {
             Id = request.Id,
             ToDoId = request.ToDoId,
-            UserId = request.UserId,
+            UserId = GetCurrentUserId(),
             HoursSpent = request.HoursSpent!.Value,
             LogDate = request.LogDate!.Value,
             LogDescription = request.LogDescription
         };
 
-        var created = await _timeLogsService.CreateTimeLog(timeLog);
+        var created = await _timeLogsService.CreateTimeLog(timeLog, GetCurrentUserId(), GetCurrentUserRole());
         return created ? Ok(created) : StatusCode(500);
     }
 
