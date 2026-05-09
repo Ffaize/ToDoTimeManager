@@ -106,10 +106,10 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseMiddleware<GlobalExceptionHandler>();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<GlobalExceptionHandler>();
         app.MapControllers();
 
         app.Run();

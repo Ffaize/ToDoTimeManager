@@ -2,7 +2,7 @@
 (
     Id          UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
     NumberedId  INT              NOT NULL,
-    Title       NVARCHAR(100)    NULL,
+    Title       NVARCHAR(200)    NULL,
     Description NVARCHAR(MAX)    NULL,
     CreatedAt   DATETIME         NOT NULL,
     DueDate     DATETIME         NULL,

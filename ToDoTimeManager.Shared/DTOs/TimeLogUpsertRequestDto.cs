@@ -11,7 +11,7 @@ public sealed class TimeLogUpsertRequestDto
 
     [NotEmptyGuid] public Guid UserId { get; set; }
 
-    [Required] public TimeSpan? HoursSpent { get; set; }
+    [Required] public decimal? HoursSpent { get; set; }
 
     [Required] public DateTime? LogDate { get; set; }
 

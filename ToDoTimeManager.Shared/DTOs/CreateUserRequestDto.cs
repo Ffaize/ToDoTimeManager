@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Utils;
 
 namespace ToDoTimeManager.Shared.DTOs;
@@ -22,6 +21,4 @@ public sealed class CreateUserRequestDto
     [MinLength(6)]
     [MaxLength(200)]
     public string Password { get; set; } = string.Empty;
-
-    [Required] public UserRole? UserRole { get; set; }
 }

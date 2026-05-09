@@ -12,7 +12,7 @@ public partial class ModalContainer : IDisposable
         ModalService.OnChange += OnChange;
     }
 
-    private void OnChange() => InvokeAsync(StateHasChanged);
+    private async void OnChange() => await InvokeAsync(StateHasChanged);
 
     private void OnCancel() => ModalService.Close(false);
 
