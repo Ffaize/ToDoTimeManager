@@ -13,18 +13,21 @@ public class UsersService : IUsersService
 {
     private readonly IUsersDataController _usersDataController;
     private readonly IAccessControlService _accessControlService;
+    private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<UsersService> _logger;
     private readonly IPasswordHelperService _passwordHelperService;
 
     public UsersService(
         IUsersDataController usersDataController,
         IAccessControlService accessControlService,
+        IActivityLogsService activityLogsService,
         ILogger<UsersService> logger,
         IPasswordHelperService passwordHelperService)
     {
-        _usersDataController = usersDataController;
+        _usersDataController  = usersDataController;
         _accessControlService = accessControlService;
-        _logger = logger;
+        _activityLogsService  = activityLogsService;
+        _logger               = logger;
         _passwordHelperService = passwordHelperService;
     }
 
@@ -221,7 +224,16 @@ public class UsersService : IUsersService
                 Password = passwordHash
             };
 
-            return await _usersDataController.UpdateUser(updatedEntity);
+            var result = await _usersDataController.UpdateUser(updatedEntity);
+            if (result)
+            {
+                bool isSelf = currentUserId == request.Id;
+                var desc = isSelf
+                    ? "updated own profile"
+                    : $"updated profile of {existing.UserName}";
+                _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserUpdated, desc);
+            }
+            return result;
         }
         catch (ServiceException)
         {
@@ -234,7 +246,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<bool> ChangeUserRole(Guid userId, UserRole newRole)
+    public async Task<bool> ChangeUserRole(Guid userId, UserRole newRole, Guid currentUserId)
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
@@ -246,7 +258,11 @@ public class UsersService : IUsersService
                 throw new NotFoundException("User was not found");
 
             existing.UserRole = newRole;
-            return await _usersDataController.UpdateUser(existing);
+            var result = await _usersDataController.UpdateUser(existing);
+            if (result)
+                _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserRoleChanged,
+                    $"changed role of {existing.UserName} to {newRole}");
+            return result;
         }
         catch (ServiceException)
         {

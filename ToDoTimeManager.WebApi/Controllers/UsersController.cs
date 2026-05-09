@@ -153,7 +153,7 @@ public class UsersController : BaseController
     [HttpPut("ChangeRole/{id}")]
     public async Task<IActionResult> ChangeUserRole(Guid id, [FromBody] ChangeUserRoleRequestDto request)
     {
-        var changed = await _usersService.ChangeUserRole(id, request.NewRole);
+        var changed = await _usersService.ChangeUserRole(id, request.NewRole, GetCurrentUserId());
         return changed ? Ok(changed) : StatusCode(500);
     }
 
