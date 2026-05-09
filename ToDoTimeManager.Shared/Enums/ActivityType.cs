@@ -8,5 +8,7 @@ public enum ActivityType
     StatusChanged  = 3,
     TimeLogged     = 4,
     TimeLogUpdated = 5,
-    TimeLogDeleted = 6
+    TimeLogDeleted  = 6,
+    UserUpdated     = 7,
+    UserRoleChanged = 8
 }

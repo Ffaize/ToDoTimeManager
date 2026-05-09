@@ -13,6 +13,6 @@ public interface IUsersService
     Task<User?> GetUserByLoginParameter(string loginParameter, Guid currentUserId, UserRole currentUserRole);
     Task<bool> CreateUser(CreateUserRequestDto request);
     Task<bool> UpdateUser(UpdateUserRequestDto request, Guid currentUserId);
-    Task<bool> ChangeUserRole(Guid userId, UserRole newRole);
+    Task<bool> ChangeUserRole(Guid userId, UserRole newRole, Guid currentUserId);
     Task<bool> DeleteUser(Guid userId);
 }
