@@ -204,4 +204,31 @@
   <data name="two-fa_step-label" xml:space="preserve">
     <value>Two-factor auth</value>
   </data>
+  <data name="ProjectType_Backend" xml:space="preserve">
+    <value>Backend</value>
+  </data>
+  <data name="ProjectType_Frontend" xml:space="preserve">
+    <value>Frontend</value>
+  </data>
+  <data name="ProjectType_DataBase" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="ProjectType_FullStack" xml:space="preserve">
+    <value>Full Stack</value>
+  </data>
+  <data name="ProjectType_Mobile" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
+  <data name="ProjectType_DevOps" xml:space="preserve">
+    <value>DevOps</value>
+  </data>
+  <data name="ProjectType_DataScience" xml:space="preserve">
+    <value>Data Science</value>
+  </data>
+  <data name="ProjectType_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="ProjectType_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
 </root>

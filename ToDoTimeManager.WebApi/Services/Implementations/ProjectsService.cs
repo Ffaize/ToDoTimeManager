@@ -92,7 +92,8 @@ public class ProjectsService : IProjectsService
                 Name = request.Name,
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = createdByUserId
+                CreatedBy = createdByUserId,
+                Type = request.Type
             };
             return await _projectsDataController.CreateProject(entity);
         }
@@ -121,7 +122,8 @@ public class ProjectsService : IProjectsService
             {
                 Id = request.Id,
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                Type = request.Type
             };
             return await _projectsDataController.UpdateProject(entity);
         }

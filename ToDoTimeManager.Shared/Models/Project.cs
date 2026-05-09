@@ -1,3 +1,5 @@
+using ToDoTimeManager.Shared.Enums;
+
 namespace ToDoTimeManager.Shared.Models;
 
 public class Project
@@ -8,4 +10,5 @@ public class Project
     public DateTime CreatedAt { get; set; }
     public Guid CreatedBy { get; set; }
     public int TeamCount { get; set; }
+    public ProjectType? Type { get; set; }
 }
