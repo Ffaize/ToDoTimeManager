@@ -66,6 +66,7 @@
     <Folder Include="StoredProcedures\Projects" />
     <Folder Include="StoredProcedures\ProjectTeams" />
     <Folder Include="StoredProcedures\TwoFactorCodes" />
+    <Folder Include="StoredProcedures\ActivityLogs" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users.sql" />
@@ -127,5 +128,13 @@
     <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_DeleteByUserId.sql" />
     <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_GetByUserId.sql" />
     <Build Include="StoredProcedures\TwoFactorCodes\sp_TwoFactorCodes_Upsert.sql" />
+    <Build Include="Tables\ActivityLogs.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_Create.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetAll.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetById.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByToDoId.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByUserId.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByUserIdAndToDoId.sql" />
+    <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_DeleteById.sql" />
   </ItemGroup>
 </Project>
