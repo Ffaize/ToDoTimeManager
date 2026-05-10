@@ -1,11 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
+using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
+using ToDoTimeManager.WebUI.Services.HttpServices;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
 public partial class RegisterForm
 {
+    [Inject] private UserService UserService { get; set; } = null!;
+    [Inject] private AuthService AuthService { get; set; } = null!;
+
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
+    [Parameter] public Action<string>? EmailChanged { get; set; }
+    [Parameter] public Action<Guid>? UserIdChanged { get; set; }
+
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
@@ -15,6 +24,40 @@ public partial class RegisterForm
     public bool IsPasswordValid { get; set; }
     public bool IsEmailValid { get; set; }
     public bool IsUsernameValid { get; set; }
+
+    private async Task OnRegisterClicked()
+    {
+        if (string.IsNullOrWhiteSpace(Username) ||
+            string.IsNullOrWhiteSpace(Email) ||
+            string.IsNullOrWhiteSpace(Password) ||
+            string.IsNullOrWhiteSpace(ConfirmPassword) ||
+            !IsUseOfTermsAgreed) return;
+
+        await Loading(async () =>
+        {
+            var created = await UserService.Create(new CreateUserRequestDto
+            {
+                Id = Guid.NewGuid(),
+                UserName = Username,
+                Email = Email,
+                Password = Password
+            });
+
+            if (!created) return;
+
+            var twoFactor = await AuthService.Login(new LoginUser
+            {
+                LoginParameter = Email,
+                Password = Password
+            });
+
+            if (twoFactor is null) return;
+
+            EmailChanged?.Invoke(twoFactor.MaskedEmail ?? Email);
+            UserIdChanged?.Invoke(twoFactor.UserId);
+            GoTo?.Invoke(AuthPageCurrentState.TwoFA);
+        });
+    }
 
     private void OnSignInClicked()
     {

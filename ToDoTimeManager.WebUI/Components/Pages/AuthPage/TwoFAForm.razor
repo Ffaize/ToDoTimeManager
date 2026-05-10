@@ -1,3 +1,5 @@
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Models.Enums.Button
 @inherits BaseComponent
 
 <div class="form-eyebrow">@Localizer["TWO-FACTOR"] · @Localizer["STEP"] 2</div>
@@ -21,3 +23,15 @@
     <input class="otp-cell @GetIsFilledCssClass(Value5)" type="text" maxlength="1" autocomplete="off" value="@Value5" @oninput="e => HandleInput(e, 5)">
     <input class="otp-cell @GetIsFilledCssClass(Value6)" type="text" maxlength="1" autocomplete="off" value="@Value6" @oninput="e => HandleInput(e, 6)">
 </div>
+
+<Button Disabled="@IsLoading"
+    OnClick="@OnVerifyClicked"
+    IsLoading="@IsLoading"
+    UseLoading="true"
+    Style="@ButtonStyle.Primary"
+    IconPosition="ButtonIconPosition.Right"
+    Text="@Localizer["Verify code"]">
+    <Icon>
+        <ArrowRightIcon IconSize="14" />
+    </Icon>
+</Button>
