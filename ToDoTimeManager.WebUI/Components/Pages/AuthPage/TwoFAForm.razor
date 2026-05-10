@@ -10,14 +10,14 @@
     </p>
 </div>
 
-<div class="otp-row with-dash">
-    <input class="otp-cell @GetIsFilledCssClass(Value1)" type="text" maxlength="1" autocomplete="off" value="@Value1">
-    <input class="otp-cell @GetIsFilledCssClass(Value2)" type="text" maxlength="1" autocomplete="off" value="@Value2">
-    <input class="otp-cell @GetIsFilledCssClass(Value3)" type="text" maxlength="1" autocomplete="off" value="@Value3">
+<div class="otp-row with-dash" id="otp-inputs">
+    <input class="otp-cell @GetIsFilledCssClass(Value1)" type="text" maxlength="1" autocomplete="off" value="@Value1" @oninput="e => HandleInput(e, 1)">
+    <input class="otp-cell @GetIsFilledCssClass(Value2)" type="text" maxlength="1" autocomplete="off" value="@Value2" @oninput="e => HandleInput(e, 2)">
+    <input class="otp-cell @GetIsFilledCssClass(Value3)" type="text" maxlength="1" autocomplete="off" value="@Value3" @oninput="e => HandleInput(e, 3)">
     <span class="otp-dash">
         <span>—</span>
     </span>
-    <input class="otp-cell @GetIsFilledCssClass(Value4)" type="text" maxlength="1" autocomplete="off" value="@Value4">
-    <input class="otp-cell @GetIsFilledCssClass(Value5)" type="text" maxlength="1" autocomplete="off" value="@Value5">
-    <input class="otp-cell @GetIsFilledCssClass(Value6)" type="text" maxlength="1" autocomplete="off" value="@Value6">
+    <input class="otp-cell @GetIsFilledCssClass(Value4)" type="text" maxlength="1" autocomplete="off" value="@Value4" @oninput="e => HandleInput(e, 4)">
+    <input class="otp-cell @GetIsFilledCssClass(Value5)" type="text" maxlength="1" autocomplete="off" value="@Value5" @oninput="e => HandleInput(e, 5)">
+    <input class="otp-cell @GetIsFilledCssClass(Value6)" type="text" maxlength="1" autocomplete="off" value="@Value6" @oninput="e => HandleInput(e, 6)">
 </div>
