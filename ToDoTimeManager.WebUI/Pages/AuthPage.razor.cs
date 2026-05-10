@@ -31,6 +31,7 @@ public partial class AuthPage
     private bool _isAnimating = false;
 
     private string _email = string.Empty;
+    private Guid _userId;
 
     private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
     {
@@ -73,5 +74,10 @@ public partial class AuthPage
     protected void EmailChanged(string obj)
     {
         _email = obj;
+    }
+
+    protected void UserIdChanged(Guid userId)
+    {
+        _userId = userId;
     }
 }
