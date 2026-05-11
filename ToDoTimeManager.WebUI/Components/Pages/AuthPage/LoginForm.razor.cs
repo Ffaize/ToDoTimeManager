@@ -13,7 +13,7 @@ public partial class LoginForm
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
-    [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn)>? UserChanged { get; set; }
+    [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds)>? UserChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
@@ -36,7 +36,7 @@ public partial class LoginForm
 
             if (result is null) return;
 
-            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn));
+            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn, result.SenderEmail ?? string.Empty, result.CodeLifetimeSeconds));
             GoTo?.Invoke(AuthPageCurrentState.TwoFA);
         });
     }

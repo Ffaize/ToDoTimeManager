@@ -32,6 +32,18 @@
 
 .input-shell input::placeholder { color: var(--text-3); }
 
+.input-shell input:-webkit-autofill,
+.input-shell input:-webkit-autofill:hover,
+.input-shell input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #111317 inset;
+    -webkit-text-fill-color: #f4f5f7;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.input-shell:focus-within input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #161a20 inset;
+}
+
 .input-shell:has(input:disabled) {
     opacity: 0.45;
     cursor: not-allowed !important;

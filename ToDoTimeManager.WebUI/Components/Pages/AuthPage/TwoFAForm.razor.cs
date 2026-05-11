@@ -11,9 +11,9 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFAForm : IDisposable
+public partial class TwoFaForm : IDisposable
 {
-    [Inject] private IJSRuntime JS { get; set; } = null!;
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
@@ -29,6 +29,7 @@ public partial class TwoFAForm : IDisposable
     [Parameter] public Guid UserId { get; set; }
     [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
     [Parameter] public bool KeepSignedIn { get; set; } = true;
+    [Parameter] public string SenderEmail { get; set; } = string.Empty;
 
     protected override Task OnParametersSetAsync()
     {
@@ -118,12 +119,12 @@ public partial class TwoFAForm : IDisposable
         {
             var result = await AuthService.SendCode(new SendTwoFactorCodeRequestDto { UserId = UserId });
             if (result is null) return;
-            TwoFaTimerService.StartTimer(UserId);
-            _cts.Cancel();
+            TwoFaTimerService.StartTimer(UserId, result.CodeLifetimeSeconds);
+            await _cts.CancelAsync();
             _cts = new CancellationTokenSource();
             _ = StartCountdown(_cts.Token);
             Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
-            await JS.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
+            await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
         });
     }
 
@@ -177,7 +178,7 @@ public partial class TwoFAForm : IDisposable
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            await JS.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
+            await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
     }
 
     private string GetIsFilledCssClass(string value)
