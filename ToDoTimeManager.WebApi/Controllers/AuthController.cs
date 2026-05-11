@@ -88,9 +88,9 @@ public class AuthController : BaseController
     /// 500 Internal Server Error if the refresh token is invalid or expired.
     /// </returns>
     [HttpPost("RefreshToken")]
-    public IActionResult RefreshToken(TokenModel? tokenModel)
+    public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
     {
-        var newTokenModel = _authService.RefreshAuthToken(tokenModel!);
+        var newTokenModel = await _authService.RefreshAuthToken(tokenModel!);
         return newTokenModel != null ? Ok(newTokenModel) : StatusCode(500);
     }
 }

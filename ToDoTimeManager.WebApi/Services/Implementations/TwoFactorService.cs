@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -12,6 +14,7 @@ public class TwoFactorService : ITwoFactorService
 {
     private readonly ITwoFactorCodesDataController _twoFactorCodesDataController;
     private readonly IUsersDataController _usersDataController;
+    private readonly IUserSecretsDataController _userSecretsDataController;
     private readonly ITwoFactorCodeGeneratorService _codeGeneratorService;
     private readonly IEmailService _emailService;
     private readonly IJwtGeneratorService _jwtGeneratorService;
@@ -22,6 +25,7 @@ public class TwoFactorService : ITwoFactorService
     public TwoFactorService(
         ITwoFactorCodesDataController twoFactorCodesDataController,
         IUsersDataController usersDataController,
+        IUserSecretsDataController userSecretsDataController,
         ITwoFactorCodeGeneratorService codeGeneratorService,
         IEmailService emailService,
         IJwtGeneratorService jwtGeneratorService,
@@ -31,6 +35,7 @@ public class TwoFactorService : ITwoFactorService
     {
         _twoFactorCodesDataController = twoFactorCodesDataController;
         _usersDataController = usersDataController;
+        _userSecretsDataController = userSecretsDataController;
         _codeGeneratorService = codeGeneratorService;
         _emailService = emailService;
         _jwtGeneratorService = jwtGeneratorService;
@@ -98,15 +103,31 @@ public class TwoFactorService : ITwoFactorService
             throw new NotFoundException("User not found");
 
         var user = userEntity.ToUser();
+
+        string? plainRefreshToken = null;
+        DateTime? refreshExpiresAt = null;
+
+        if (keepSignedIn)
+        {
+            var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var d) ? d : 14;
+            plainRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
+            refreshExpiresAt = DateTime.UtcNow.AddDays(rtDays);
+            await _userSecretsDataController.UpdateRefreshToken(
+                userId, HashRefreshToken(plainRefreshToken), refreshExpiresAt);
+        }
+        else
+        {
+            await _userSecretsDataController.ClearRefreshToken(userId);
+        }
+
         return new TokenModel
         {
             AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-            RefreshToken = keepSignedIn ? _jwtGeneratorService.GenerateRefreshToken() : null,
-            RefreshTokenExpiresAt = keepSignedIn
-                ? DateTime.UtcNow.AddDays(
-                    int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var rtDays) ? rtDays : 14)
-                : null
+            RefreshToken = plainRefreshToken,
+            RefreshTokenExpiresAt = refreshExpiresAt
         };
     }
 
+    private static string HashRefreshToken(string plainToken) =>
+        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(plainToken)));
 }

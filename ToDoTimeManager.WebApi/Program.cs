@@ -65,6 +65,7 @@ public class Program
         builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
+        builder.Services.AddScoped<IUserSecretsDataController, UserSecretsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
         builder.Services.AddScoped<ITwoFactorCodeGeneratorService, TwoFactorCodeGeneratorService>();
         builder.Services.AddScoped<ITwoFactorCodeHasherService, TwoFactorCodeHasherService>();

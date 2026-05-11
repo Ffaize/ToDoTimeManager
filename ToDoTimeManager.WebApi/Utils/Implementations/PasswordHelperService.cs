@@ -1,64 +1,37 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
-using System.Text.Json;
-using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Utils.Implementations;
 
 public class PasswordHelperService : IPasswordHelperService
 {
+    private const int Iterations = 100_000;
+    private const int HashSize = 32;
+
+    public string GenerateSalt() =>
+        Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
     public string HashPassword(string salt, string password)
     {
-        var userHash = HashPasswordWithSalt(password, DateToByteArray(salt));
-        return userHash;
+        var saltBytes = Convert.FromBase64String(salt);
+        return Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password, saltBytes, KeyDerivationPrf.HMACSHA256, Iterations, HashSize));
     }
 
-    public bool VerifyPassword(User user, string hashedPassword)
+    public bool VerifyPassword(string plainPassword, string storedHash, string storedSalt)
     {
-        var result = VerifyHashedPassword(user, hashedPassword);
-        return result == PasswordVerificationResult.Success;
-    }
-
-    private static PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword)
-    {
-        if (user.Password == null) return PasswordVerificationResult.Failed;
         try
         {
-            var storedBytes = Convert.FromBase64String(user.Password);
-            var incomingBytes = Convert.FromBase64String(hashedPassword);
-            return CryptographicOperations.FixedTimeEquals(storedBytes, incomingBytes)
-                ? PasswordVerificationResult.Success
-                : PasswordVerificationResult.Failed;
+            var expected = Convert.FromBase64String(storedHash);
+            var saltBytes = Convert.FromBase64String(storedSalt);
+            var actual = KeyDerivation.Pbkdf2(
+                plainPassword, saltBytes, KeyDerivationPrf.HMACSHA256, Iterations, HashSize);
+            return CryptographicOperations.FixedTimeEquals(expected, actual);
         }
         catch
         {
-            return PasswordVerificationResult.Failed;
+            return false;
         }
-    }
-
-    private static byte[] DateToByteArray(string salt)
-    {
-        using var memoryStream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(memoryStream))
-        {
-            writer.WriteStartObject();
-            writer.WriteString("string", salt);
-            writer.WriteEndObject();
-        }
-
-        var dateTimeBytes = memoryStream.ToArray();
-        return dateTimeBytes;
-    }
-
-    private static string HashPasswordWithSalt(string password, byte[] salt)
-    {
-        return Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password,
-            salt,
-            KeyDerivationPrf.HMACSHA256,
-            100000,
-            256 / 8));
     }
 }

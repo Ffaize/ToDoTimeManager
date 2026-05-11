@@ -5,5 +5,5 @@ namespace ToDoTimeManager.WebApi.Services.Interfaces;
 public interface IAuthService
 {
     Task<TwoFactorPendingModel?> Login(LoginUser loginUser);
-    TokenModel? RefreshAuthToken(TokenModel tokenModel);
+    Task<TokenModel?> RefreshAuthToken(TokenModel tokenModel);
 }

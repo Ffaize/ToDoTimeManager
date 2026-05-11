@@ -67,6 +67,7 @@
     <Folder Include="StoredProcedures\ProjectTeams" />
     <Folder Include="StoredProcedures\TwoFactorCodes" />
     <Folder Include="StoredProcedures\ActivityLogs" />
+    <Folder Include="StoredProcedures\UsersSecrets" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Users.sql" />
@@ -136,6 +137,12 @@
     <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByUserId.sql" />
     <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByUserIdAndToDoId.sql" />
     <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_DeleteById.sql" />
+    <Build Include="Tables\UsersSecrets.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_Create.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_GetByUserId.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_UpdateRefreshToken.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_ClearRefreshToken.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_UpdatePasswordSalt.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ToDoTimeManager.DataBase.publish.xml" />
