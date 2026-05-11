@@ -12,6 +12,7 @@ namespace ToDoTimeManager.WebApi.Services.Implementations;
 public class UsersService : IUsersService
 {
     private readonly IUsersDataController _usersDataController;
+    private readonly IUserSecretsDataController _userSecretsDataController;
     private readonly IAccessControlService _accessControlService;
     private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<UsersService> _logger;
@@ -19,16 +20,18 @@ public class UsersService : IUsersService
 
     public UsersService(
         IUsersDataController usersDataController,
+        IUserSecretsDataController userSecretsDataController,
         IAccessControlService accessControlService,
         IActivityLogsService activityLogsService,
         ILogger<UsersService> logger,
         IPasswordHelperService passwordHelperService)
     {
-        _usersDataController  = usersDataController;
-        _accessControlService = accessControlService;
-        _activityLogsService  = activityLogsService;
-        _logger               = logger;
-        _passwordHelperService = passwordHelperService;
+        _usersDataController        = usersDataController;
+        _userSecretsDataController  = userSecretsDataController;
+        _accessControlService       = accessControlService;
+        _activityLogsService        = activityLogsService;
+        _logger                     = logger;
+        _passwordHelperService      = passwordHelperService;
     }
 
     public async Task<List<User>> GetAllUsers()
@@ -172,16 +175,28 @@ public class UsersService : IUsersService
             if (existingByEmail != null)
                 throw new ConflictException("Email is already registered");
 
+            var salt = _passwordHelperService.GenerateSalt();
+            var hash = _passwordHelperService.HashPassword(salt, request.Password);
+
             var user = new User
             {
                 Id = request.Id,
                 UserName = request.UserName,
                 Email = request.Email,
-                Password = _passwordHelperService.HashPassword(request.Id.ToString(), request.Password),
+                Password = hash,
                 UserRole = UserRole.User
             };
 
-            return await _usersDataController.CreateUser(new UserEntity(user));
+            var created = await _usersDataController.CreateUser(new UserEntity(user));
+            if (!created)
+                return false;
+
+            return await _userSecretsDataController.Create(new UserSecretsEntity
+            {
+                Id = Guid.NewGuid(),
+                UserId = request.Id,
+                PasswordSalt = salt
+            });
         }
         catch (ServiceException)
         {
@@ -208,32 +223,54 @@ public class UsersService : IUsersService
             if (existing == null)
                 throw new NotFoundException("User was not found");
 
-            var passwordHash = !string.IsNullOrWhiteSpace(request.Password)
-                ? _passwordHelperService.HashPassword(request.Id.ToString(), request.Password)
-                : existing.Password;
+            string passwordHash = existing.Password ?? throw new ValidationException("User password is missing");
+            bool passwordChanged = !string.IsNullOrWhiteSpace(request.Password);
 
-            if (string.IsNullOrWhiteSpace(passwordHash))
-                throw new ValidationException("User password is missing");
-
-            var updatedEntity = new UserEntity
+            if (passwordChanged)
             {
-                Id = request.Id,
-                UserName = request.UserName,
-                Email = request.Email,
-                UserRole = existing.UserRole,
-                Password = passwordHash
-            };
+                var newSalt = _passwordHelperService.GenerateSalt();
+                passwordHash = _passwordHelperService.HashPassword(newSalt, request.Password!);
 
-            var result = await _usersDataController.UpdateUser(updatedEntity);
-            if (result)
-            {
+                var updatedEntity = new UserEntity
+                {
+                    Id = request.Id,
+                    UserName = request.UserName,
+                    Email = request.Email,
+                    UserRole = existing.UserRole,
+                    Password = passwordHash
+                };
+
+                var result = await _usersDataController.UpdateUser(updatedEntity);
+                if (!result)
+                    return false;
+
+                await _userSecretsDataController.UpdatePasswordSalt(request.Id, newSalt);
+
                 bool isSelf = currentUserId == request.Id;
-                var desc = isSelf
-                    ? "updated own profile"
-                    : $"updated profile of {existing.UserName}";
+                var desc = isSelf ? "updated own profile" : $"updated profile of {existing.UserName}";
                 _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserUpdated, desc);
+                return true;
             }
-            return result;
+            else
+            {
+                var updatedEntity = new UserEntity
+                {
+                    Id = request.Id,
+                    UserName = request.UserName,
+                    Email = request.Email,
+                    UserRole = existing.UserRole,
+                    Password = passwordHash
+                };
+
+                var result = await _usersDataController.UpdateUser(updatedEntity);
+                if (result)
+                {
+                    bool isSelf = currentUserId == request.Id;
+                    var desc = isSelf ? "updated own profile" : $"updated profile of {existing.UserName}";
+                    _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserUpdated, desc);
+                }
+                return result;
+            }
         }
         catch (ServiceException)
         {

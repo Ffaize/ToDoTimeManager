@@ -36,10 +36,10 @@ public partial class AuthPage
     private bool _isAnimating = false;
 
     private string _email = string.Empty;
+    private string _senderEmail = string.Empty;
     private Guid _userId;
     private bool _keepSignedIn = true;
     private AuthPageCurrentState _sourceState = AuthPageCurrentState.Login;
-    private string _senderEmail = string.Empty;
     private int _codeLifetimeSeconds;
 
     private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
@@ -49,7 +49,7 @@ public partial class AuthPage
         { AuthPageCurrentState.TwoFA,         "auth-form-slide--hidden-right" },
     };
 
-    protected async void GoTo(AuthPageCurrentState target)
+    protected async Task GoTo(AuthPageCurrentState target)
     {
         if (_isAnimating) return;
         var current = this.AuthPageCurrentState;
@@ -64,6 +64,9 @@ public partial class AuthPage
         _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
         this.AuthPageCurrentState = target;
 
+        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
+            target, _email, _userId, _keepSignedIn, _sourceState, _senderEmail, _codeLifetimeSeconds));
+
         await InvokeAsync(StateHasChanged);
         await Task.Delay(450);
 
@@ -77,21 +80,27 @@ public partial class AuthPage
 
         _isAnimating = false;
         await InvokeAsync(StateHasChanged);
-        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
-            target, _email, _userId, _keepSignedIn, _sourceState, _senderEmail, _codeLifetimeSeconds));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            NavigationManager.NavigateTo("/dashboard");
+            return;
+        }
+
         var saved = await ProtectedLocalStorage.GetAuthPageStateAsync();
         if (saved is null) return;
 
         _email = saved.Email;
+        _senderEmail = saved.SenderEmail;
         _userId = saved.UserId;
         _keepSignedIn = saved.KeepSignedIn;
         _sourceState = saved.SourceState;
-        _senderEmail = saved.SenderEmail;
         _codeLifetimeSeconds = saved.CodeLifetimeSeconds;
 
         var targetIndex = Array.IndexOf(NavOrder, saved.State);
@@ -112,9 +121,9 @@ public partial class AuthPage
     protected void UserChanged((string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds) user)
     {
         _email = user.Email;
+        _senderEmail = user.SenderEmail;
         _userId = user.UserId;
         _keepSignedIn = user.KeepSignedIn;
-        _senderEmail = user.SenderEmail;
         _codeLifetimeSeconds = user.CodeLifetimeSeconds;
         TwoFaTimerService.StartTimer(user.UserId, user.CodeLifetimeSeconds);
     }

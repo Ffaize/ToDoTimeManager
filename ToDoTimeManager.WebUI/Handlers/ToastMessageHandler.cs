@@ -23,7 +23,7 @@ public class ToastMessageHandler(CircuitServicesAccesor circuitServicesAccesor) 
 
             var toastMessage = !string.IsNullOrWhiteSpace(content) && ProblemDetailsParser.TryExtract(content, out var extracted)
                 ? extracted!
-                : "Smth went wrong";
+                : "Something went wrong";
 
             await toastsService.ShowToast(toastMessage, ToastType.Error);
             response.Content = new StringContent("null", Encoding.UTF8, "application/json");

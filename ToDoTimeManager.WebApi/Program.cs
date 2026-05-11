@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
 using System.Text;
+using System.Threading.RateLimiting;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 using ToDoTimeManager.WebApi.Middleware;
 using ToDoTimeManager.WebApi.Seeders;
@@ -20,6 +23,11 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        var jwtKey = builder.Configuration["JwtSettings:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey))
+            throw new InvalidOperationException(
+                "JwtSettings:Key is not configured. Set it via dotnet user-secrets or the JwtSettings__Key environment variable.");
 
         // Add services to the container.
 
@@ -57,11 +65,65 @@ public class Program
         builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
+        builder.Services.AddScoped<IUserSecretsDataController, UserSecretsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
         builder.Services.AddScoped<ITwoFactorCodeGeneratorService, TwoFactorCodeGeneratorService>();
+        builder.Services.AddScoped<ITwoFactorCodeHasherService, TwoFactorCodeHasherService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.OnRejected = async (context, ct) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                    context.HttpContext.Response.Headers.RetryAfter =
+                        ((int)retryAfter.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+                context.HttpContext.Response.ContentType = "application/problem+json";
+                await context.HttpContext.Response.WriteAsync(
+                    """{"type":"https://tools.ietf.org/html/rfc6585#section-4","title":"Too Many Requests","status":429,"detail":"Rate limit exceeded. Please try again later."}""",
+                    ct);
+            };
+
+            options.AddSlidingWindowLimiter("auth-login", o =>
+            {
+                o.PermitLimit = 5;
+                o.Window = TimeSpan.FromSeconds(60);
+                o.SegmentsPerWindow = 2;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+
+            options.AddSlidingWindowLimiter("auth-send-code", o =>
+            {
+                o.PermitLimit = 3;
+                o.Window = TimeSpan.FromSeconds(300);
+                o.SegmentsPerWindow = 5;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+
+            options.AddSlidingWindowLimiter("auth-verify-code", o =>
+            {
+                o.PermitLimit = 5;
+                o.Window = TimeSpan.FromSeconds(60);
+                o.SegmentsPerWindow = 2;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+
+            options.AddSlidingWindowLimiter("auth-register", o =>
+            {
+                o.PermitLimit = 5;
+                o.Window = TimeSpan.FromSeconds(60);
+                o.SegmentsPerWindow = 2;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+        });
 
 
         builder.Services.AddSwaggerGen(options =>
@@ -109,6 +171,7 @@ public class Program
 
         app.UseMiddleware<GlobalExceptionHandler>();
         app.UseHttpsRedirection();
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

@@ -23,7 +23,7 @@ public class AuthService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Auth HTTP request failed");
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class AuthService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Auth HTTP request failed");
             return null;
         }
     }
@@ -54,7 +54,7 @@ public class AuthService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Auth HTTP request failed");
             return null;
         }
     }
@@ -69,7 +69,7 @@ public class AuthService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Auth HTTP request failed");
             return null;
         }
     }

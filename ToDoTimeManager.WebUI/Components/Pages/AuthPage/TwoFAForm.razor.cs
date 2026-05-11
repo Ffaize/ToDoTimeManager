@@ -24,8 +24,9 @@ public partial class TwoFaForm : IDisposable
     private int _remainingSeconds;
     private string FormattedTime => TimeSpan.FromSeconds(_remainingSeconds).ToString(@"mm\:ss");
 
-    [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
+    [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public string Email { get; set; } = string.Empty;
+    [Parameter] public string SenderEmail { get; set; } = string.Empty;
     [Parameter] public Guid UserId { get; set; }
     [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
     [Parameter] public bool KeepSignedIn { get; set; } = true;
@@ -58,60 +59,12 @@ public partial class TwoFaForm : IDisposable
         _cts.Dispose();
     }
 
-    public string Value1
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
-    public string Value2
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
-    public string Value3
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
-    public string Value4
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
-    public string Value5
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
-    public string Value6
-    {
-        get;
-        set
-        {
-            var upper = value.ToUpper();
-            value = upper.Length > 1 ? upper.Substring(0, 1) : upper;
-        }
-    } = string.Empty;
+    public string Value1 { get; set; } = string.Empty;
+    public string Value2 { get; set; } = string.Empty;
+    public string Value3 { get; set; } = string.Empty;
+    public string Value4 { get; set; } = string.Empty;
+    public string Value5 { get; set; } = string.Empty;
+    public string Value6 { get; set; } = string.Empty;
 
     private async Task OnResendCodeClicked()
     {
@@ -128,10 +81,10 @@ public partial class TwoFaForm : IDisposable
         });
     }
 
-    private void OnUseDifferentEmailClicked()
+    private async Task OnUseDifferentEmailClicked()
     {
         Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
-        GoTo?.Invoke(SourceState);
+        if (GoTo != null) await GoTo(SourceState);
     }
 
     private async Task OnVerifyClicked()
@@ -154,8 +107,10 @@ public partial class TwoFaForm : IDisposable
             TwoFaTimerService.ClearTimer(UserId);
             await ProtectedLocalStorage.SaveLastLoginParameterAsync(Email);
             await ProtectedLocalStorage.RemoveAuthPageStateAsync();
-            var authProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
-            await authProvider.MarkUserAsAuthenticated(tokens);
+            if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
+                await authProvider.MarkUserAsAuthenticated(tokens);
+            else
+                await ProtectedLocalStorage.SaveTokenAsync(tokens);
             NavigationManager.NavigateTo("/dashboard");
         });
     }

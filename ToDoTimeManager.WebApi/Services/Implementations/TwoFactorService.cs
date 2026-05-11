@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Exceptions;
@@ -12,26 +14,32 @@ public class TwoFactorService : ITwoFactorService
 {
     private readonly ITwoFactorCodesDataController _twoFactorCodesDataController;
     private readonly IUsersDataController _usersDataController;
+    private readonly IUserSecretsDataController _userSecretsDataController;
     private readonly ITwoFactorCodeGeneratorService _codeGeneratorService;
     private readonly IEmailService _emailService;
     private readonly IJwtGeneratorService _jwtGeneratorService;
+    private readonly ITwoFactorCodeHasherService _codeHasher;
     private readonly IConfiguration _configuration;
     private readonly ILogger<TwoFactorService> _logger;
 
     public TwoFactorService(
         ITwoFactorCodesDataController twoFactorCodesDataController,
         IUsersDataController usersDataController,
+        IUserSecretsDataController userSecretsDataController,
         ITwoFactorCodeGeneratorService codeGeneratorService,
         IEmailService emailService,
         IJwtGeneratorService jwtGeneratorService,
+        ITwoFactorCodeHasherService codeHasher,
         IConfiguration configuration,
         ILogger<TwoFactorService> logger)
     {
         _twoFactorCodesDataController = twoFactorCodesDataController;
         _usersDataController = usersDataController;
+        _userSecretsDataController = userSecretsDataController;
         _codeGeneratorService = codeGeneratorService;
         _emailService = emailService;
         _jwtGeneratorService = jwtGeneratorService;
+        _codeHasher = codeHasher;
         _configuration = configuration;
         _logger = logger;
     }
@@ -50,7 +58,7 @@ public class TwoFactorService : ITwoFactorService
         {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Code = code,
+            Code = _codeHasher.HashCode(code),
             ExpiresAt = DateTime.UtcNow.AddMinutes(
                 int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5"))
         };
@@ -85,7 +93,7 @@ public class TwoFactorService : ITwoFactorService
             throw new ValidationException("Verification code has expired. Please request a new one.");
         }
 
-        if (!string.Equals(record.Code, code, StringComparison.OrdinalIgnoreCase))
+        if (!_codeHasher.VerifyCode(code, record.Code))
             throw new ValidationException("Invalid verification code.");
 
         var deleted = await _twoFactorCodesDataController.DeleteByUserId(userId);
@@ -97,14 +105,31 @@ public class TwoFactorService : ITwoFactorService
             throw new NotFoundException("User not found");
 
         var user = userEntity.ToUser();
+
+        string? plainRefreshToken = null;
+        DateTime? refreshExpiresAt = null;
+
+        if (keepSignedIn)
+        {
+            var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var d) ? d : 14;
+            plainRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
+            refreshExpiresAt = DateTime.UtcNow.AddDays(rtDays);
+            await _userSecretsDataController.UpdateRefreshToken(
+                userId, HashRefreshToken(plainRefreshToken), refreshExpiresAt);
+        }
+        else
+        {
+            await _userSecretsDataController.ClearRefreshToken(userId);
+        }
+
         return new TokenModel
         {
             AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-            RefreshToken = keepSignedIn ? _jwtGeneratorService.GenerateRefreshToken() : null,
-            RefreshTokenExpiresAt = keepSignedIn
-                ? DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
-                : null
+            RefreshToken = plainRefreshToken,
+            RefreshTokenExpiresAt = refreshExpiresAt
         };
     }
 
+    private static string HashRefreshToken(string plainToken) =>
+        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(plainToken)));
 }

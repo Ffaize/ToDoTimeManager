@@ -12,15 +12,14 @@ public partial class LoginForm
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
-    [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
+    [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds)>? UserChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
     private bool KeepSignedIn { get; set; } = true;
-    public CancellationTokenSource CancellationToken { get; set; } = new();
-    public bool IsPasswordValid { get; set; }
-    public bool IsLogInParameterValid { get; set; }
+    private bool IsPasswordValid { get; set; }
+    private bool IsLogInParameterValid { get; set; }
 
     private async Task OnSignInClicked()
     {
@@ -37,7 +36,7 @@ public partial class LoginForm
             if (result is null) return;
 
             UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn, result.SenderEmail ?? string.Empty, result.CodeLifetimeSeconds));
-            GoTo?.Invoke(AuthPageCurrentState.TwoFA);
+            if (GoTo != null) await GoTo(AuthPageCurrentState.TwoFA);
         });
     }
 
@@ -48,13 +47,12 @@ public partial class LoginForm
         if (!string.IsNullOrEmpty(lastLoginParameter))
         {
             LogInParameter = lastLoginParameter;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
 
-    private void OnCreateAccountClicked()
+    private async Task OnCreateAccountClicked()
     {
-        CancellationToken.Cancel();
-        GoTo?.Invoke(AuthPageCurrentState.Registration);
+        if (GoTo != null) await GoTo(AuthPageCurrentState.Registration);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
@@ -18,6 +19,7 @@ public class AuthService : IAuthService
     private readonly IJwtGeneratorService _jwtGeneratorService;
     private readonly IConfiguration _configuration;
     private readonly IUsersDataController _usersDataController;
+    private readonly IUserSecretsDataController _userSecretsDataController;
     private readonly ITwoFactorService _twoFactorService;
 
     public AuthService(
@@ -26,6 +28,7 @@ public class AuthService : IAuthService
         IJwtGeneratorService jwtGeneratorService,
         IConfiguration configuration,
         IUsersDataController usersDataController,
+        IUserSecretsDataController userSecretsDataController,
         ITwoFactorService twoFactorService)
     {
         _logger = logger;
@@ -33,6 +36,7 @@ public class AuthService : IAuthService
         _jwtGeneratorService = jwtGeneratorService;
         _configuration = configuration;
         _usersDataController = usersDataController;
+        _userSecretsDataController = userSecretsDataController;
         _twoFactorService = twoFactorService;
     }
 
@@ -49,12 +53,14 @@ public class AuthService : IAuthService
             if (userEntity == null)
                 throw new ValidationException("Invalid username or password");
 
-            var user = userEntity.ToUser();
-            var passwordHash = _passwordHelperService.HashPassword(user.Id.ToString(), loginUser.Password);
-            if (!_passwordHelperService.VerifyPassword(user, passwordHash))
+            var secrets = await _userSecretsDataController.GetByUserId(userEntity.Id);
+            if (secrets == null)
                 throw new ValidationException("Invalid username or password");
 
-            return await _twoFactorService.SendCode(user.Id);
+            if (!_passwordHelperService.VerifyPassword(loginUser.Password, userEntity.Password!, secrets.PasswordSalt))
+                throw new ValidationException("Invalid username or password");
+
+            return await _twoFactorService.SendCode(userEntity.Id);
         }
         catch (ServiceException)
         {
@@ -62,29 +68,43 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Auth operation failed");
             return null;
         }
     }
 
-    public TokenModel? RefreshAuthToken(TokenModel? tokenModel)
+    public async Task<TokenModel?> RefreshAuthToken(TokenModel? tokenModel)
     {
-        if (tokenModel == null || string.IsNullOrWhiteSpace(tokenModel.RefreshToken))
-            return null;
-        if (tokenModel.RefreshTokenExpiresAt < DateTime.UtcNow)
+        if (tokenModel == null || string.IsNullOrWhiteSpace(tokenModel.RefreshToken)
+                               || string.IsNullOrWhiteSpace(tokenModel.AccessToken))
             return null;
 
         try
         {
-            var (userId, userRole) = ValidateAndReadToken(tokenModel.AccessToken!);
+            var (userId, userRole) = ValidateAndReadToken(tokenModel.AccessToken);
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
-                throw new ValidationException("Smth went wrong");
+                return null;
+
+            var secrets = await _userSecretsDataController.GetByUserId(Guid.Parse(userId));
+            if (secrets?.RefreshToken == null || secrets.RefreshTokenExpiresAt == null
+                                               || secrets.RefreshTokenExpiresAt < DateTime.UtcNow)
+                return null;
+
+            var incomingHash = HashRefreshToken(tokenModel.RefreshToken);
+            var storedBytes = Convert.FromBase64String(secrets.RefreshToken);
+            var incomingBytes = Convert.FromBase64String(incomingHash);
+            if (!CryptographicOperations.FixedTimeEquals(storedBytes, incomingBytes))
+                return null;
+
+            var newRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
+            await _userSecretsDataController.UpdateRefreshToken(
+                Guid.Parse(userId), HashRefreshToken(newRefreshToken), secrets.RefreshTokenExpiresAt);
 
             return new TokenModel
             {
                 AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
-                RefreshToken = tokenModel.RefreshToken,
-                RefreshTokenExpiresAt = tokenModel.RefreshTokenExpiresAt
+                RefreshToken = newRefreshToken,
+                RefreshTokenExpiresAt = secrets.RefreshTokenExpiresAt
             };
         }
         catch (ServiceException)
@@ -93,7 +113,7 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Auth operation failed");
             return null;
         }
     }
@@ -112,7 +132,7 @@ public class AuthService : IAuthService
             ValidIssuer = issuer,
             ValidateAudience = true,
             ValidAudience = audience,
-            ValidateLifetime = false, // allow expired tokens to be refreshed
+            ValidateLifetime = false,
             ClockSkew = TimeSpan.Zero
         };
 
@@ -122,4 +142,7 @@ public class AuthService : IAuthService
         var role = principal.FindFirstValue(ClaimTypes.Role);
         return (userId, role);
     }
+
+    private static string HashRefreshToken(string plainToken) =>
+        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(plainToken)));
 }

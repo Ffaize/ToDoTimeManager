@@ -10,5 +10,5 @@ public partial class BaseAuthForm : BaseComponent
     [Parameter] public RenderFragment MainIcon { get; set; }
     [Parameter] public RenderFragment MainText { get; set; }
     [Parameter] public RenderFragment SubText { get; set; }
-    [Parameter] public string AditionalCssClass { get; set; }
+    [Parameter] public string AdditionalCssClass { get; set; }
 }

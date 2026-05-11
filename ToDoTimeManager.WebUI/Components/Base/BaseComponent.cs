@@ -17,11 +17,15 @@ namespace ToDoTimeManager.WebUI.Components.Base
             cancellationToken.ThrowIfCancellationRequested();
             IsLoading = true;
             await InvokeAsync(StateHasChanged);
-
-            await task();
-
-            IsLoading = false;
-            await InvokeAsync(StateHasChanged);
+            try
+            {
+                await task();
+            }
+            finally
+            {
+                IsLoading = false;
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
 

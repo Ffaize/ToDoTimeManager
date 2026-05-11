@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Services.Interfaces;
@@ -37,6 +38,7 @@ public class AuthController : BaseController
     /// 500 Internal Server Error if authentication fails unexpectedly.
     /// </returns>
     [HttpPost("Login")]
+    [EnableRateLimiting("auth-login")]
     public async Task<IActionResult> Login(LoginUser? loginUser)
     {
         var pending = await _authService.Login(loginUser!);
@@ -52,6 +54,7 @@ public class AuthController : BaseController
     /// 200 OK with a <see cref="TwoFactorPendingModel"/> containing the user ID and masked email address.
     /// </returns>
     [HttpPost("SendCode")]
+    [EnableRateLimiting("auth-send-code")]
     public async Task<IActionResult> SendCode([FromBody] SendTwoFactorCodeRequestDto request)
     {
         var pending = await _twoFactorService.SendCode(request.UserId);
@@ -68,6 +71,7 @@ public class AuthController : BaseController
     /// 400 Bad Request if the code is invalid or has expired.
     /// </returns>
     [HttpPost("VerifyCode")]
+    [EnableRateLimiting("auth-verify-code")]
     public async Task<IActionResult> VerifyCode([FromBody] VerifyTwoFactorRequestDto request)
     {
         var tokenModel = await _twoFactorService.VerifyCode(request.UserId, request.Code!, request.KeepSignedIn);
@@ -84,9 +88,9 @@ public class AuthController : BaseController
     /// 500 Internal Server Error if the refresh token is invalid or expired.
     /// </returns>
     [HttpPost("RefreshToken")]
-    public IActionResult RefreshToken(TokenModel? tokenModel)
+    public async Task<IActionResult> RefreshToken(TokenModel? tokenModel)
     {
-        var newTokenModel = _authService.RefreshAuthToken(tokenModel!);
+        var newTokenModel = await _authService.RefreshAuthToken(tokenModel!);
         return newTokenModel != null ? Ok(newTokenModel) : StatusCode(500);
     }
 }
