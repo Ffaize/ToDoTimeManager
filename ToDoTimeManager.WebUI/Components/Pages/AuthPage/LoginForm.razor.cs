@@ -10,8 +10,7 @@ public partial class LoginForm
     [Inject] private AuthService AuthService { get; set; } = null!;
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
-    [Parameter] public Action<string>? EmailChanged { get; set; }
-    [Parameter] public Action<Guid>? UserIdChanged { get; set; }
+    [Parameter] public Action<(string Email, Guid UserId)>? UserChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
@@ -34,8 +33,7 @@ public partial class LoginForm
 
             if (result is null) return;
 
-            EmailChanged?.Invoke(result.MaskedEmail ?? string.Empty);
-            UserIdChanged?.Invoke(result.UserId);
+            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId));
             GoTo?.Invoke(AuthPageCurrentState.TwoFA);
         });
     }

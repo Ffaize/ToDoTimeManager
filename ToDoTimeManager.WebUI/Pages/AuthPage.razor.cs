@@ -71,13 +71,9 @@ public partial class AuthPage
     protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    protected void EmailChanged(string obj)
+    protected void UserChanged((string Email, Guid UserId) user)
     {
-        _email = obj;
-    }
-
-    protected void UserIdChanged(Guid userId)
-    {
-        _userId = userId;
+        _email = user.Email;
+        _userId = user.UserId;
     }
 }

@@ -12,8 +12,7 @@ public partial class RegisterForm
     [Inject] private AuthService AuthService { get; set; } = null!;
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
-    [Parameter] public Action<string>? EmailChanged { get; set; }
-    [Parameter] public Action<Guid>? UserIdChanged { get; set; }
+    [Parameter] public Action<(string Email, Guid UserId)>? UserChanged { get; set; }
 
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
@@ -53,8 +52,7 @@ public partial class RegisterForm
 
             if (twoFactor is null) return;
 
-            EmailChanged?.Invoke(twoFactor.MaskedEmail ?? Email);
-            UserIdChanged?.Invoke(twoFactor.UserId);
+            UserChanged?.Invoke((twoFactor.MaskedEmail ?? Email, twoFactor.UserId));
             GoTo?.Invoke(AuthPageCurrentState.TwoFA);
         });
     }

@@ -8,7 +8,7 @@ using ToDoTimeManager.WebUI.Services.Implementations;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFaForm
+public partial class TwoFAForm
 {
     [Inject] private IJSRuntime JS { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
