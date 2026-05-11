@@ -41,7 +41,7 @@ public class CustomAuthStateProvider(
                 return new AuthenticationState(JwtTokenHelper.GetClaimsPrincipal(tokens.AccessToken!));
 
             // Access token expired — check whether the refresh token can save us.
-            if (tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
+            if (tokens.RefreshTokenExpiresAt == null || tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
             {
                 logger.LogInformation("Both access and refresh tokens are expired. Clearing session.");
                 await localStorage.RemoveTokenAsync();

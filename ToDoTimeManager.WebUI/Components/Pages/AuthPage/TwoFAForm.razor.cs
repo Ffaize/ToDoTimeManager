@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.JSInterop;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
+using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
@@ -14,10 +16,13 @@ public partial class TwoFAForm
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
     [Parameter] public string Email { get; set; } = string.Empty;
     [Parameter] public Guid UserId { get; set; }
+    [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
+    [Parameter] public bool KeepSignedIn { get; set; } = true;
     public string Value1
     {
         get;
@@ -73,6 +78,23 @@ public partial class TwoFAForm
         }
     } = string.Empty;
 
+    private async Task OnResendCodeClicked()
+    {
+        await Loading(async () =>
+        {
+            var result = await AuthService.SendCode(new SendTwoFactorCodeRequestDto { UserId = UserId });
+            if (result is null) return;
+            Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
+            await JS.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
+        });
+    }
+
+    private void OnUseDifferentEmailClicked()
+    {
+        Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
+        GoTo?.Invoke(SourceState);
+    }
+
     private async Task OnVerifyClicked()
     {
         if (string.IsNullOrEmpty(Value1) || string.IsNullOrEmpty(Value2) || string.IsNullOrEmpty(Value3) ||
@@ -84,11 +106,13 @@ public partial class TwoFAForm
             var tokens = await AuthService.VerifyCode(new VerifyTwoFactorRequestDto
             {
                 UserId = UserId,
-                Code = code
+                Code = code,
+                KeepSignedIn = KeepSignedIn
             });
 
             if (tokens is null) return;
 
+            await ProtectedLocalStorage.SaveLastLoginParameterAsync(Email);
             var authProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
             await authProvider.MarkUserAsAuthenticated(tokens);
             NavigationManager.NavigateTo("/dashboard");

@@ -204,6 +204,84 @@
   <data name="two-fa_step-label" xml:space="preserve">
     <value>Two-factor auth</value>
   </data>
+  <data name="CODE EXPIRES IN" xml:space="preserve">
+    <value>CODE EXPIRES IN</value>
+  </data>
+  <data name="TWO-FACTOR" xml:space="preserve">
+    <value>TWO-FACTOR</value>
+  </data>
+  <data name="Light the forge." xml:space="preserve">
+    <value>Light the forge.</value>
+  </data>
+  <data name="We sent a 6-digit ember code to" xml:space="preserve">
+    <value>We sent a 6-digit ember code to</value>
+  </data>
+  <data name="Drop it in below to seal the session." xml:space="preserve">
+    <value>Drop it in below to seal the session.</value>
+  </data>
+  <data name="Verify code" xml:space="preserve">
+    <value>Verify code</value>
+  </data>
+  <data name="CREATE ACCOUNT" xml:space="preserve">
+    <value>CREATE ACCOUNT</value>
+  </data>
+  <data name="Already a smith?" xml:space="preserve">
+    <value>Already a smith?</value>
+  </data>
+  <data name="Sign-In" xml:space="preserve">
+    <value>Sign-In</value>
+  </data>
+  <data name="forge tasks." xml:space="preserve">
+    <value>forge tasks.</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="At least 8 characters" xml:space="preserve">
+    <value>At least 8 characters</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Re-enter your password" xml:space="preserve">
+    <value>Re-enter your password</value>
+  </data>
+  <data name="I agree to the" xml:space="preserve">
+    <value>I agree to the</value>
+  </data>
+  <data name="Terms" xml:space="preserve">
+    <value>Terms</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>and</value>
+  </data>
+  <data name="Privacy Policy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="Forge my account" xml:space="preserve">
+    <value>Forge my account</value>
+  </data>
+  <data name="Resend code" xml:space="preserve">
+    <value>Resend code</value>
+  </data>
+  <data name="Email not in your inbox?" xml:space="preserve">
+    <value>Email not in your inbox?</value>
+  </data>
+  <data name="Check your spam folder or sender filters for " xml:space="preserve">
+    <value>Check your spam folder or sender filters for </value>
+  </data>
+  <data name=". The code is single-use and expires in 5 minutes." xml:space="preserve">
+    <value>. The code is single-use and expires in 5 minutes.</value>
+  </data>
+  <data name="Use a different email" xml:space="preserve">
+    <value>Use a different email</value>
+  </data>
+  <data name="Lost access? Contact admin" xml:space="preserve">
+    <value>Lost access? Contact admin</value>
+  </data>
   <data name="ProjectType_Backend" xml:space="preserve">
     <value>Бекенд</value>
   </data>

@@ -24,14 +24,48 @@
     <input class="otp-cell @GetIsFilledCssClass(Value6)" type="text" maxlength="1" autocomplete="off" value="@Value6" @oninput="e => HandleInput(e, 6)">
 </div>
 
+<div class="meta-row">
+    <span class="timer">
+        <span>@Localizer["CODE EXPIRES IN"] </span>
+        <strong>03:51</strong>
+    </span>
+    <button type="button" class="resend" @onclick="OnResendCodeClicked" disabled="@IsLoading">
+        @Localizer["Resend code"]
+    </button>
+</div>
+
 <Button Disabled="@IsLoading"
-    OnClick="@OnVerifyClicked"
-    IsLoading="@IsLoading"
-    UseLoading="true"
-    Style="@ButtonStyle.Primary"
-    IconPosition="ButtonIconPosition.Right"
-    Text="@Localizer["Verify code"]">
+        OnClick="@OnVerifyClicked"
+        IsLoading="@IsLoading"
+        UseLoading="true"
+        Style="@ButtonStyle.Primary"
+        IconPosition="ButtonIconPosition.Right"
+        Text="@Localizer["Verify code"]">
     <Icon>
         <ArrowRightIcon IconSize="14" />
     </Icon>
 </Button>
+
+        
+<div class="hint">
+    <TimerIcon IconSize="14" />
+    <div>
+        <strong>
+            <span>@Localizer["Email not in your inbox?"]</span>
+        </strong>
+        <span>@Localizer["Check your spam folder or sender filters for "]</span>
+        <code>
+            <span>noreply@taskforge.io</span>
+        </code>
+        <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
+    </div>
+</div>
+
+<div class="helper-row">
+    <a @onclick="OnUseDifferentEmailClicked" @onclick:preventDefault href="#">
+        <span>@Localizer["Use a different email"]</span>
+    </a>
+    <a href="#">
+        <span>@Localizer["Lost access? Contact admin"]</span>
+    </a>
+</div>

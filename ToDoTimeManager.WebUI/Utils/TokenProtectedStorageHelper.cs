@@ -25,4 +25,5 @@ public static class TokenProtectedStorageHelper
     {
         await protectedLocalStorage.DeleteAsync(nameof(TokenModel));
     }
+
 }

@@ -42,7 +42,7 @@ public class TokenMessageHandler : DelegatingHandler
             if (response.StatusCode != HttpStatusCode.Unauthorized || tokens == null)
                 return response;
 
-            if (tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
+            if (tokens.RefreshTokenExpiresAt == null || tokens.RefreshTokenExpiresAt <= DateTime.UtcNow)
             {
                 _logger.LogWarning("Received 401 and refresh token is already expired. Logging out.");
                 await LogOutAsync();

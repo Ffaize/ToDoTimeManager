@@ -70,7 +70,7 @@ public class AuthController : BaseController
     [HttpPost("VerifyCode")]
     public async Task<IActionResult> VerifyCode([FromBody] VerifyTwoFactorRequestDto request)
     {
-        var tokenModel = await _twoFactorService.VerifyCode(request.UserId, request.Code!);
+        var tokenModel = await _twoFactorService.VerifyCode(request.UserId, request.Code!, request.KeepSignedIn);
         return Ok(tokenModel);
     }
 

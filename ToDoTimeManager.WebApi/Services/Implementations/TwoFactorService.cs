@@ -67,7 +67,7 @@ public class TwoFactorService : ITwoFactorService
         };
     }
 
-    public async Task<TokenModel> VerifyCode(Guid userId, string code)
+    public async Task<TokenModel> VerifyCode(Guid userId, string code, bool keepSignedIn)
     {
         var record = await _twoFactorCodesDataController.GetByUserId(userId);
         if (record == null)
@@ -97,9 +97,10 @@ public class TwoFactorService : ITwoFactorService
         return new TokenModel
         {
             AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
-            RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
-            RefreshTokenExpiresAt =
-                DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
+            RefreshToken = keepSignedIn ? _jwtGeneratorService.GenerateRefreshToken() : null,
+            RefreshTokenExpiresAt = keepSignedIn
+                ? DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
+                : null
         };
     }
 

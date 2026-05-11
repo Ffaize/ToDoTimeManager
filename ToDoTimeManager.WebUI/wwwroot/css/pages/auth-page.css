@@ -446,7 +446,6 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 8px;
-    margin-bottom: 8px;
 }
 
 .otp-cell {
@@ -482,4 +481,97 @@
 .otp-cell.filled {
     border-color: var(--line-2);
     color: var(--ember-2);
+}
+
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+}
+
+    .meta-row .timer {
+        color: var(--text-2);
+    }
+
+    .meta-row .resend {
+        background: none;
+        border: none;
+        color: var(--text-1);
+        font-family: inherit;
+        font-size: 11px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 2px 0;
+        border-bottom: 1px dashed var(--line-2);
+        transition: all 0.5s
+    }
+
+    .meta-row .timer strong {
+        color: var(--ember-2);
+        font-weight: 600;
+    }
+
+    .meta-row .resend:hover:not(:disabled) {
+        color: var(--ember-2);
+        border-color: var(--ember-2);
+    }
+
+.hint {
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-2);
+}
+
+    .hint strong {
+        color: var(--text-1);
+        display: block;
+        margin-bottom: 2px;
+        font-weight: 600;
+    }
+
+    .hint code {
+        font-family: "JetBrains Mono", monospace;
+        color: var(--ember-2);
+    }
+
+.hint svg {
+    color: var(--ember);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.helper-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-2);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.helper-row a {
+    color: var(--text-1);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--line-2);
+    padding-bottom: 1px;
+    transition: all 0.5s
+}
+
+.helper-row a:hover {
+    color: var(--ember-2);
+    border-color: var(--ember-2);
 }

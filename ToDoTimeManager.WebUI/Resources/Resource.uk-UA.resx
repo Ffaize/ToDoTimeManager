@@ -204,6 +204,84 @@
   <data name="two-fa_step-label" xml:space="preserve">
     <value>Двоетапна перевірка</value>
   </data>
+  <data name="CODE EXPIRES IN" xml:space="preserve">
+    <value>КОД ЗАКІНЧУЄТЬСЯ ЧЕРЕЗ</value>
+  </data>
+  <data name="TWO-FACTOR" xml:space="preserve">
+    <value>ДВОФАКТОРНИЙ</value>
+  </data>
+  <data name="Light the forge." xml:space="preserve">
+    <value>Запали горн.</value>
+  </data>
+  <data name="We sent a 6-digit ember code to" xml:space="preserve">
+    <value>Ми надіслали 6-значний код на</value>
+  </data>
+  <data name="Drop it in below to seal the session." xml:space="preserve">
+    <value>Введіть його нижче, щоб підтвердити сесію.</value>
+  </data>
+  <data name="Verify code" xml:space="preserve">
+    <value>Перевірити код</value>
+  </data>
+  <data name="CREATE ACCOUNT" xml:space="preserve">
+    <value>СТВОРИТИ АКАУНТ</value>
+  </data>
+  <data name="Already a smith?" xml:space="preserve">
+    <value>Вже є акаунт?</value>
+  </data>
+  <data name="Sign-In" xml:space="preserve">
+    <value>Увійти</value>
+  </data>
+  <data name="forge tasks." xml:space="preserve">
+    <value>кувати задачі.</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Ім'я користувача</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Ел. пошта</value>
+  </data>
+  <data name="At least 8 characters" xml:space="preserve">
+    <value>Мінімум 8 символів</value>
+  </data>
+  <data name="Confirm password" xml:space="preserve">
+    <value>Підтвердити пароль</value>
+  </data>
+  <data name="Re-enter your password" xml:space="preserve">
+    <value>Повторіть пароль</value>
+  </data>
+  <data name="I agree to the" xml:space="preserve">
+    <value>Я погоджуюсь з</value>
+  </data>
+  <data name="Terms" xml:space="preserve">
+    <value>Умовами</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>та</value>
+  </data>
+  <data name="Privacy Policy" xml:space="preserve">
+    <value>Політикою конфіденційності</value>
+  </data>
+  <data name="Forge my account" xml:space="preserve">
+    <value>Створити акаунт</value>
+  </data>
+  <data name="Resend code" xml:space="preserve">
+    <value>Надіслати код повторно</value>
+  </data>
+  <data name="Email not in your inbox?" xml:space="preserve">
+    <value>Немає листа в поштовій скриньці?</value>
+  </data>
+  <data name="Check your spam folder or sender filters for " xml:space="preserve">
+    <value>Перевірте папку зі спамом або фільтри відправника для </value>
+  </data>
+  <data name=". The code is single-use and expires in 5 minutes." xml:space="preserve">
+    <value>. Код одноразовий і дійсний 5 хвилин.</value>
+  </data>
+  <data name="Use a different email" xml:space="preserve">
+    <value>Використати іншу пошту</value>
+  </data>
+  <data name="Lost access? Contact admin" xml:space="preserve">
+    <value>Втратили доступ? Зверніться до адміна</value>
+  </data>
   <data name="ProjectType_Backend" xml:space="preserve">
     <value>Бекенд</value>
   </data>

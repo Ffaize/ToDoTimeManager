@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 using ToDoTimeManager.WebApi.Middleware;
+using ToDoTimeManager.WebApi.Seeders;
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
@@ -16,7 +17,7 @@ namespace ToDoTimeManager.WebApi;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +112,8 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        await DataSeeder.SeedAsync(app.Services);
 
         app.Run();
     }

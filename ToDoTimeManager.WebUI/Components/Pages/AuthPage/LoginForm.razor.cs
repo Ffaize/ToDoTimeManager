@@ -1,20 +1,23 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
+using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
 public partial class LoginForm
 {
     [Inject] private AuthService AuthService { get; set; } = null!;
+    [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
-    [Parameter] public Action<(string Email, Guid UserId)>? UserChanged { get; set; }
+    [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn)>? UserChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
-    private bool KeepSignedIn { get; set; }
+    private bool KeepSignedIn { get; set; } = true;
     public CancellationTokenSource CancellationToken { get; set; } = new();
     public bool IsPasswordValid { get; set; }
     public bool IsLogInParameterValid { get; set; }
@@ -33,9 +36,20 @@ public partial class LoginForm
 
             if (result is null) return;
 
-            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId));
+            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn));
             GoTo?.Invoke(AuthPageCurrentState.TwoFA);
         });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var lastLoginParameter = await ProtectedLocalStorage.GetLastLoginParameterAsync();
+        if (!string.IsNullOrEmpty(lastLoginParameter))
+        {
+            LogInParameter = lastLoginParameter;
+            StateHasChanged();
+        }
     }
 
     private void OnCreateAccountClicked()

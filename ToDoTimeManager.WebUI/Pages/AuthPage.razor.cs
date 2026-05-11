@@ -32,6 +32,8 @@ public partial class AuthPage
 
     private string _email = string.Empty;
     private Guid _userId;
+    private bool _keepSignedIn = true;
+    private AuthPageCurrentState _sourceState = AuthPageCurrentState.Login;
 
     private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
     {
@@ -47,6 +49,8 @@ public partial class AuthPage
         if (current == target) return;
 
         _isAnimating = true;
+        if (target == AuthPageCurrentState.TwoFA)
+            _sourceState = current;
         var isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
 
         _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
@@ -71,9 +75,10 @@ public partial class AuthPage
     protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    protected void UserChanged((string Email, Guid UserId) user)
+    protected void UserChanged((string Email, Guid UserId, bool KeepSignedIn) user)
     {
         _email = user.Email;
         _userId = user.UserId;
+        _keepSignedIn = user.KeepSignedIn;
     }
 }
