@@ -11,7 +11,7 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFaForm : IDisposable
+public partial class TwoFAForm : IDisposable
 {
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
@@ -30,7 +30,6 @@ public partial class TwoFaForm : IDisposable
     [Parameter] public Guid UserId { get; set; }
     [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
     [Parameter] public bool KeepSignedIn { get; set; } = true;
-    [Parameter] public string SenderEmail { get; set; } = string.Empty;
 
     protected override Task OnParametersSetAsync()
     {

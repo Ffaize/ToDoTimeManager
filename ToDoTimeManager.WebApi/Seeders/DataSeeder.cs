@@ -16,6 +16,7 @@ public static class DataSeeder
     {
         await using var scope = services.CreateAsyncScope();
         var usersData = scope.ServiceProvider.GetRequiredService<IUsersDataController>();
+        var userSecretsData = scope.ServiceProvider.GetRequiredService<IUserSecretsDataController>();
         var passwordHelper = scope.ServiceProvider.GetRequiredService<IPasswordHelperService>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
@@ -26,19 +27,30 @@ public static class DataSeeder
             return;
         }
 
+        var salt = passwordHelper.GenerateSalt();
         var user = new UserEntity
         {
             Id = SeedUserId,
             UserName = SeedUserName,
             Email = SeedUserEmail,
-            Password = passwordHelper.HashPassword(SeedUserId.ToString(), SeedUserPassword),
+            Password = passwordHelper.HashPassword(salt, SeedUserPassword),
             UserRole = UserRole.Admin
         };
 
         var created = await usersData.CreateUser(user);
-        if (created)
-            logger.LogInformation("Seed user created: {Email}", SeedUserEmail);
-        else
+        if (!created)
+        {
             logger.LogError("Failed to create seed user.");
+            return;
+        }
+
+        await userSecretsData.Create(new UserSecretsEntity
+        {
+            Id = Guid.NewGuid(),
+            UserId = SeedUserId,
+            PasswordSalt = salt
+        });
+
+        logger.LogInformation("Seed user created: {Email}", SeedUserEmail);
     }
 }
