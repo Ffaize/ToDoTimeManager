@@ -46,23 +46,18 @@
     </Icon>
 </Button>
 
-        
+
 <div class="hint">
     <TimerIcon IconSize="14" />
     <div>
         <strong>
             <span>@Localizer["Email not in your inbox?"]</span>
         </strong>
-        @if (!string.IsNullOrWhiteSpace(SenderEmail))
-        {
-            <span>@Localizer["Check your spam folder or sender filters for "]</span>
-            <code>@SenderEmail</code>
-            <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
-        }
-        else
-        {
-            <span>@Localizer["Check your spam folder. The code is single-use and expires in 5 minutes."]</span>
-        }
+        <span>@Localizer["Check your spam folder or sender filters for "]</span>
+        <code>
+            <span>@SenderEmail</span>
+        </code>
+        <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
     </div>
 </div>
 

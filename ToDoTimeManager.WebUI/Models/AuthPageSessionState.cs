@@ -8,5 +8,6 @@ public record AuthPageSessionState(
     Guid UserId,
     bool KeepSignedIn,
     AuthPageCurrentState SourceState,
-    string SenderEmail = ""
+    string SenderEmail,
+    int CodeLifetimeSeconds
 );

@@ -68,10 +68,12 @@ public class TwoFactorService : ITwoFactorService
             throw new ConflictException("Failed to persist verification code.");
         await _emailService.SendTwoFactorCodeAsync(userEntity.Email, code);
 
+        var lifetimeMinutes = int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5");
         return new TwoFactorPendingModel
         {
             UserId = userId,
             MaskedEmail = userEntity.Email.MaskAsEmail(),
+            CodeLifetimeSeconds = lifetimeMinutes * 60,
             SenderEmail = _configuration["EmailSettings:SenderEmail"]
         };
     }

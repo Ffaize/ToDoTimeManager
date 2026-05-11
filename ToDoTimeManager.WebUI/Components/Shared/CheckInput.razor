@@ -1,6 +1,6 @@
 ﻿<div class="row-extras @AdditionalCssClass">
     <label class="check">
-        <input type="checkbox" disabled="@Disabled" value="Value"/>
+        <input type="checkbox" disabled="@Disabled" checked="@Value" @onchange="e => ValueChanged.InvokeAsync((bool)e.Value!)"/>
         <span class="box"></span>
         <span>@Text</span>
     </label>

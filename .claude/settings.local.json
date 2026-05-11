@@ -11,7 +11,9 @@
       "Bash(npm run *)",
       "Bash(dir /b \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Components\")",
       "PowerShell(ls \"D:\\\\Projects\\\\ToDoTimeManager\" -File | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github\\)'}; ls \"D:\\\\Projects\\\\ToDoTimeManager\" | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github|rules\\)'})",
-      "PowerShell(head -20)"
+      "PowerShell(head -20)",
+      "Bash(dotnet user-secrets *)",
+      "Bash(git stash *)"
     ]
   }
 }

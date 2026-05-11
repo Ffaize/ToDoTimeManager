@@ -26,7 +26,7 @@
                 <FormContent>
                     <LoginForm GoTo="@GoTo" UserChanged="@UserChanged" />
                 </FormContent>
-            </BaseAuthForm> 
+            </BaseAuthForm>
         </div>
         <div class="@GetSlideClass(AuthPageCurrentState.Registration)">
             <BaseAuthForm Steps="@([RegisterStepName, TwoFaStepName])" CurrentStep="@RegisterStepName">
@@ -42,10 +42,10 @@
                 <FormContent>
                     <RegisterForm GoTo="@GoTo" UserChanged="@UserChanged" />
                 </FormContent>
-            </BaseAuthForm> 
+            </BaseAuthForm>
         </div>
         <div class="@GetSlideClass(AuthPageCurrentState.TwoFA)">
-            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+            <BaseAuthForm Steps="@([_sourceState == AuthPageCurrentState.Login ? SignInStepName : RegisterStepName, TwoFaStepName])" CurrentStep="@TwoFaStepName">
                 <MainIcon>
                     <LockShieldIcon IconSize="200"/>
                 </MainIcon>
@@ -58,9 +58,9 @@
                     @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
                 </SubText>
                 <FormContent>
-                    <TwoFAForm GoTo="@GoTo" Email="@_email" SenderEmail="@_senderEmail" UserId="@_userId" SourceState="@_sourceState" KeepSignedIn="@_keepSignedIn" />
+                    <TwoFAForm GoTo="@GoTo" Email="@_email" UserId="@_userId" SourceState="@_sourceState" KeepSignedIn="@_keepSignedIn" SenderEmail="@_senderEmail" />
                 </FormContent>
-            </BaseAuthForm> 
+            </BaseAuthForm>
         </div>
     </div>
 </div>
