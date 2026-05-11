@@ -26,6 +26,7 @@ public partial class TwoFAForm : IDisposable
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public string Email { get; set; } = string.Empty;
+    [Parameter] public string SenderEmail { get; set; } = string.Empty;
     [Parameter] public Guid UserId { get; set; }
     [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
     [Parameter] public bool KeepSignedIn { get; set; } = true;
@@ -107,6 +108,8 @@ public partial class TwoFAForm : IDisposable
             await ProtectedLocalStorage.RemoveAuthPageStateAsync();
             if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
                 await authProvider.MarkUserAsAuthenticated(tokens);
+            else
+                await ProtectedLocalStorage.SaveTokenAsync(tokens);
             NavigationManager.NavigateTo("/dashboard");
         });
     }

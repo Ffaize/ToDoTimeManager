@@ -63,7 +63,8 @@ public class TwoFactorService : ITwoFactorService
         return new TwoFactorPendingModel
         {
             UserId = userId,
-            MaskedEmail = userEntity.Email.MaskAsEmail()
+            MaskedEmail = userEntity.Email.MaskAsEmail(),
+            SenderEmail = _configuration["EmailSettings:SenderEmail"]
         };
     }
 
@@ -99,7 +100,8 @@ public class TwoFactorService : ITwoFactorService
             AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
             RefreshToken = keepSignedIn ? _jwtGeneratorService.GenerateRefreshToken() : null,
             RefreshTokenExpiresAt = keepSignedIn
-                ? DateTime.UtcNow.AddDays(int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "7"))
+                ? DateTime.UtcNow.AddDays(
+                    int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var rtDays) ? rtDays : 14)
                 : null
         };
     }

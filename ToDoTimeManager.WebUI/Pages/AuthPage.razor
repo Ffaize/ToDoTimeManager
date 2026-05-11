@@ -58,7 +58,7 @@
                     @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
                 </SubText>
                 <FormContent>
-                    <TwoFAForm GoTo="@GoTo" Email="@_email" UserId="@_userId" SourceState="@_sourceState" KeepSignedIn="@_keepSignedIn" />
+                    <TwoFAForm GoTo="@GoTo" Email="@_email" SenderEmail="@_senderEmail" UserId="@_userId" SourceState="@_sourceState" KeepSignedIn="@_keepSignedIn" />
                 </FormContent>
             </BaseAuthForm> 
         </div>

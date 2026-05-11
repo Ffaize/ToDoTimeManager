@@ -7,5 +7,6 @@ public record AuthPageSessionState(
     string Email,
     Guid UserId,
     bool KeepSignedIn,
-    AuthPageCurrentState SourceState
+    AuthPageCurrentState SourceState,
+    string SenderEmail = ""
 );

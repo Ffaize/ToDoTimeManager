@@ -53,7 +53,16 @@
         <strong>
             <span>@Localizer["Email not in your inbox?"]</span>
         </strong>
-        <span>@Localizer["Check your spam folder. The code is single-use and expires in 5 minutes."]</span>
+        @if (!string.IsNullOrWhiteSpace(SenderEmail))
+        {
+            <span>@Localizer["Check your spam folder or sender filters for "]</span>
+            <code>@SenderEmail</code>
+            <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
+        }
+        else
+        {
+            <span>@Localizer["Check your spam folder. The code is single-use and expires in 5 minutes."]</span>
+        }
     </div>
 </div>
 

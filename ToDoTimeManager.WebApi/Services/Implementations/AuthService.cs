@@ -80,7 +80,7 @@ public class AuthService : IAuthService
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
                 throw new ValidationException("Token is invalid");
 
-            var refreshLifetimeDays = int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "14");
+            var refreshLifetimeDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var rtDays) ? rtDays : 14;
             return new TokenModel
             {
                 AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),

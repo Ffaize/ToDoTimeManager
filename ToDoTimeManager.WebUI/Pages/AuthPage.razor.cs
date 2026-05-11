@@ -36,6 +36,7 @@ public partial class AuthPage
     private bool _isAnimating = false;
 
     private string _email = string.Empty;
+    private string _senderEmail = string.Empty;
     private Guid _userId;
     private bool _keepSignedIn = true;
     private AuthPageCurrentState _sourceState = AuthPageCurrentState.Login;
@@ -63,7 +64,7 @@ public partial class AuthPage
         this.AuthPageCurrentState = target;
 
         await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
-            target, _email, _userId, _keepSignedIn, _sourceState));
+            target, _email, _userId, _keepSignedIn, _sourceState, _senderEmail));
 
         await InvokeAsync(StateHasChanged);
         await Task.Delay(450);
@@ -95,6 +96,7 @@ public partial class AuthPage
         if (saved is null) return;
 
         _email = saved.Email;
+        _senderEmail = saved.SenderEmail;
         _userId = saved.UserId;
         _keepSignedIn = saved.KeepSignedIn;
         _sourceState = saved.SourceState;
@@ -114,9 +116,10 @@ public partial class AuthPage
     protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    protected void UserChanged((string Email, Guid UserId, bool KeepSignedIn) user)
+    protected void UserChanged((string Email, string SenderEmail, Guid UserId, bool KeepSignedIn) user)
     {
         _email = user.Email;
+        _senderEmail = user.SenderEmail;
         _userId = user.UserId;
         _keepSignedIn = user.KeepSignedIn;
         TwoFaTimerService.StartTimer(user.UserId);

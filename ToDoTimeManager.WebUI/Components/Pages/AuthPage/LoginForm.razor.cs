@@ -13,7 +13,7 @@ public partial class LoginForm
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
-    [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn)>? UserChanged { get; set; }
+    [Parameter] public Action<(string Email, string SenderEmail, Guid UserId, bool KeepSignedIn)>? UserChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
@@ -35,7 +35,7 @@ public partial class LoginForm
 
             if (result is null) return;
 
-            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn));
+            UserChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.SenderEmail ?? string.Empty, result.UserId, KeepSignedIn));
             if (GoTo != null) await GoTo(AuthPageCurrentState.TwoFA);
         });
     }
@@ -45,7 +45,10 @@ public partial class LoginForm
         if (!firstRender) return;
         var lastLoginParameter = await ProtectedLocalStorage.GetLastLoginParameterAsync();
         if (!string.IsNullOrEmpty(lastLoginParameter))
+        {
             LogInParameter = lastLoginParameter;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task OnCreateAccountClicked()
