@@ -15,6 +15,7 @@ public class TwoFactorService : ITwoFactorService
     private readonly ITwoFactorCodeGeneratorService _codeGeneratorService;
     private readonly IEmailService _emailService;
     private readonly IJwtGeneratorService _jwtGeneratorService;
+    private readonly ITwoFactorCodeHasherService _codeHasher;
     private readonly IConfiguration _configuration;
     private readonly ILogger<TwoFactorService> _logger;
 
@@ -24,6 +25,7 @@ public class TwoFactorService : ITwoFactorService
         ITwoFactorCodeGeneratorService codeGeneratorService,
         IEmailService emailService,
         IJwtGeneratorService jwtGeneratorService,
+        ITwoFactorCodeHasherService codeHasher,
         IConfiguration configuration,
         ILogger<TwoFactorService> logger)
     {
@@ -32,6 +34,7 @@ public class TwoFactorService : ITwoFactorService
         _codeGeneratorService = codeGeneratorService;
         _emailService = emailService;
         _jwtGeneratorService = jwtGeneratorService;
+        _codeHasher = codeHasher;
         _configuration = configuration;
         _logger = logger;
     }
@@ -50,7 +53,7 @@ public class TwoFactorService : ITwoFactorService
         {
             Id = Guid.NewGuid(),
             UserId = userId,
-            Code = code,
+            Code = _codeHasher.HashCode(code),
             ExpiresAt = DateTime.UtcNow.AddMinutes(
                 int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5"))
         };
@@ -83,7 +86,7 @@ public class TwoFactorService : ITwoFactorService
             throw new ValidationException("Verification code has expired. Please request a new one.");
         }
 
-        if (!string.Equals(record.Code, code, StringComparison.OrdinalIgnoreCase))
+        if (!_codeHasher.VerifyCode(code, record.Code))
             throw new ValidationException("Invalid verification code.");
 
         var deleted = await _twoFactorCodesDataController.DeleteByUserId(userId);

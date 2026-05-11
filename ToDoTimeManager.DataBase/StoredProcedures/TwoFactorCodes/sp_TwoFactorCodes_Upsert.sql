@@ -1,6 +1,6 @@
 CREATE PROCEDURE [dbo].[sp_TwoFactorCodes_Upsert] @Id        UNIQUEIDENTIFIER,
                                                   @UserId    UNIQUEIDENTIFIER,
-                                                  @Code      NVARCHAR(7),
+                                                  @Code      NVARCHAR(128),
                                                   @ExpiresAt DATETIME
 AS
     BEGIN TRANSACTION;

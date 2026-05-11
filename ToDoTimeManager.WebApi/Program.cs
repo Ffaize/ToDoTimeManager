@@ -64,6 +64,7 @@ public class Program
 
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
         builder.Services.AddScoped<ITwoFactorCodeGeneratorService, TwoFactorCodeGeneratorService>();
+        builder.Services.AddScoped<ITwoFactorCodeHasherService, TwoFactorCodeHasherService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
