@@ -21,6 +21,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        var jwtKey = builder.Configuration["JwtSettings:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey))
+            throw new InvalidOperationException(
+                "JwtSettings:Key is not configured. Set it via dotnet user-secrets or the JwtSettings__Key environment variable.");
+
         // Add services to the container.
 
         builder.Services.AddControllers();

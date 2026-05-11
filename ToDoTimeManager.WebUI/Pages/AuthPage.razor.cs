@@ -47,7 +47,7 @@ public partial class AuthPage
         { AuthPageCurrentState.TwoFA,         "auth-form-slide--hidden-right" },
     };
 
-    protected async void GoTo(AuthPageCurrentState target)
+    protected async Task GoTo(AuthPageCurrentState target)
     {
         if (_isAnimating) return;
         var current = this.AuthPageCurrentState;
@@ -62,6 +62,9 @@ public partial class AuthPage
         _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
         this.AuthPageCurrentState = target;
 
+        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
+            target, _email, _userId, _keepSignedIn, _sourceState));
+
         await InvokeAsync(StateHasChanged);
         await Task.Delay(450);
 
@@ -75,13 +78,19 @@ public partial class AuthPage
 
         _isAnimating = false;
         await InvokeAsync(StateHasChanged);
-        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
-            target, _email, _userId, _keepSignedIn, _sourceState));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            NavigationManager.NavigateTo("/dashboard");
+            return;
+        }
+
         var saved = await ProtectedLocalStorage.GetAuthPageStateAsync();
         if (saved is null) return;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
 using System.Text.Json;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
@@ -22,9 +23,19 @@ public class PasswordHelperService : IPasswordHelperService
 
     private static PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword)
     {
-        return user.Password != null && user.Password.Equals(hashedPassword)
-            ? PasswordVerificationResult.Success
-            : PasswordVerificationResult.Failed;
+        if (user.Password == null) return PasswordVerificationResult.Failed;
+        try
+        {
+            var storedBytes = Convert.FromBase64String(user.Password);
+            var incomingBytes = Convert.FromBase64String(hashedPassword);
+            return CryptographicOperations.FixedTimeEquals(storedBytes, incomingBytes)
+                ? PasswordVerificationResult.Success
+                : PasswordVerificationResult.Failed;
+        }
+        catch
+        {
+            return PasswordVerificationResult.Failed;
+        }
     }
 
     private static byte[] DateToByteArray(string salt)

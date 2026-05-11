@@ -11,7 +11,7 @@ public partial class RegisterForm
     [Inject] private UserService UserService { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
 
-    [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
+    [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn)>? UserChanged { get; set; }
 
     public string Username { get; set; } = string.Empty;
@@ -26,7 +26,8 @@ public partial class RegisterForm
 
     private async Task OnRegisterClicked()
     {
-        if (string.IsNullOrWhiteSpace(Username) ||
+        if (!IsUsernameValid || !IsEmailValid || !IsPasswordValid || !IsConfirmPasswordValid ||
+            string.IsNullOrWhiteSpace(Username) ||
             string.IsNullOrWhiteSpace(Email) ||
             string.IsNullOrWhiteSpace(Password) ||
             string.IsNullOrWhiteSpace(ConfirmPassword) ||
@@ -53,12 +54,12 @@ public partial class RegisterForm
             if (twoFactor is null) return;
 
             UserChanged?.Invoke((twoFactor.MaskedEmail ?? Email, twoFactor.UserId, true));
-            GoTo?.Invoke(AuthPageCurrentState.TwoFA);
+            if (GoTo != null) await GoTo(AuthPageCurrentState.TwoFA);
         });
     }
 
-    private void OnSignInClicked()
+    private async Task OnSignInClicked()
     {
-        GoTo?.Invoke(AuthPageCurrentState.Login);
+        if (GoTo != null) await GoTo(AuthPageCurrentState.Login);
     }
 }

@@ -62,7 +62,7 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Auth operation failed");
             return null;
         }
     }
@@ -78,13 +78,14 @@ public class AuthService : IAuthService
         {
             var (userId, userRole) = ValidateAndReadToken(tokenModel.AccessToken!);
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(userRole))
-                throw new ValidationException("Smth went wrong");
+                throw new ValidationException("Token is invalid");
 
+            var refreshLifetimeDays = int.Parse(_configuration["JwtSettings:RefreshTokenLifetime"] ?? "14");
             return new TokenModel
             {
                 AccessToken = _jwtGeneratorService.GenerateAccessToken(userId, Enum.Parse<UserRole>(userRole)),
-                RefreshToken = tokenModel.RefreshToken,
-                RefreshTokenExpiresAt = tokenModel.RefreshTokenExpiresAt
+                RefreshToken = _jwtGeneratorService.GenerateRefreshToken(),
+                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(refreshLifetimeDays)
             };
         }
         catch (ServiceException)
@@ -93,7 +94,7 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, "Auth operation failed");
             return null;
         }
     }

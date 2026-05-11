@@ -15,6 +15,7 @@ public class CustomAuthStateProvider(
     ILogger<CustomAuthStateProvider> logger)
     : AuthenticationStateProvider
 {
+    private static readonly JwtSecurityTokenHandler JwtHandler = new();
     private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -27,8 +28,7 @@ public class CustomAuthStateProvider(
             var tokens = await localStorage.GetTokenAsync();
             if (tokens is null) return new AuthenticationState(_anonymous);
 
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(tokens.AccessToken) as JwtSecurityToken;
+            var jsonToken = JwtHandler.ReadToken(tokens.AccessToken) as JwtSecurityToken;
 
             if (jsonToken == null)
             {
@@ -103,7 +103,11 @@ public class CustomAuthStateProvider(
     public async Task MarkUserAsLoggedOut()
     {
         var localStorage = circuitServicesAccesor?.Service?.GetRequiredService<ProtectedLocalStorage>();
-        if (localStorage != null) await localStorage.RemoveTokenAsync();
+        if (localStorage != null)
+        {
+            await localStorage.RemoveTokenAsync();
+            await localStorage.RemoveAuthPageStateAsync();
+        }
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
     }
 
@@ -116,8 +120,7 @@ public class CustomAuthStateProvider(
         if (tokens?.AccessToken is null) return null;
 
         // Reject expired access tokens — callers should not act on stale identity data.
-        var handler = new JwtSecurityTokenHandler();
-        if (handler.ReadToken(tokens.AccessToken) is JwtSecurityToken jwt && jwt.ValidTo < DateTime.UtcNow)
+        if (JwtHandler.ReadToken(tokens.AccessToken) is JwtSecurityToken jwt && jwt.ValidTo < DateTime.UtcNow)
             return null;
 
         var (userId, role) = JwtTokenHelper.GetUserDataFromAccessToken(tokens.AccessToken);
