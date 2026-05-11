@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[sp_TimeLogs_Update] @Id UNIQUEIDENTIFIER,
                                             @ToDoId UNIQUEIDENTIFIER,
                                             @UserId UNIQUEIDENTIFIER,
-                                            @HoursSpent TIME,
+                                            @HoursSpent DECIMAL(6, 2),
                                             @LogDate DATETIME,
-                                            @LogDescription NVARCHAR(200)
+                                            @LogDescription NVARCHAR(1000)
 AS
 UPDATE [dbo].[TimeLogs]
 SET ToDoId         = @ToDoId,

@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ToDoTimeManager.WebUI.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Interfaces;
+using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Pages;
 
@@ -15,6 +18,8 @@ public partial class AuthPage
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ILogger<AuthPage> Logger { get; set; } = null!;
     [Inject] private IModalService ModalService { get; set; } = null!;
+    [Inject] private ITwoFaTimerService TwoFaTimerService { get; set; } = null!;
+    [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     private static readonly AuthPageCurrentState[] NavOrder =
     [
@@ -70,6 +75,31 @@ public partial class AuthPage
 
         _isAnimating = false;
         await InvokeAsync(StateHasChanged);
+        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
+            target, _email, _userId, _keepSignedIn, _sourceState));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var saved = await ProtectedLocalStorage.GetAuthPageStateAsync();
+        if (saved is null) return;
+
+        _email = saved.Email;
+        _userId = saved.UserId;
+        _keepSignedIn = saved.KeepSignedIn;
+        _sourceState = saved.SourceState;
+
+        var targetIndex = Array.IndexOf(NavOrder, saved.State);
+        foreach (var state in NavOrder)
+        {
+            var idx = Array.IndexOf(NavOrder, state);
+            _slideClasses[state] = state == saved.State
+                ? "auth-form-slide--active"
+                : (idx < targetIndex ? "auth-form-slide--hidden-left" : "auth-form-slide--hidden-right");
+        }
+        AuthPageCurrentState = saved.State;
+        await InvokeAsync(StateHasChanged);
     }
 
     protected string GetSlideClass(AuthPageCurrentState state) =>
@@ -80,5 +110,6 @@ public partial class AuthPage
         _email = user.Email;
         _userId = user.UserId;
         _keepSignedIn = user.KeepSignedIn;
+        TwoFaTimerService.StartTimer(user.UserId);
     }
 }

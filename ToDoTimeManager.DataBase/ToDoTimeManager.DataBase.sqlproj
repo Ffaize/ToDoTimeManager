@@ -137,4 +137,7 @@
     <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_GetByUserIdAndToDoId.sql" />
     <Build Include="StoredProcedures\ActivityLogs\sp_ActivityLogs_DeleteById.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ToDoTimeManager.DataBase.publish.xml" />
+  </ItemGroup>
 </Project>

@@ -6,23 +6,57 @@ using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
+using ToDoTimeManager.WebUI.Services.Interfaces;
 using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFAForm
+public partial class TwoFAForm : IDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
+    [Inject] private ITwoFaTimerService TwoFaTimerService { get; set; } = null!;
+
+    private CancellationTokenSource _cts = new();
+    private int _remainingSeconds;
+    private string FormattedTime => TimeSpan.FromSeconds(_remainingSeconds).ToString(@"mm\:ss");
 
     [Parameter] public Action<AuthPageCurrentState>? GoTo { get; set; }
     [Parameter] public string Email { get; set; } = string.Empty;
     [Parameter] public Guid UserId { get; set; }
     [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
     [Parameter] public bool KeepSignedIn { get; set; } = true;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (UserId == Guid.Empty) return Task.CompletedTask;
+        _remainingSeconds = TwoFaTimerService.GetRemainingSeconds(UserId);
+        _cts.Cancel();
+        _cts = new CancellationTokenSource();
+        _ = StartCountdown(_cts.Token);
+        return Task.CompletedTask;
+    }
+
+    private async Task StartCountdown(CancellationToken ct)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        while (await timer.WaitForNextTickAsync(ct))
+        {
+            _remainingSeconds = TwoFaTimerService.GetRemainingSeconds(UserId);
+            await InvokeAsync(StateHasChanged);
+            if (_remainingSeconds <= 0) break;
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+
     public string Value1
     {
         get;
@@ -84,6 +118,10 @@ public partial class TwoFAForm
         {
             var result = await AuthService.SendCode(new SendTwoFactorCodeRequestDto { UserId = UserId });
             if (result is null) return;
+            TwoFaTimerService.StartTimer(UserId);
+            _cts.Cancel();
+            _cts = new CancellationTokenSource();
+            _ = StartCountdown(_cts.Token);
             Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
             await JS.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
         });
@@ -112,7 +150,9 @@ public partial class TwoFAForm
 
             if (tokens is null) return;
 
+            TwoFaTimerService.ClearTimer(UserId);
             await ProtectedLocalStorage.SaveLastLoginParameterAsync(Email);
+            await ProtectedLocalStorage.RemoveAuthPageStateAsync();
             var authProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
             await authProvider.MarkUserAsAuthenticated(tokens);
             NavigationManager.NavigateTo("/dashboard");
