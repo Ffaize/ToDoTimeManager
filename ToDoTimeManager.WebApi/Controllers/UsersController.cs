@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Extensions;
@@ -117,6 +118,7 @@ public class UsersController : BaseController
     /// </returns>
     [AllowAnonymous]
     [HttpPost("Create")]
+    [EnableRateLimiting("auth-register")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestDto request)
     {
         var created = await _usersService.CreateUser(request);
