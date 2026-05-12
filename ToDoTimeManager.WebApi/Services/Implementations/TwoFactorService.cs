@@ -72,7 +72,7 @@ public class TwoFactorService : ITwoFactorService
         return new TwoFactorPendingModel
         {
             UserId = userId,
-            MaskedEmail = userEntity.Email.MaskAsEmail(),
+            MaskedEmail = userEntity.Email,
             CodeLifetimeSeconds = lifetimeMinutes * 60,
             SenderEmail = _configuration["EmailSettings:SenderEmail"]
         };

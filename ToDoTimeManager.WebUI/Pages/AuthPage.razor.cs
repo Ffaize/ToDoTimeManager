@@ -52,7 +52,7 @@ public partial class AuthPage
     protected async Task GoTo(AuthPageCurrentState target)
     {
         if (_isAnimating) return;
-        var current = this.AuthPageCurrentState;
+        var current = AuthPageCurrentState;
         if (current == target) return;
 
         _isAnimating = true;
@@ -62,7 +62,7 @@ public partial class AuthPage
 
         _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
         _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
-        this.AuthPageCurrentState = target;
+        AuthPageCurrentState = target;
 
         await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
             target, _email, _userId, _keepSignedIn, _sourceState, _senderEmail, _codeLifetimeSeconds));
@@ -118,7 +118,7 @@ public partial class AuthPage
     protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    protected void UserChanged((string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds) user)
+    protected void AuthInfoChanged((string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds) user)
     {
         _email = user.Email;
         _senderEmail = user.SenderEmail;

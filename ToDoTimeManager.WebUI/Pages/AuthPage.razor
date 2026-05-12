@@ -24,7 +24,7 @@
                     @Localizer["Track, prioritize, and ship work with the precision of a master smith."]
                 </SubText>
                 <FormContent>
-                    <LoginForm GoTo="@GoTo" UserChanged="@UserChanged" />
+                    <LoginForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
                 </FormContent>
             </BaseAuthForm>
         </div>
@@ -40,7 +40,7 @@
                     @Localizer["Free for solo smiths. No card required. Bring your team when you're ready."]
                 </SubText>
                 <FormContent>
-                    <RegisterForm GoTo="@GoTo" UserChanged="@UserChanged" />
+                    <RegisterForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
                 </FormContent>
             </BaseAuthForm>
         </div>

@@ -9,7 +9,6 @@ namespace ToDoTimeManager.WebUI.Pages;
 
 public partial class MainPage
 {
-    [Inject] public ToastsService ToastService { get; set; } = null!;
     [Inject] public NavigationManager NavigationManager { get; set; } = null!;
     [Inject] public StatisticService StatisticService { get; set; } = null!;
     [Inject] public ILogger<MainPage> Logger { get; set; } = null!;
