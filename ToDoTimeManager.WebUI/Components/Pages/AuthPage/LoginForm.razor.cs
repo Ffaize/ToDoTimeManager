@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.WebUI.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
+using ToDoTimeManager.WebUI.Services.Implementations;
 using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
@@ -13,7 +16,7 @@ public partial class LoginForm
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
-    [Parameter] public Action<(string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds)>? AuthInfoChanged { get; set; }
+    [Parameter] public Action<PendingTwoFaSessionState, UserResponseDto>? AuthInfoChanged { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
@@ -35,7 +38,26 @@ public partial class LoginForm
 
             if (result is null) return;
 
-            AuthInfoChanged?.Invoke((result.MaskedEmail ?? string.Empty, result.UserId, KeepSignedIn, result.SenderEmail ?? string.Empty, result.CodeLifetimeSeconds));
+            var user = new UserResponseDto
+            {
+                Id = result.UserId,
+                Email = LogInParameter.Contains('@') ? LogInParameter : null,
+                UserName = LogInParameter.Contains('@') ? null : LogInParameter
+            };
+
+            var session = new PendingTwoFaSessionState(
+                result.Email ?? string.Empty,
+                result.SenderEmail ?? string.Empty,
+                KeepSignedIn,
+                result.CodeLifetimeSeconds,
+                AuthPageCurrentState.Login
+            );
+
+            await ProtectedLocalStorage.SaveUserInfoAsync(user);
+            await ProtectedLocalStorage.SavePendingTwoFaSessionStateAsync(session);
+
+
+            AuthInfoChanged?.Invoke(session, user);
             if (GoTo != null) await GoTo(AuthPageCurrentState.TwoFA);
         });
     }

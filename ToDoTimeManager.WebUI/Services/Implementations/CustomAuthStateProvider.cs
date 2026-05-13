@@ -106,7 +106,7 @@ public class CustomAuthStateProvider(
         if (localStorage != null)
         {
             await localStorage.RemoveTokenAsync();
-            await localStorage.RemoveAuthPageStateAsync();
+            await localStorage.RemovePendingTwoFaContextAsync();
         }
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
     }

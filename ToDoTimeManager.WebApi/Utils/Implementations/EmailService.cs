@@ -151,7 +151,7 @@ public class EmailService : IEmailService
                                                     style="color:#f4f5f7;background-color:rgba(255,106,43,0.10);padding:1px 7px;border-radius:5px;border:1px solid rgba(255,106,43,0.2);font-family:'JetBrains Mono','Courier New',monospace;font-size:11px;">5&nbsp;min</span>
                                                 and can only be used once.</p>
                 
-                                            <table class="otp-table" cellpadding="0" cellspacing="0" style="margin-bottom:18px;">
+                                            <table class="otp-table" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
                                                 <tr>
                                                     <td class="otp-cell" width="46" height="54" bgcolor="#111317"
                                                         style="background-color:#111317;border:1px solid #2f3641;border-radius:10px;text-align:center;vertical-align:middle;font-family:'JetBrains Mono','Courier New',monospace;font-size:22px;font-weight:600;color:#ffb14a;">
@@ -181,17 +181,6 @@ public class EmailService : IEmailService
                                                 </tr>
                                             </table>
                 
-                                            <table cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                                                <tr>
-                                                    <td>
-                                                        <button onclick="copyCode(this)"
-                                                            style="cursor:pointer;background:linear-gradient(180deg,#ff7b3d,#e85a1c);border:none;border-radius:10px;padding:10px 20px;font-family:'JetBrains Mono','Courier New',monospace;font-size:12px;font-weight:600;color:#ffffff;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 0 0 1px rgba(255,106,43,0.4),0 4px 16px -4px rgba(255,106,43,0.5);">
-                                                            Copy code
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                
                                             <p style="margin:0;font-size:11px;color:#5a6271;line-height:1.5;">If you did not request
                                                 this code, you can safely ignore this email. Someone may have entered your address by
                                                 mistake.</p>
@@ -202,14 +191,6 @@ public class EmailService : IEmailService
                             </td>
                         </tr>
                     </table>
-                    <script>
-                        function copyCode(btn) {
-                            navigator.clipboard.writeText('372841').then(function () {
-                                btn.textContent = 'Copied!';
-                                setTimeout(function () { btn.textContent = 'Copy code'; }, 2000);
-                            });
-                        }
-                    </script>
                 </body>
                 
                 </html>

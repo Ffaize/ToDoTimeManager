@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.JSInterop;
 using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.WebUI.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
 using ToDoTimeManager.WebUI.Services.Implementations;
@@ -11,7 +12,7 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFAForm : IDisposable
+public partial class TwoFAForm
 {
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
@@ -20,50 +21,42 @@ public partial class TwoFAForm : IDisposable
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private ITwoFaTimerService TwoFaTimerService { get; set; } = null!;
 
-    private CancellationTokenSource _cts = new();
     private int _remainingSeconds;
+    private Action<int>? _timerHandler;
+    public TwoFaTimer? TwoFaTimer { get; set; }
     private string FormattedTime => TimeSpan.FromSeconds(_remainingSeconds).ToString(@"mm\:ss");
 
+    [Parameter] public PendingTwoFaSessionState? SessionState { get; set; }
+    [Parameter] public UserResponseDto? User { get; set; }
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
-    [Parameter] public string Email { get; set; } = string.Empty;
-    [Parameter] public string SenderEmail { get; set; } = string.Empty;
-    [Parameter] public Guid UserId { get; set; }
-    [Parameter] public AuthPageCurrentState SourceState { get; set; } = AuthPageCurrentState.Login;
-    [Parameter] public bool KeepSignedIn { get; set; } = true;
 
-    protected override Task OnParametersSetAsync()
-    {
-        if (UserId == Guid.Empty) return Task.CompletedTask;
-        _remainingSeconds = TwoFaTimerService.GetRemainingSeconds(UserId);
-        _cts.Cancel();
-        _cts = new CancellationTokenSource();
-        _ = StartCountdown(_cts.Token);
-        return Task.CompletedTask;
-    }
+    public string[] OtpValues { get; set; } = new string[6];
 
-    private async Task StartCountdown(CancellationToken ct)
+    public string Email { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
+
+    protected override void OnParametersSet()
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
-        while (await timer.WaitForNextTickAsync(ct))
+        if (User is not null)
         {
-            _remainingSeconds = TwoFaTimerService.GetRemainingSeconds(UserId);
-            await InvokeAsync(StateHasChanged);
-            if (_remainingSeconds <= 0) break;
+            UserId = User.Id;
+            Email = User.Email ?? User.UserName ?? string.Empty;
         }
-    }
+        else
+        {
+            UserId = Guid.Empty;
+            Email = string.Empty;
+        }
 
-    public void Dispose()
-    {
-        _cts.Cancel();
-        _cts.Dispose();
-    }
+        if (_timerHandler != null && TwoFaTimer != null)
+            TwoFaTimer.OnRemainingSecondsChanged -= _timerHandler;
 
-    public string Value1 { get; set; } = string.Empty;
-    public string Value2 { get; set; } = string.Empty;
-    public string Value3 { get; set; } = string.Empty;
-    public string Value4 { get; set; } = string.Empty;
-    public string Value5 { get; set; } = string.Empty;
-    public string Value6 { get; set; } = string.Empty;
+        TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
+        _timerHandler = seconds => { _remainingSeconds = seconds; InvokeAsync(StateHasChanged); };
+        TwoFaTimer?.OnRemainingSecondsChanged += _timerHandler;
+
+        base.OnParametersSet();
+    }
 
     private async Task OnResendCodeClicked()
     {
@@ -71,46 +64,49 @@ public partial class TwoFAForm : IDisposable
         {
             var result = await AuthService.SendCode(new SendTwoFactorCodeRequestDto { UserId = UserId });
             if (result is null) return;
-            TwoFaTimerService.StartTimer(UserId, result.CodeLifetimeSeconds);
-            await _cts.CancelAsync();
-            _cts = new CancellationTokenSource();
-            _ = StartCountdown(_cts.Token);
-            Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
+            TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
+            if (TwoFaTimer == null)
+            {
+                TwoFaTimerService.StartTimer(UserId, result.CodeLifetimeSeconds);
+                TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
+            }
+            OtpValues = new string[6];
             await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
         });
     }
 
     private async Task OnUseDifferentEmailClicked()
     {
-        Value1 = Value2 = Value3 = Value4 = Value5 = Value6 = string.Empty;
-        if (GoTo != null) await GoTo(SourceState);
+        OtpValues = new string[6];
+        TwoFaTimer?.Dispose();
+        await ProtectedLocalStorage.RemovePendingTwoFaContextAsync();
+        if (GoTo != null) await GoTo(AuthPageCurrentState.Login);
     }
 
     private async Task OnVerifyClicked()
     {
-        if (string.IsNullOrEmpty(Value1) || string.IsNullOrEmpty(Value2) || string.IsNullOrEmpty(Value3) ||
-            string.IsNullOrEmpty(Value4) || string.IsNullOrEmpty(Value5) || string.IsNullOrEmpty(Value6)) return;
+        if (OtpValues.Any(string.IsNullOrEmpty)) return;
 
         await Loading(async () =>
         {
-            var code = $"{Value1}{Value2}{Value3}-{Value4}{Value5}{Value6}";
+            var code = $"{OtpValues[0]}{OtpValues[1]}{OtpValues[2]}-{OtpValues[3]}{OtpValues[4]}{OtpValues[5]}";
             var tokens = await AuthService.VerifyCode(new VerifyTwoFactorRequestDto
             {
                 UserId = UserId,
                 Code = code,
-                KeepSignedIn = KeepSignedIn
+                KeepSignedIn = SessionState?.KeepSignedIn ?? true
             });
 
             if (tokens is null) return;
 
-            TwoFaTimerService.ClearTimer(UserId);
+            TwoFaTimer?.Dispose();
             await ProtectedLocalStorage.SaveLastLoginParameterAsync(Email);
-            await ProtectedLocalStorage.RemoveAuthPageStateAsync();
+            await ProtectedLocalStorage.RemovePendingTwoFaContextAsync();
             if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
                 await authProvider.MarkUserAsAuthenticated(tokens);
             else
                 await ProtectedLocalStorage.SaveTokenAsync(tokens);
-            NavigationManager.NavigateTo("/dashboard");
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
         });
     }
 
@@ -118,15 +114,7 @@ public partial class TwoFAForm : IDisposable
     {
         var raw = e.Value?.ToString() ?? string.Empty;
         var val = raw.Length > 1 ? raw[..1].ToUpper() : raw.ToUpper();
-        switch (index)
-        {
-            case 1: Value1 = val; break;
-            case 2: Value2 = val; break;
-            case 3: Value3 = val; break;
-            case 4: Value4 = val; break;
-            case 5: Value5 = val; break;
-            case 6: Value6 = val; break;
-        }
+        OtpValues[index - 1] = val;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -135,8 +123,6 @@ public partial class TwoFAForm : IDisposable
             await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
     }
 
-    private string GetIsFilledCssClass(string value)
-    {
-        return string.IsNullOrEmpty(value) ? string.Empty : "filled";
-    }
+    private string GetIsFilledCssClass(int index) =>
+        string.IsNullOrEmpty(OtpValues[index]) ? string.Empty : "filled";
 }

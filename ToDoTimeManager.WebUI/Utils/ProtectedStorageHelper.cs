@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.WebUI.Models;
 
 namespace ToDoTimeManager.WebUI.Utils;
@@ -14,15 +15,27 @@ public static class ProtectedStorageHelper
         return result is { Success: true, Value: not null } ? result.Value : null;
     }
 
-    public static async Task SaveAuthPageStateAsync(this ProtectedLocalStorage storage, AuthPageSessionState state)
-        => await storage.SetAsync("AuthPageState", state);
+    public static async Task SaveUserInfoAsync(this ProtectedLocalStorage storage, UserResponseDto user)
+        => await storage.SetAsync("PendingTwoFaUser", user);
 
-    public static async Task<AuthPageSessionState?> GetAuthPageStateAsync(this ProtectedLocalStorage storage)
+    public static async Task<UserResponseDto?> GetUserInfoAsync(this ProtectedLocalStorage storage)
     {
-        var result = await storage.GetAsync<AuthPageSessionState>("AuthPageState");
+        var result = await storage.GetAsync<UserResponseDto>("PendingTwoFaUser");
         return result is { Success: true, Value: not null } ? result.Value : null;
     }
 
-    public static async Task RemoveAuthPageStateAsync(this ProtectedLocalStorage storage)
-        => await storage.DeleteAsync("AuthPageState");
+    public static async Task SavePendingTwoFaSessionStateAsync(this ProtectedLocalStorage storage, PendingTwoFaSessionState state)
+        => await storage.SetAsync("PendingTwoFaSessionState", state);
+
+    public static async Task<PendingTwoFaSessionState?> GetPendingTwoFaSessionStateAsync(this ProtectedLocalStorage storage)
+    {
+        var result = await storage.GetAsync<PendingTwoFaSessionState>("PendingTwoFaSessionState");
+        return result is { Success: true, Value: not null } ? result.Value : null;
+    }
+
+    public static async Task RemovePendingTwoFaContextAsync(this ProtectedLocalStorage storage)
+    {
+        await storage.DeleteAsync("PendingTwoFaUser");
+        await storage.DeleteAsync("PendingTwoFaSessionState");
+    }
 }

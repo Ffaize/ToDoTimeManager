@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.WebUI.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
@@ -35,12 +36,8 @@ public partial class AuthPage
 
     private bool _isAnimating = false;
 
-    private string _email = string.Empty;
-    private string _senderEmail = string.Empty;
-    private Guid _userId;
-    private bool _keepSignedIn = true;
-    private AuthPageCurrentState _sourceState = AuthPageCurrentState.Login;
-    private int _codeLifetimeSeconds;
+    private PendingTwoFaSessionState _session = new();
+    private UserResponseDto _user = new();
 
     private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
     {
@@ -57,15 +54,12 @@ public partial class AuthPage
 
         _isAnimating = true;
         if (target == AuthPageCurrentState.TwoFA)
-            _sourceState = current;
+            _session.SourceState = current;
         var isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
 
         _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
         _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
         AuthPageCurrentState = target;
-
-        await ProtectedLocalStorage.SaveAuthPageStateAsync(new AuthPageSessionState(
-            target, _email, _userId, _keepSignedIn, _sourceState, _senderEmail, _codeLifetimeSeconds));
 
         await InvokeAsync(StateHasChanged);
         await Task.Delay(450);
@@ -89,42 +83,43 @@ public partial class AuthPage
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         if (authState.User.Identity?.IsAuthenticated == true)
         {
-            NavigationManager.NavigateTo("/dashboard");
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
             return;
         }
 
-        var saved = await ProtectedLocalStorage.GetAuthPageStateAsync();
-        if (saved is null) return;
+        var pendingUser = await ProtectedLocalStorage.GetUserInfoAsync();
+        if (pendingUser is null || pendingUser.Id == Guid.Empty) return;
+        _user = pendingUser;
 
-        _email = saved.Email;
-        _senderEmail = saved.SenderEmail;
-        _userId = saved.UserId;
-        _keepSignedIn = saved.KeepSignedIn;
-        _sourceState = saved.SourceState;
-        _codeLifetimeSeconds = saved.CodeLifetimeSeconds;
+        if (!TwoFaTimerService.HasActiveTimer(pendingUser.Id))
+        {
+            await ProtectedLocalStorage.RemovePendingTwoFaContextAsync();
+            return;
+        }
 
-        var targetIndex = Array.IndexOf(NavOrder, saved.State);
+        var pendingSessionState = await ProtectedLocalStorage.GetPendingTwoFaSessionStateAsync();
+        _session = pendingSessionState ?? new PendingTwoFaSessionState { SourceState = AuthPageCurrentState.Login };
+
+
         foreach (var state in NavOrder)
         {
-            var idx = Array.IndexOf(NavOrder, state);
-            _slideClasses[state] = state == saved.State
+            _slideClasses[state] = state == AuthPageCurrentState.TwoFA
                 ? "auth-form-slide--active"
-                : (idx < targetIndex ? "auth-form-slide--hidden-left" : "auth-form-slide--hidden-right");
+                : (Array.IndexOf(NavOrder, state) < Array.IndexOf(NavOrder, AuthPageCurrentState.TwoFA)
+                    ? "auth-form-slide--hidden-left"
+                    : "auth-form-slide--hidden-right");
         }
-        AuthPageCurrentState = saved.State;
+        AuthPageCurrentState = AuthPageCurrentState.TwoFA;
         await InvokeAsync(StateHasChanged);
     }
 
     protected string GetSlideClass(AuthPageCurrentState state) =>
         $"auth-form-slide {_slideClasses[state]}";
 
-    protected void AuthInfoChanged((string Email, Guid UserId, bool KeepSignedIn, string SenderEmail, int CodeLifetimeSeconds) user)
+    protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)
     {
-        _email = user.Email;
-        _senderEmail = user.SenderEmail;
-        _userId = user.UserId;
-        _keepSignedIn = user.KeepSignedIn;
-        _codeLifetimeSeconds = user.CodeLifetimeSeconds;
-        TwoFaTimerService.StartTimer(user.UserId, user.CodeLifetimeSeconds);
+        TwoFaTimerService.StartTimer(user.Id, session.CodeLifetimeSeconds);
+        _session = session;
+        _user = user;
     }
 }

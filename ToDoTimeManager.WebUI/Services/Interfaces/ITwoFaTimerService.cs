@@ -1,8 +1,11 @@
+using ToDoTimeManager.WebUI.Services.Implementations;
+
 namespace ToDoTimeManager.WebUI.Services.Interfaces;
 
 public interface ITwoFaTimerService
 {
-    void StartTimer(Guid userId, int lifetimeSeconds);
-    int GetRemainingSeconds(Guid userId);
-    void ClearTimer(Guid userId);
+    void StartTimer(Guid userId, int periodSeconds);
+    TwoFaTimer? GetTimer(Guid userId);
+    bool HasActiveTimer(Guid userId);
+    void RemoveTimer(Guid userId);
 }
