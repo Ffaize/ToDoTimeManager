@@ -12,7 +12,7 @@ using ToDoTimeManager.WebUI.Utils;
 
 namespace ToDoTimeManager.WebUI.Components.Pages.AuthPage;
 
-public partial class TwoFAForm
+public partial class TwoFAForm : IDisposable
 {
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
@@ -34,6 +34,9 @@ public partial class TwoFAForm
 
     public string Email { get; set; } = string.Empty;
     public Guid UserId { get; set; }
+    public bool IsButtonDisabled => OtpValues.Any(string.IsNullOrEmpty) || IsLoading;
+
+
 
     protected override void OnParametersSet()
     {
@@ -52,8 +55,11 @@ public partial class TwoFAForm
             TwoFaTimer.OnRemainingSecondsChanged -= _timerHandler;
 
         TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
-        _timerHandler = seconds => { _remainingSeconds = seconds; InvokeAsync(StateHasChanged); };
-        TwoFaTimer?.OnRemainingSecondsChanged += _timerHandler;
+        if (TwoFaTimer != null)
+        {
+            _timerHandler = seconds => { _remainingSeconds = seconds; InvokeAsync(StateHasChanged); };
+            TwoFaTimer?.OnRemainingSecondsChanged += _timerHandler;
+        }
 
         base.OnParametersSet();
     }
@@ -125,4 +131,10 @@ public partial class TwoFAForm
 
     private string GetIsFilledCssClass(int index) =>
         string.IsNullOrEmpty(OtpValues[index]) ? string.Empty : "filled";
+
+    public void Dispose()
+    {
+        if (TwoFaTimer != null)
+            TwoFaTimer?.OnRemainingSecondsChanged -= _timerHandler;
+    }
 }

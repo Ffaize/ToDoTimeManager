@@ -34,7 +34,7 @@
     </button>
 </div>
 
-<Button Disabled="@IsLoading"
+<Button Disabled="@(IsButtonDisabled)"
         OnClick="@OnVerifyClicked"
         IsLoading="@IsLoading"
         UseLoading="true"

@@ -27,6 +27,8 @@ public partial class RegisterForm
     public bool IsPasswordValid { get; set; }
     public bool IsEmailValid { get; set; }
     public bool IsUsernameValid { get; set; }
+    public bool IsButtonDisabled =>
+        !IsConfirmPasswordValid || !IsPasswordValid || !IsEmailValid || !IsUsernameValid || !IsUseOfTermsAgreed || IsLoading;
 
     private async Task OnRegisterClicked()
     {

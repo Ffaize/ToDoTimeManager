@@ -96,7 +96,7 @@
     </Text>
 </CheckInput>
 
-<Button Disabled="@IsLoading"
+<Button Disabled="@(IsButtonDisabled)"
     OnClick="@OnRegisterClicked"
     IsLoading="@IsLoading"
     UseLoading="true"

@@ -24,7 +24,7 @@ public partial class Input
     [Parameter] public Func<string?, string>? ValidationFunc { get; set; } = StringValidationHelper.DefaultValidation;
     [Parameter] public bool IsValid
     {
-        get => HasValidationError; 
+        get => _validationState == ValidationState.Valid;
         set;
     }
     [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
@@ -46,7 +46,7 @@ public partial class Input
         await ValueChanged.InvokeAsync(e.Value?.ToString());
     }
 
-    private void HandleFocusOut()
+    private async Task HandleFocusOut()
     {
         if (!UseValidation || ValidationFunc is null) return;
 
@@ -54,6 +54,8 @@ public partial class Input
         _validationState = string.IsNullOrEmpty(_validationMessage)
             ? ValidationState.Valid
             : ValidationState.Invalid;
+
+        await IsValidChanged.InvokeAsync(_validationState == ValidationState.Valid);
     }
 
     private string GetStyleClass() => Style switch

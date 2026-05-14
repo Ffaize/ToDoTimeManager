@@ -23,6 +23,9 @@ public partial class LoginForm
     private bool KeepSignedIn { get; set; } = true;
     private bool IsPasswordValid { get; set; }
     private bool IsLogInParameterValid { get; set; }
+    private bool IsButtonDisabled => !IsPasswordValid || !IsLogInParameterValid || IsLoading;
+
+
 
     private async Task OnSignInClicked()
     {
@@ -69,6 +72,7 @@ public partial class LoginForm
         if (!string.IsNullOrEmpty(lastLoginParameter))
         {
             LogInParameter = lastLoginParameter;
+            IsLogInParameterValid = true;
             await InvokeAsync(StateHasChanged);
         }
     }

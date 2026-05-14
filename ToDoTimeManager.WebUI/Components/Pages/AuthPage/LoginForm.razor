@@ -56,7 +56,7 @@
     </Text>
 </CheckInput>
             
-<Button Disabled="@IsLoading"
+<Button Disabled="@(IsButtonDisabled)"
     OnClick="@OnSignInClicked"
     IsLoading="@IsLoading"
     UseLoading="true"
