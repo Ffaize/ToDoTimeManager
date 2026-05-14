@@ -24,13 +24,35 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        var jwtKey = builder.Configuration["JwtSettings:Key"];
-        if (string.IsNullOrWhiteSpace(jwtKey))
-            throw new InvalidOperationException(
-                "JwtSettings:Key is not configured. Set it via dotnet user-secrets or the JwtSettings__Key environment variable.");
+        VerifyJwtKey(builder);
+        AddServices(builder);
+        AddRateLimit(builder);
+        AddSwaggerGeneration(builder);
+        AddAuth(builder);
 
-        // Add services to the container.
+        var app = builder.Build();
 
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseMiddleware<GlobalExceptionHandler>();
+        app.UseHttpsRedirection();
+        app.UseRateLimiter();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        await DataSeeder.SeedAsync(app.Services);
+
+        await app.RunAsync();
+    }
+
+    private static void AddServices(WebApplicationBuilder builder)
+    {
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -67,12 +89,62 @@ public class Program
 
         builder.Services.AddScoped<IUserSecretsDataController, UserSecretsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
-        builder.Services.AddScoped<ITwoFactorCodeGeneratorService, TwoFactorCodeGeneratorService>();
-        builder.Services.AddScoped<ITwoFactorCodeHasherService, TwoFactorCodeHasherService>();
+        builder.Services.AddScoped<ITwoFactorCodesHelper, TwoFactorCodesHelper>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
+    }
 
+    private static void VerifyJwtKey(WebApplicationBuilder builder)
+    {
+        var jwtKey = builder.Configuration["JwtSettings:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey))
+            throw new InvalidOperationException(
+                "JwtSettings:Key is not configured. Set it via dotnet user-secrets or the JwtSettings__Key environment variable.");
+    }
+
+    private static void AddAuth(WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    ValidateLifetime = true,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? string.Empty)),
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+    }
+
+    private static void AddSwaggerGeneration(WebApplicationBuilder builder)
+    {
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description =
+                    "Enter ONLY your valid token in the text input below.\n\nExample: \"eyJhbGciOiJIUzI1NiIsInR...\""
+            });
+            options.OperationFilter<AuthResponsesOperationFilter>();
+        });
+    }
+
+    private static void AddRateLimit(WebApplicationBuilder builder)
+    {
         builder.Services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -124,60 +196,5 @@ public class Program
                 o.QueueLimit = 0;
             });
         });
-
-
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description =
-                    "Enter ONLY your valid token in the text input below.\n\nExample: \"eyJhbGciOiJIUzI1NiIsInR...\""
-            });
-            options.OperationFilter<AuthResponsesOperationFilter>();
-        });
-        builder.Services.AddAuthorization();
-
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                    ValidateLifetime = true,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? string.Empty)),
-                    ValidateIssuerSigningKey = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseMiddleware<GlobalExceptionHandler>();
-        app.UseHttpsRedirection();
-        app.UseRateLimiter();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.MapControllers();
-
-        await DataSeeder.SeedAsync(app.Services);
-
-        app.Run();
     }
 }

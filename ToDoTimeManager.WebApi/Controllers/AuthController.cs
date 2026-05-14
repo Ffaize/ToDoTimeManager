@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
@@ -16,16 +17,18 @@ public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
     private readonly ITwoFactorService _twoFactorService;
+    private readonly IUsersService _usersService;
 
     /// <summary>
     /// Initializes a new instance of <see cref="AuthController"/>.
     /// </summary>
     /// <param name="authService">The authentication service used to validate credentials.</param>
     /// <param name="twoFactorService">The two-factor authentication service used to manage verification codes and issue tokens.</param>
-    public AuthController(IAuthService authService, ITwoFactorService twoFactorService)
+    public AuthController(IAuthService authService, ITwoFactorService twoFactorService, IUsersService usersService)
     {
         _authService = authService;
         _twoFactorService = twoFactorService;
+        _usersService = usersService;
     }
 
     /// <summary>
@@ -57,7 +60,8 @@ public class AuthController : BaseController
     [EnableRateLimiting("auth-send-code")]
     public async Task<IActionResult> SendCode([FromBody] SendTwoFactorCodeRequestDto request)
     {
-        var pending = await _twoFactorService.SendCode(request.UserId);
+        var user = await _usersService.GetUserById(request.UserId, GetCurrentUserId(), GetCurrentUserRole());
+        var pending = await _twoFactorService.SendCode(new UserEntity(user));
         return Ok(pending);
     }
 

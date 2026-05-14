@@ -143,6 +143,8 @@
     <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_UpdateRefreshToken.sql" />
     <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_ClearRefreshToken.sql" />
     <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_UpdatePasswordSalt.sql" />
+    <Build Include="StoredProcedures\Users\sp_Users_GetUserRoleByUserId.sql" />
+    <Build Include="StoredProcedures\UsersSecrets\sp_UsersSecrets_GetPasswordSaltByUserId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ToDoTimeManager.DataBase.publish.xml" />

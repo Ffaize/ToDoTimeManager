@@ -30,6 +30,20 @@ public class UserSecretsDataController : IUserSecretsDataController
         }
     }
 
+    public async Task<string?> GetPasswordSaltByUserId(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.GetOneByParameter<string>(
+                "sp_UsersSecrets_GetPasswordSaltByUserId", "UserId", userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
+    }
+
     public async Task<bool> Create(UserSecretsEntity entity)
     {
         try

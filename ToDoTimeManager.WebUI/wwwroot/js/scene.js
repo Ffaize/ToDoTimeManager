@@ -16,6 +16,8 @@ function initializeOtpInputs(containerId) {
             }
         });
     });
+
+    inputs[0]?.focus();
 }
 
 function initializeEmbers() {

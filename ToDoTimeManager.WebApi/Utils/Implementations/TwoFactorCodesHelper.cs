@@ -4,11 +4,12 @@ using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Utils.Implementations;
 
-public class TwoFactorCodeHasherService : ITwoFactorCodeHasherService
+public class TwoFactorCodesHelper : ITwoFactorCodesHelper
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;
     private const int Iterations = 100_000;
+    private const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private const char Separator = '.';
 
     public string HashCode(string plainCode)
@@ -37,5 +38,14 @@ public class TwoFactorCodeHasherService : ITwoFactorCodeHasherService
         {
             return false;
         }
+    }
+
+    public string GenerateCode()
+    {
+        var chars = new char[6];
+        for (var i = 0; i < 6; i++)
+            chars[i] = Alphabet[RandomNumberGenerator.GetInt32(Alphabet.Length)];
+
+        return $"{chars[0]}{chars[1]}{chars[2]}-{chars[3]}{chars[4]}{chars[5]}";
     }
 }

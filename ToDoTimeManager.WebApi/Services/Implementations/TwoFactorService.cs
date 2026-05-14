@@ -6,6 +6,7 @@ using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Extensions;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
+using ToDoTimeManager.WebApi.Utils.Implementations;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations;
@@ -15,10 +16,10 @@ public class TwoFactorService : ITwoFactorService
     private readonly ITwoFactorCodesDataController _twoFactorCodesDataController;
     private readonly IUsersDataController _usersDataController;
     private readonly IUserSecretsDataController _userSecretsDataController;
-    private readonly ITwoFactorCodeGeneratorService _codeGeneratorService;
+    private readonly ITwoFactorCodesHelper _twoFactorCodesHelper;
     private readonly IEmailService _emailService;
     private readonly IJwtGeneratorService _jwtGeneratorService;
-    private readonly ITwoFactorCodeHasherService _codeHasher;
+    private readonly ITwoFactorCodesHelper _codeHasher;
     private readonly IConfiguration _configuration;
     private readonly ILogger<TwoFactorService> _logger;
 
@@ -26,17 +27,17 @@ public class TwoFactorService : ITwoFactorService
         ITwoFactorCodesDataController twoFactorCodesDataController,
         IUsersDataController usersDataController,
         IUserSecretsDataController userSecretsDataController,
-        ITwoFactorCodeGeneratorService codeGeneratorService,
+        ITwoFactorCodesHelper twoFactorCodesHelper,
         IEmailService emailService,
         IJwtGeneratorService jwtGeneratorService,
-        ITwoFactorCodeHasherService codeHasher,
+        ITwoFactorCodesHelper codeHasher,
         IConfiguration configuration,
         ILogger<TwoFactorService> logger)
     {
         _twoFactorCodesDataController = twoFactorCodesDataController;
         _usersDataController = usersDataController;
         _userSecretsDataController = userSecretsDataController;
-        _codeGeneratorService = codeGeneratorService;
+        _twoFactorCodesHelper = twoFactorCodesHelper;
         _emailService = emailService;
         _jwtGeneratorService = jwtGeneratorService;
         _codeHasher = codeHasher;
@@ -44,20 +45,19 @@ public class TwoFactorService : ITwoFactorService
         _logger = logger;
     }
 
-    public async Task<TwoFactorPendingModel> SendCode(Guid userId)
+    public async Task<TwoFactorPendingModel> SendCode(UserEntity user)
     {
-        var userEntity = await _usersDataController.GetUserById(userId);
-        if (userEntity == null)
+        if (user == null)
             throw new NotFoundException("User not found");
 
-        if (string.IsNullOrWhiteSpace(userEntity.Email))
+        if (string.IsNullOrWhiteSpace(user.Email))
             throw new ValidationException("User has no email address configured.");
 
-        var code = _codeGeneratorService.GenerateCode();
+        var code = _twoFactorCodesHelper.GenerateCode();
         var entity = new TwoFactorCodeEntity
         {
             Id = Guid.NewGuid(),
-            UserId = userId,
+            UserId = user.Id,
             Code = _codeHasher.HashCode(code),
             ExpiresAt = DateTime.UtcNow.AddMinutes(
                 int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5"))
@@ -66,13 +66,13 @@ public class TwoFactorService : ITwoFactorService
         var upsertSucceeded = await _twoFactorCodesDataController.UpsertCode(entity);
         if (!upsertSucceeded)
             throw new ConflictException("Failed to persist verification code.");
-        await _emailService.SendTwoFactorCodeAsync(userEntity.Email, code);
+        await _emailService.SendTwoFactorCodeAsync(user.Email, code);
 
         var lifetimeMinutes = int.Parse(_configuration["TwoFactorSettings:CodeLifetimeMinutes"] ?? "5");
         return new TwoFactorPendingModel
         {
-            UserId = userId,
-            Email = userEntity.Email,
+            UserId = user.Id,
+            Email = user.Email,
             CodeLifetimeSeconds = lifetimeMinutes * 60,
             SenderEmail = _configuration["EmailSettings:SenderEmail"]
         };
@@ -100,22 +100,21 @@ public class TwoFactorService : ITwoFactorService
         if (!deleted)
             throw new ConflictException("Failed to invalidate verification code. Please try again.");
 
-        var userEntity = await _usersDataController.GetUserById(userId);
-        if (userEntity == null)
+        var userRole = await _usersDataController.GetUserRoleByUserId(userId);
+        if (userRole is null)
             throw new NotFoundException("User not found");
 
-        var user = userEntity.ToUser();
 
         string? plainRefreshToken = null;
         DateTime? refreshExpiresAt = null;
 
         if (keepSignedIn)
         {
-            var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var d) ? d : 14;
+            var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var days) ? days : 14;
             plainRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
             refreshExpiresAt = DateTime.UtcNow.AddDays(rtDays);
             await _userSecretsDataController.UpdateRefreshToken(
-                userId, HashRefreshToken(plainRefreshToken), refreshExpiresAt);
+                userId, HashHelper.HashRefreshToken(plainRefreshToken), refreshExpiresAt);
         }
         else
         {
@@ -124,12 +123,11 @@ public class TwoFactorService : ITwoFactorService
 
         return new TokenModel
         {
-            AccessToken = _jwtGeneratorService.GenerateAccessToken(user.Id.ToString(), user.UserRole),
+            AccessToken = _jwtGeneratorService.GenerateAccessToken(userId.ToString(), userRole),
             RefreshToken = plainRefreshToken,
             RefreshTokenExpiresAt = refreshExpiresAt
         };
     }
 
-    private static string HashRefreshToken(string plainToken) =>
-        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(plainToken)));
+
 }

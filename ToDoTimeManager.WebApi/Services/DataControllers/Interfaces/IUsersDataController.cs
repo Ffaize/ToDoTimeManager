@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.WebApi.Entities;
+﻿using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.WebApi.Entities;
 
 namespace ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 
@@ -12,4 +13,5 @@ public interface IUsersDataController
     Task<bool> CreateUser(UserEntity newUser);
     Task<bool> UpdateUser(UserEntity updatedUser);
     Task<bool> DeleteUser(Guid userId);
+    Task<UserRole?> GetUserRoleByUserId(Guid userId);
 }

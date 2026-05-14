@@ -8,6 +8,7 @@ using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebApi.Exceptions;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 using ToDoTimeManager.WebApi.Services.Interfaces;
+using ToDoTimeManager.WebApi.Utils.Implementations;
 using ToDoTimeManager.WebApi.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Services.Implementations;
@@ -53,14 +54,11 @@ public class AuthService : IAuthService
             if (userEntity == null)
                 throw new ValidationException("Invalid username or password");
 
-            var secrets = await _userSecretsDataController.GetByUserId(userEntity.Id);
-            if (secrets == null)
+            var passwordSalt = await _userSecretsDataController.GetPasswordSaltByUserId(userEntity.Id);
+            if (passwordSalt == null || !_passwordHelperService.VerifyPassword(loginUser.Password, userEntity.Password!, passwordSalt))
                 throw new ValidationException("Invalid username or password");
 
-            if (!_passwordHelperService.VerifyPassword(loginUser.Password, userEntity.Password!, secrets.PasswordSalt))
-                throw new ValidationException("Invalid username or password");
-
-            return await _twoFactorService.SendCode(userEntity.Id);
+            return await _twoFactorService.SendCode(userEntity);
         }
         catch (ServiceException)
         {
@@ -90,7 +88,7 @@ public class AuthService : IAuthService
                                                || secrets.RefreshTokenExpiresAt < DateTime.UtcNow)
                 return null;
 
-            var incomingHash = HashRefreshToken(tokenModel.RefreshToken);
+            var incomingHash = HashHelper.HashRefreshToken(tokenModel.RefreshToken);
             var storedBytes = Convert.FromBase64String(secrets.RefreshToken);
             var incomingBytes = Convert.FromBase64String(incomingHash);
             if (!CryptographicOperations.FixedTimeEquals(storedBytes, incomingBytes))
@@ -98,7 +96,7 @@ public class AuthService : IAuthService
 
             var newRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
             await _userSecretsDataController.UpdateRefreshToken(
-                Guid.Parse(userId), HashRefreshToken(newRefreshToken), secrets.RefreshTokenExpiresAt);
+                Guid.Parse(userId), HashHelper.HashRefreshToken(newRefreshToken), secrets.RefreshTokenExpiresAt);
 
             return new TokenModel
             {
@@ -142,7 +140,4 @@ public class AuthService : IAuthService
         var role = principal.FindFirstValue(ClaimTypes.Role);
         return (userId, role);
     }
-
-    private static string HashRefreshToken(string plainToken) =>
-        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(plainToken)));
 }

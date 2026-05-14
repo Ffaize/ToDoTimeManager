@@ -9,7 +9,7 @@ public class UserEntity
     {
     }
 
-    public UserEntity(User user)
+    public UserEntity(User? user)
     {
         Id = user.Id;
         UserName = user.UserName;

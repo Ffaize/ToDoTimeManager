@@ -1,7 +1,8 @@
 namespace ToDoTimeManager.WebApi.Utils.Interfaces;
 
-public interface ITwoFactorCodeHasherService
+public interface ITwoFactorCodesHelper
 {
     string HashCode(string plainCode);
     bool VerifyCode(string plainCode, string storedHash);
+    string GenerateCode();
 }

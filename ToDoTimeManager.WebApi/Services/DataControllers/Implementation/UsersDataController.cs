@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.WebApi.Entities;
+﻿using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.WebApi.Entities;
 using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
 using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
 
@@ -117,6 +118,20 @@ public class UsersDataController : IUsersDataController
         {
             _logger.LogError(e, e.Message);
             return false;
+        }
+    }
+
+    public async Task<UserRole?> GetUserRoleByUserId(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.GetOneByParameter<UserRole>(
+                "sp_Users_GetUserRoleByUserId", "UserId", userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
         }
     }
 }
