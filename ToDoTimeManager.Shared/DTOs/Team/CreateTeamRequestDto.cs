@@ -1,0 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+using ToDoTimeManager.Shared.Utils;
+
+namespace ToDoTimeManager.Shared.DTOs.Team;
+
+public sealed class CreateTeamRequestDto
+{
+    [NotEmptyGuid] public Guid Id { get; set; }
+
+    [Required]
+    [MinLength(1)]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(500)] public string? Description { get; set; }
+}

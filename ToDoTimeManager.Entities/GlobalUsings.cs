@@ -1,3 +1,9 @@
 global using ToDoTimeManager.Shared.Models;
 global using ToDoTimeManager.Shared.Enums;
-global using ToDoTimeManager.Shared.DTOs;
+global using ToDoTimeManager.Shared.DTOs.User;
+global using ToDoTimeManager.Shared.DTOs.Project;
+global using ToDoTimeManager.Shared.DTOs.Team;
+global using ToDoTimeManager.Shared.DTOs.TimeLog;
+global using ToDoTimeManager.Shared.DTOs.ToDo;
+global using ToDoTimeManager.Shared.DTOs.TwoFactorAuth;
+global using ToDoTimeManager.Shared.DTOs.MainPageStatistic;

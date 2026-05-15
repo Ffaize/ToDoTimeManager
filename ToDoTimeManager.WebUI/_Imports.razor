@@ -1,4 +1,4 @@
-﻿@using System.Net.Http
+@using System.Net.Http
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -7,8 +7,21 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
 @using ToDoTimeManager.WebUI
-@using ToDoTimeManager.WebUI.Services.Interfaces
-@using ToDoTimeManager.WebUI.Services.Modal
+@using ToDoTimeManager.WebUI.Services.Services.Interfaces
+
+@using ToDoTimeManager.WebUI.Services.Helpers.Modal
+@using ToDoTimeManager.WebUI.Components.PageComponents.AuthPage
+@using ToDoTimeManager.WebUI.Components.PageComponents.AuthPage.Forms
+@using ToDoTimeManager.WebUI.Components.StaticComponents.Elements
+@using ToDoTimeManager.WebUI.Components.StaticComponents.Icons
+@using ToDoTimeManager.WebUI.Components.StaticComponents.Icons.Countries
+@using ToDoTimeManager.WebUI.Components.StaticComponents.Toast
 @using ToDoTimeManager.WebUI.Components.Modals
-@using ToDoTimeManager.WebUI.Components.Shared.Icons
-@using ToDoTimeManager.WebUI.Components.Base
+@using ToDoTimeManager.WebUI.Components.Shared
+@using ToDoTimeManager.WebUI.Components.Shared.Layouts
+@using ToDoTimeManager.WebUI.Components.BaseComponents
+@using ToDoTimeManager.WebUI.Models.Enums
+@using ToDoTimeManager.WebUI.Models.Models
+@using ToDoTimeManager.Shared.Models
+@using ToDoTimeManager.Shared.Enums
+@using ToDoTimeManager.Shared.DTOs.User

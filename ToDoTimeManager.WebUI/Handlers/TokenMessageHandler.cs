@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Net;
 using System.Net.Http.Headers;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+using ToDoTimeManager.WebUI.Services.Helpers.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.HttpServices;
-using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Utils;
+using ToDoTimeManager.WebUI.Services.Services.Implementations;
+using ToDoTimeManager.WebUI.Utils.PotectedLocalStorageHelpers;
 
 namespace ToDoTimeManager.WebUI.Handlers;
 

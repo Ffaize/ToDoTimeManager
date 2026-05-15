@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
 using ToDoTimeManager.Business.Services.Interfaces;
+using ToDoTimeManager.Entities.Exceptions;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 

@@ -1,4 +1,4 @@
-namespace ToDoTimeManager.Business.Exceptions;
+namespace ToDoTimeManager.Entities.Exceptions;
 
 public class ValidationException : ServiceException
 {

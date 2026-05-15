@@ -1,0 +1,52 @@
+﻿@using System.Globalization
+@using ToDoTimeManager.WebUI.Utils.OtherUtils
+@inject NavigationManager Navigation
+
+<CustomDropdown TItem="CultureInfo"
+    Items="@(new List<CultureInfo> { new(EnglishName), new(UkrainianName) })"
+    ItemLabel="@(x => x.GetCultureInfoDisplayName())"
+    Placeholder="Select…"
+    @bind-SelectedItem="@Culture"
+    Searchable="false"
+    ItemIcon="@GetIcon()"
+    AdditionalCssClass="@AdditionalCssClass" />
+
+@code
+{
+
+    [Parameter]
+    public string AdditionalCssClass { get; set; } = string.Empty;
+
+    const string EnglishName = "en-US";
+    const string UkrainianName = "uk-UA";
+
+    protected override void OnInitialized()
+    {
+        Culture = CultureInfo.CurrentCulture;
+    }
+
+    private CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set {
+            if (Equals(CultureInfo.CurrentCulture, value)) return;
+            var uri = new Uri(Navigation.Uri)
+                .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+            var cultureEscaped = Uri.EscapeDataString(value.Name);
+            var uriEscaped = Uri.EscapeDataString(uri);
+
+            var fullUri = $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}";
+            Navigation.NavigateTo(fullUri, true);
+        }
+    }
+
+    private Func<CultureInfo, RenderFragment?>? GetIcon()
+    {
+        return info => info.Name switch
+        {
+            EnglishName => @<UnitedStatesIcon IconSize="14" />,
+            UkrainianName => @<UkraineIcon IconSize="14" />,
+            var _ => null
+        };
+    }
+}

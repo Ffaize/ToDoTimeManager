@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
+using ToDoTimeManager.ServiceDefaults;
 using ToDoTimeManager.WebUI.Handlers;
-using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+using ToDoTimeManager.WebUI.Services.Helpers.CircuitServicesAccesor;
 using ToDoTimeManager.WebUI.Services.HttpServices;
-using ToDoTimeManager.WebUI.Services.Implementations;
-using ToDoTimeManager.WebUI.Services.Interfaces;
+using ToDoTimeManager.WebUI.Services.Services.Implementations;
+using ToDoTimeManager.WebUI.Services.Services.Interfaces;
+
 
 namespace ToDoTimeManager.WebUI;
 

@@ -1,0 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Utils;
+
+namespace ToDoTimeManager.Shared.DTOs.Project;
+
+public sealed class UpdateProjectRequestDto
+{
+    [NotEmptyGuid] public Guid Id { get; set; }
+
+    [Required]
+    [MinLength(1)]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(500)] public string? Description { get; set; }
+
+    public ProjectType? Type { get; set; }
+}

@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using ToDoTimeManager.Shared.DTOs;
-using ToDoTimeManager.WebUI.Models;
+using ToDoTimeManager.Shared.DTOs.User;
+using ToDoTimeManager.WebUI.Models.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
-using ToDoTimeManager.WebUI.Services.Interfaces;
-using ToDoTimeManager.WebUI.Utils;
+using ToDoTimeManager.WebUI.Services.Services.Interfaces;
+
+using ToDoTimeManager.WebUI.Utils.PotectedLocalStorageHelpers;
 
 namespace ToDoTimeManager.WebUI.Pages;
 

@@ -1,8 +1,8 @@
-using ToDoTimeManager.WebUI.Services.CircuitServicesAccesor;
+using ToDoTimeManager.WebUI.Services.Helpers.CircuitServicesAccesor;
 using System.Text;
 using ToDoTimeManager.WebUI.Models.Enums;
-using ToDoTimeManager.WebUI.Services.Interfaces;
-using ToDoTimeManager.WebUI.Utils;
+using ToDoTimeManager.WebUI.Services.Services.Interfaces;
+using ToDoTimeManager.WebUI.Utils.OtherUtils;
 
 namespace ToDoTimeManager.WebUI.Handlers;
 

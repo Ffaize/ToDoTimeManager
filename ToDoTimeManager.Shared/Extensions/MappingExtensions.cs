@@ -1,4 +1,6 @@
-using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.DTOs.Project;
+using ToDoTimeManager.Shared.DTOs.Team;
+using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.Shared.Extensions;

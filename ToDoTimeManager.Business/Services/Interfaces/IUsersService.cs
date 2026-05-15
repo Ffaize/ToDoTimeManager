@@ -1,4 +1,4 @@
-using ToDoTimeManager.Shared.DTOs;
+using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Models;
 

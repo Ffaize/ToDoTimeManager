@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Entities.Entities;
 using ToDoTimeManager.Business.Services.Interfaces;
+using ToDoTimeManager.Shared.DTOs.TwoFactorAuth;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 

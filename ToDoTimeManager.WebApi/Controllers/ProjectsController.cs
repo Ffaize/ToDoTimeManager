@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Business.Services.Interfaces;
+using ToDoTimeManager.Shared.DTOs.Project;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 

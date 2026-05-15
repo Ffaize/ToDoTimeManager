@@ -1,0 +1,40 @@
+@using ToDoTimeManager.WebUI.Components.Shared
+@inherits LayoutComponentBase
+<AuthorizeView>
+    <Authorized>
+        <ToastBox/>
+        <ModalContainer/>
+        <div class="page">
+            <div class="sidebar">
+                <NavMenu CollapseNavMenu="ColapseNavMenu" CollapseNavMenuChanged="OnCollapseNavMenuChanged"/>
+            </div>
+
+            <main @onclick="HideNavMenu">
+                <article class="content px-4">
+                    <div class="page-container">
+                        @Body
+                    </div>
+                </article>
+            </main>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin/>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public bool ColapseNavMenu { get; set; }
+
+    private void HideNavMenu()
+    {
+        ColapseNavMenu = true;
+        StateHasChanged();
+    }
+
+    private void OnCollapseNavMenuChanged(bool obj)
+    {
+        ColapseNavMenu = obj;
+        StateHasChanged();
+    }
+}

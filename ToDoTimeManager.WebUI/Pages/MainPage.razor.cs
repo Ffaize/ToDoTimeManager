@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
-using ToDoTimeManager.WebUI.Resources;
+using ToDoTimeManager.WebUI.Components.Resources;
 using ToDoTimeManager.WebUI.Services.HttpServices;
-using ToDoTimeManager.WebUI.Services.Implementations;
 
 namespace ToDoTimeManager.WebUI.Pages;
 

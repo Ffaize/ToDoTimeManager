@@ -25,7 +25,12 @@
       "Bash(Select-String -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\wwwroot\\\\css\\\\site.min.css\" -Pattern \"820px\")",
       "Bash(Measure-Object)",
       "Bash(Select-Object -ExpandProperty Count)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Services\\\\Services\\\\Interfaces\\\\IToastsService.cs\")",
+      "PowerShell(New-Item -ItemType Directory -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\" -Force)",
+      "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.resx\")",
+      "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.en-US.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.en-US.resx\")",
+      "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.uk-UA.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.uk-UA.resx\")"
     ]
   }
 }

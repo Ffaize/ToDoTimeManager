@@ -1,8 +1,5 @@
 using ToDoTimeManager.Business.Services.Interfaces;
-using ToDoTimeManager.Shared.DTOs;
-using ToDoTimeManager.Shared.Enums;
-using ToDoTimeManager.Shared.Extensions;
-using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.Entities.Exceptions;
 
 namespace ToDoTimeManager.Business.Services.Implementations;
 

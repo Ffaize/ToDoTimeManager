@@ -1,6 +1,7 @@
 using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Entities.Entities;
+using ToDoTimeManager.Entities.Exceptions;
 using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.Business.Services.Implementations;
