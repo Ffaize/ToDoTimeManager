@@ -13,7 +13,19 @@
       "PowerShell(ls \"D:\\\\Projects\\\\ToDoTimeManager\" -File | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github\\)'}; ls \"D:\\\\Projects\\\\ToDoTimeManager\" | Where-Object {$_.Name -match '\\(README|\\\\.cursor|\\\\.github|rules\\)'})",
       "PowerShell(head -20)",
       "Bash(dotnet user-secrets *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(dotnet restore *)",
+      "Bash(git -C D:/Projects/ToDoTimeManager status --short)",
+      "Bash(dotnet sln *)",
+      "Bash(dotnet workload *)",
+      "Bash(dotnet package *)",
+      "Bash(Select-String -Pattern \"error|warning|succeeded|failed\" -SimpleMatch)",
+      "PowerShell(dotnet build \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\ToDoTimeManager.WebApi.csproj\" 2>&1 | Where-Object { $_ -match \"error|warning|succeeded|failed|Error|Warning|Succeeded|Failed\" } | Select-Object -Last 20)",
+      "Bash(dotnet run *)",
+      "Bash(Select-String -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\wwwroot\\\\css\\\\site.min.css\" -Pattern \"820px\")",
+      "Bash(Measure-Object)",
+      "Bash(Select-Object -ExpandProperty Count)",
+      "Bash(git restore *)"
     ]
   }
 }

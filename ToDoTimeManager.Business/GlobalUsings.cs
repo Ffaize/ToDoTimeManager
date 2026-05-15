@@ -1,0 +1,12 @@
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;
+global using ToDoTimeManager.Business.Exceptions;
+global using ToDoTimeManager.Business.Utils.Interfaces;
+global using ToDoTimeManager.Business.Utils.Implementations;
+global using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
+global using ToDoTimeManager.Entities.Entities;
+global using ToDoTimeManager.Shared.DTOs;
+global using ToDoTimeManager.Shared.Enums;
+global using ToDoTimeManager.Shared.Extensions;
+global using ToDoTimeManager.Shared.Models;

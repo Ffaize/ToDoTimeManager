@@ -14,6 +14,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.AddServiceDefaults();
+
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         // Add services to the container.
@@ -43,7 +45,7 @@ public class Program
 
         builder.Services.AddHttpClient("TodoTimeManager", client =>
         {
-            client.BaseAddress = new Uri(builder.Configuration["BaseApiUrlAddress"] ?? "https://localhost:7130/");
+            client.BaseAddress = new Uri("https+http://webapi");
             client.DefaultRequestHeaders.Accept.Clear();
             client.Timeout = TimeSpan.FromMinutes(5);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -57,6 +59,7 @@ public class Program
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
 
+        app.MapDefaultEndpoints();
         app.UseRequestLocalization(localizationOptions);
 
         // Configure the HTTP request pipeline.

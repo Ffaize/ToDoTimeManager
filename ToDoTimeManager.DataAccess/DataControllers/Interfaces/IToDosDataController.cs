@@ -1,0 +1,19 @@
+﻿using ToDoTimeManager.Entities.Entities;
+using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Models;
+
+namespace ToDoTimeManager.DataAccess.DataControllers.Interfaces;
+
+public interface IToDosDataController
+{
+    Task<List<ToDoEntity>> GetAllToDos();
+    Task<ToDoEntity?> GetToDoById(Guid toDoId);
+    Task<List<ToDoEntity>> GetToDosByUserId(Guid userId);
+    Task<int> GetToDosCountByUserIdAndStatus(Guid userId, ToDoStatus status);
+    Task<bool> CreateToDo(ToDoEntity newToDo);
+    Task<bool> UpdateToDo(ToDoEntity updatedToDo);
+    Task<bool> DeleteToDo(Guid toDoId);
+    Task<List<ToDo>> GetToDosByNearestDueDateByUserId(Guid filterUserId);
+    Task<List<ToDoEntity>> GetToDosByTeamId(Guid teamId);
+    Task<List<ToDoEntity>> GetToDosByProjectId(Guid projectId);
+}

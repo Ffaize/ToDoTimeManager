@@ -1,7 +1,7 @@
 using ToDoTimeManager.Shared.Enums;
-using ToDoTimeManager.WebApi.Entities;
-using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
-using ToDoTimeManager.WebApi.Utils.Interfaces;
+using ToDoTimeManager.Entities.Entities;
+using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
+using ToDoTimeManager.Business.Utils.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Seeders;
 

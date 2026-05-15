@@ -1,0 +1,57 @@
+﻿using ToDoTimeManager.Shared.Enums;
+using ToDoTimeManager.Shared.Models;
+
+namespace ToDoTimeManager.Entities.Entities;
+
+public class ToDoEntity
+{
+    public ToDoEntity()
+    {
+    }
+
+    public ToDoEntity(ToDo toDo)
+    {
+        Id = toDo.Id;
+        Title = toDo.Title;
+        Description = toDo.Description;
+        CreatedAt = toDo.CreatedAt;
+        DueDate = toDo.DueDate;
+        Status = toDo.Status;
+        Type = toDo.Type;
+        AssignedTo = toDo.AssignedTo;
+        NumberedId = toDo.NumberedId;
+        TeamId = toDo.TeamId;
+        ProjectId = toDo.ProjectId;
+    }
+
+    public Guid Id { get; set; }
+    public int NumberedId { get; set; }
+
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? DueDate { get; set; }
+    public ToDoStatus Status { get; set; }
+    public TaskType? Type { get; set; }
+    public Guid? AssignedTo { get; set; }
+    public Guid? TeamId { get; set; }
+    public Guid? ProjectId { get; set; }
+
+    public ToDo ToToDo()
+    {
+        return new ToDo
+        {
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            CreatedAt = CreatedAt,
+            DueDate = DueDate,
+            Status = Status,
+            Type = Type,
+            AssignedTo = AssignedTo,
+            NumberedId = NumberedId,
+            TeamId = TeamId,
+            ProjectId = ProjectId
+        };
+    }
+}

@@ -1,0 +1,9 @@
+global using Dapper;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.Data.SqlClient;
+global using ToDoTimeManager.DataAccess.DbAccessServices;
+global using ToDoTimeManager.Entities.Entities;
+global using ToDoTimeManager.Shared.DTOs;
+global using ToDoTimeManager.Shared.Enums;
+global using ToDoTimeManager.Shared.Models;

@@ -8,13 +8,13 @@ using System.Threading.RateLimiting;
 using ToDoTimeManager.WebApi.AdditionalComponents;
 using ToDoTimeManager.WebApi.Middleware;
 using ToDoTimeManager.WebApi.Seeders;
-using ToDoTimeManager.WebApi.Services.DataControllers.DbAccessServices;
-using ToDoTimeManager.WebApi.Services.DataControllers.Implementation;
-using ToDoTimeManager.WebApi.Services.DataControllers.Interfaces;
-using ToDoTimeManager.WebApi.Services.Implementations;
-using ToDoTimeManager.WebApi.Services.Interfaces;
-using ToDoTimeManager.WebApi.Utils.Implementations;
-using ToDoTimeManager.WebApi.Utils.Interfaces;
+using ToDoTimeManager.DataAccess.DbAccessServices;
+using ToDoTimeManager.DataAccess.DataControllers.Implementation;
+using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
+using ToDoTimeManager.Business.Utils.Implementations;
+using ToDoTimeManager.Business.Utils.Interfaces;
+using ToDoTimeManager.Business.Services.Implementations;
+using ToDoTimeManager.Business.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi;
 
@@ -23,6 +23,8 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.AddServiceDefaults();
 
         VerifyJwtKey(builder);
         AddServices(builder);
@@ -39,6 +41,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.MapDefaultEndpoints();
         app.UseMiddleware<GlobalExceptionHandler>();
         app.UseHttpsRedirection();
         app.UseRateLimiter();

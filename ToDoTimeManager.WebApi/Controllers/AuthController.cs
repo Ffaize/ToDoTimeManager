@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using ToDoTimeManager.Shared.DTOs;
 using ToDoTimeManager.Shared.Models;
-using ToDoTimeManager.WebApi.Entities;
-using ToDoTimeManager.WebApi.Services.Interfaces;
+using ToDoTimeManager.Entities.Entities;
+using ToDoTimeManager.Business.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 

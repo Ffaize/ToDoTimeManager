@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using ToDoTimeManager.WebApi.Exceptions;
+using ToDoTimeManager.Business.Exceptions;
 using ToDoTimeManager.WebApi.Extensions;
 
 namespace ToDoTimeManager.WebApi.Middleware;
