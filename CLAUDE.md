@@ -5,14 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run Commands
 
 ```bash
-# Build entire solution
-dotnet build
+# Run with Aspire (recommended — starts DbPublisher → WebApi → WebUI automatically)
+dotnet run --project ToDoTimeManager.AppHost
 
-# Run the API (serves at https://localhost:7130)
-dotnet run --project ToDoTimeManager.WebApi
-
-# Run the Blazor UI (serves at https://localhost:7262)
-dotnet run --project ToDoTimeManager.WebUI
+# Or run individually (manual order matters):
+dotnet run --project ToDoTimeManager.WebApi   # serves at https://localhost:7130
+dotnet run --project ToDoTimeManager.WebUI    # serves at https://localhost:7262
 
 # Build CSS assets (run inside ToDoTimeManager.WebUI/)
 npm install
@@ -22,130 +20,245 @@ gulp            # build + watch for changes
 
 No test projects exist in this solution.
 
-## Architecture
+---
 
-Five projects in the solution:
+## Solution Structure
 
-- **ToDoTimeManager.WebApi** — ASP.NET Core 8 REST API (auth, todos, time logs, teams, projects, statistics, user management)
-- **ToDoTimeManager.WebUI** — Blazor Server interactive frontend (pages, components, HTTP client services)
-- **ToDoTimeManager.Shared** — Models, DTOs, enums, and JWT utilities shared across both runtime projects
-- **ToDoTimeManager.DataBase** — SQL Server schema only (tables + stored procedures); no runtime code
+The solution uses **.NET 10** and is organized into **14 projects** grouped by solution folder.
 
-### Request Flow
+### Backend
+
+| Project | Purpose |
+|---------|---------|
+| `ToDoTimeManager.Entities` | Dapper-mapped entity types + typed exception hierarchy |
+| `ToDoTimeManager.DataAccess` | DataController interfaces & implementations + generic `DbAccessService` (Dapper) |
+| `ToDoTimeManager.Business` | Business service interfaces & implementations |
+| `ToDoTimeManager.Business.Utils` | Utility service interfaces & implementations (JWT, passwords, email, 2FA, hashing) |
+| `ToDoTimeManager.WebApi` | ASP.NET Core 10 REST API; all controllers inherit `BaseController` |
+
+### Aspire
+
+| Project | Purpose |
+|---------|---------|
+| `ToDoTimeManager.AppHost` | .NET Aspire orchestrator — `DbPublisher` completes first, then `WebApi` starts, then `WebUI` |
+| `ToDoTimeManager.DbPublisher` | Runs on startup to deploy the SQL Server schema and apply migrations |
+| `ToDoTimeManager.ServiceDefaults` | Shared Aspire configuration (health checks, OpenTelemetry, service discovery) |
+
+### Frontend
+
+| Project | Purpose |
+|---------|---------|
+| `ToDoTimeManager.WebUI` | Blazor Server app shell — `Program.cs`, `App.razor`, Pages, Handlers, `CultureController` |
+| `ToDoTimeManager.WebUI.Components` | All Razor components (base, page, modal, static, shared/layouts) |
+| `ToDoTimeManager.WebUI.Services` | HTTP services, auth state, modal/toast services, circuit accessor |
+| `ToDoTimeManager.WebUI.Models` | UI-only enums, models, interfaces |
+| `ToDoTimeManager.WebUI.Utils` | Protected-storage helpers, string validation, culture helper, page-title helper |
+
+### Database
+
+| Project | Purpose |
+|---------|---------|
+| `ToDoTimeManager.DataBase` | SQL Server `sqlproj` — tables + stored procedures + migrations; no runtime code |
+
+### Shared
+
+| Project | Purpose |
+|---------|---------|
+| `ToDoTimeManager.Shared` | Models, DTOs, enums, extensions, and JWT utilities shared across all runtime projects |
+
+---
+
+## Request Flow
 
 ```
-Blazor Pages/Components
-  → WebUI HttpServices (BaseHttpService subclasses)
-    → [HTTP over localhost]
-      → WebApi Controllers
-        → Business Services (Services/Implementations/)
-          → Data Controllers (Services/DataControllers/)
-            → DbAccessService (Dapper)
+Blazor Pages (WebUI)
+  → HttpServices (WebUI.Services/HttpServices)
+    → [HTTP over Aspire service discovery / localhost]
+      → WebApi Controllers (inherit BaseController)
+        → Business Services (Business/Services)
+          → DataAccess Controllers (DataAccess/DataControllers)
+            → DbAccessService (DataAccess/DbAccessServices, Dapper)
               → SQL Server (stored procedures only — no inline SQL)
 ```
 
-### Authentication Flow
+---
 
-1. `AuthController` issues JWT access tokens + refresh tokens on login.
-2. Tokens are stored in `ProtectedLocalStorage` on the browser via `TokenProtectedStorageHelper`.
-3. `TokenMessageHandler` (WebUI) injects the Bearer token into every outgoing HTTP request.
-4. `ToastMessageHandler` (WebUI) intercepts error responses and surfaces them as toast notifications.
-5. `CustomAuthStateProvider` manages Blazor auth state and triggers automatic token refresh when the access token is expired but the refresh token is still valid.
-6. JWT settings (key, issuer, lifetimes) live in `WebApi/appsettings.json`. ClockSkew is `TimeSpan.Zero` — tokens expire exactly at their `ValidTo` time.
+## Authentication Flow
 
-### Authorization Model
+1. `AuthController.Login` validates credentials, sends a 2FA code to the user's email via `IEmailService`, and returns a `TwoFactorPendingModel` (userId + masked email). A JWT is **not** issued yet.
+2. `AuthController.SendCode` resends a code (rate-limited separately).
+3. `AuthController.VerifyCode` validates the code and issues a `TokenModel` (access token + refresh token).
+4. Tokens are stored in `ProtectedLocalStorage` via `TokenProtectedStorageHelper`.
+5. `TokenMessageHandler` attaches the Bearer token to every outgoing HTTP request and transparently retries on 401 using `TokenRefreshService`.
+6. `CustomAuthStateProvider` manages Blazor auth state and also performs refresh when the access token is expired but the refresh token is still valid.
+7. JWT settings live in `WebApi/appsettings.json`. ClockSkew is `TimeSpan.Zero`.
+8. Auth endpoints are rate-limited: `auth-login`, `auth-send-code`, `auth-verify-code`, `auth-register`.
 
-- Two roles: `User` (0) and `Admin` (1), defined in `Shared/Enums/UserRole.cs`.
-- Admins have unrestricted access to all resources.
-- Regular users can only read/write their own resources (own to-dos, time logs, profile).
-- Resource ownership is verified inside business services, not controllers.
-- `TeamMemberRole` (Member=0, Owner=1) governs per-team permissions for team/project operations.
+---
 
-### Key Structural Patterns
+## Authorization Model
 
-- **All database access** goes through `DbAccessService` (a generic Dapper wrapper). Services and data controllers never write raw SQL — they call stored procedures only.
-- **All WebUI HTTP calls** use typed service classes inheriting from `BaseHttpService` (`WebUI/Services/HttpServices/`). `BaseHttpService` creates the named `"TodoTimeManager"` `HttpClient`.
-- **Shared contracts** (models, DTOs, enums) live exclusively in the Shared project — never duplicated in WebApi or WebUI.
-- **Entities** (`WebApi/Entities/`) are Dapper-mapped types separate from the shared models. Each entity exposes a `To[Model]()` conversion method.
-- **Localization** is built in; resource strings are in `WebUI/Localization/Resource.resx` with `uk-UA` (default) and `en-US` variants.
-- **Error handling**: `GlobalExceptionHandler` middleware on the API; `ToastMessageHandler` + `ToastsService` on the UI.
-- **CircuitServicesAccesor**: A Blazor Server workaround that provides access to scoped services (e.g., `ProtectedLocalStorage`) from within `CustomAuthStateProvider`.
+Five roles are defined in `Shared/Enums/UserRole.cs` as a numeric hierarchy:
+
+| Role | Value | Notes |
+|------|-------|-------|
+| `User` | 0 | Default on registration |
+| `Developer` | 1 | |
+| `ProjectManager` | 2 | |
+| `Manager` | 3 | |
+| `Admin` | 4 | Unrestricted access |
+
+`BaseController` exposes hierarchy helpers: `IsAdmin()`, `IsManager()`, `IsProjectManager()`, `IsDeveloper()` — each returns `true` for that role **and all higher roles**.
+
+`TeamMemberRole` (Member=0, Owner=1) governs per-team permissions for team and project operations.
+
+Resource ownership checks (is this the caller's own resource?) are performed inside **business services**, not controllers.
+
+---
+
+## Key Structural Patterns
+
+- **All database access** goes through `DbAccessService` (a generic Dapper wrapper). No inline SQL anywhere — stored procedures only.
+- **All WebUI HTTP calls** use typed service classes inheriting from `BaseHttpService` (`WebUI.Services/HttpServices/`). The named `HttpClient` is `"TodoTimeManager"`.
+- **Shared contracts** (models, DTOs, enums, extensions) live exclusively in `ToDoTimeManager.Shared` — never duplicated in any other project.
+- **Entities** (`Entities/Entities/`) are Dapper-mapped types separate from shared models. They are used only in the DataAccess and Business layers — never leak to WebUI.
+- **Exception hierarchy** — business/data code throws typed exceptions from `Entities/Exceptions/`; `GlobalExceptionHandler` middleware maps them to HTTP status codes via `ProblemDetailsFactory`:
+
+  | Exception | HTTP Status |
+  |-----------|------------|
+  | `ValidationException` | 400 |
+  | `ForbiddenException` | 403 |
+  | `NotFoundException` | 404 |
+  | `ConflictException` | 409 |
+  | `ServiceException` (base) | set in constructor |
+
+- **Activity log tracking** — mutating operations on ToDos, TimeLogs, and Users must write entries via `IActivityLogsService`.
+- **Localization** — resource strings live in `WebUI.Components/Resources/` (`Resource.resx`, `Resource.uk-UA.resx`, `Resource.en-US.resx`). Default culture is `uk-UA`. Inject `IStringLocalizer<Resource>` in components (already provided by `BaseComponent`).
+- **CircuitServicesAccesor** — provides `IServiceProvider` access from outside the Blazor circuit scope (used by `CustomAuthStateProvider` and `TokenMessageHandler`).
+- **Data seeding** — `WebApi/Seeders/DataSeeder.cs` creates a seed admin user on startup if one does not exist.
 
 ---
 
 ## Notable Directories
 
+### Backend
+
 | Path | Purpose |
 |------|---------|
-| `WebApi/Controllers/` | REST endpoints |
-| `WebApi/Services/Implementations/` | Business logic |
-| `WebApi/Services/DataControllers/` | DB access layer (interfaces + implementations) |
-| `WebApi/Services/DataControllers/DbAccessServices/` | Generic Dapper `DbAccessService` |
-| `WebApi/Entities/` | Database-mapped entity types (separate from Shared models) |
-| `WebApi/AdditionalComponents/` | `CustomException`, `AuthResponsesOperationFilter` |
-| `WebApi/Middleware/` | `GlobalExceptionHandler` |
-| `WebApi/Utils/` | `PasswordHelperService`, `JwtGeneratorService` |
-| `WebUI/Pages/` | Routed Blazor pages |
-| `WebUI/Components/Base/` | `BaseComponent`, `BaseAuthForm` — abstract base classes |
-| `WebUI/Components/Pages/AuthPage/` | Auth sub-components: `LoginForm`, `RegisterForm`, `TwoFaForm` |
-| `WebUI/Components/Modals/` | Modal dialog components |
-| `WebUI/Components/Shared/` | Reusable UI components (Input, Button, CheckInput, CustomDropdown, StepsComponent, icons, etc.) |
-| `WebUI/Components/Toast/` | Toast notification components |
-| `WebUI/Handlers/` | HTTP message handlers |
-| `WebUI/Models/Enums/` | WebUI-only enums (InputStyle, ButtonStyle, AuthPageCurrentState, etc.) |
-| `WebUI/Services/HttpServices/` | Typed API client services |
-| `WebUI/Services/Implementations/` | `CustomAuthStateProvider`, `ToastsService` |
-| `WebUI/Services/CircuitServicesAccesor/` | Scoped-service accessor for Blazor circuits |
-| `WebUI/Utils/` | `TokenProtectedStorageHelper`, `PageTitleHelper`, `CultureInfoHelper` |
-| `WebUI/Localization/` | `Resource.resx`, `Resource.en-US.resx`, `Resource.uk-UA.resx` |
-| `WebUI/Controllers/` | `CultureController` (MVC, handles culture switching) |
-| `WebUI/wwwroot/css/components/` | Per-component CSS files (inputs.css, etc.) |
-| `Shared/Models/` | Domain models (User, ToDo, TimeLog, Team, Project, …) |
-| `Shared/DTOs/` | Request/response DTOs |
-| `Shared/Enums/` | `ToDoStatus`, `UserRole`, `TimeFilter`, `TeamMemberRole` |
-| `Shared/Utils/` | `JwtTokenHelper`, `NotEmptyGuidAttribute` |
-| `DataBase/Tables/` | SQL table creation scripts |
-| `DataBase/StoredProcedures/` | All stored procedures, grouped by entity |
+| `ToDoTimeManager.Entities/Entities/` | Dapper-mapped entity types (one per DB table) |
+| `ToDoTimeManager.Entities/Exceptions/` | `ServiceException`, `ConflictException`, `ForbiddenException`, `NotFoundException`, `ValidationException` |
+| `ToDoTimeManager.DataAccess/DataControllers/Interfaces/` | Data controller interfaces (one per entity) |
+| `ToDoTimeManager.DataAccess/DataControllers/Implementation/` | Data controller implementations |
+| `ToDoTimeManager.DataAccess/DbAccessServices/DbAccessService.cs` | Generic Dapper wrapper |
+| `ToDoTimeManager.Business/Services/Interfaces/` | Business service interfaces |
+| `ToDoTimeManager.Business/Services/Implementations/` | Business service implementations |
+| `ToDoTimeManager.Business.Utils/Interfaces/` | `IJwtGeneratorService`, `IPasswordHelperService`, `ITwoFactorCodesHelper`, `IEmailService` |
+| `ToDoTimeManager.Business.Utils/Implementations/` | `JwtGeneratorService`, `PasswordHelperService`, `TwoFactorCodesHelper`, `EmailService`, `HashHelper` |
+| `ToDoTimeManager.WebApi/Controllers/BaseController.cs` | Abstract base for all controllers |
+| `ToDoTimeManager.WebApi/Controllers/` | REST endpoint controllers |
+| `ToDoTimeManager.WebApi/Middleware/GlobalExceptionHandler.cs` | Catches `ServiceException` subclasses and maps to ProblemDetails |
+| `ToDoTimeManager.WebApi/Extensions/ProblemDetailsFactory.cs` | Builds `ProblemDetails` responses by status code |
+| `ToDoTimeManager.WebApi/Extensions/StringExtensions.cs` | String utility extensions |
+| `ToDoTimeManager.WebApi/Seeders/DataSeeder.cs` | Seeds the initial admin user on startup |
+
+### Frontend
+
+| Path | Purpose |
+|------|---------|
+| `ToDoTimeManager.WebUI/Pages/` | Routed Blazor pages (`MainPage.razor`, `AuthPage.razor`) |
+| `ToDoTimeManager.WebUI/Handlers/` | `TokenMessageHandler`, `ToastMessageHandler` |
+| `ToDoTimeManager.WebUI/Controllers/CultureController.cs` | MVC controller for culture switching |
+| `ToDoTimeManager.WebUI.Components/BaseComponents/BaseComponent.cs` | Abstract base for all Razor components |
+| `ToDoTimeManager.WebUI.Components/PageComponents/AuthPage/` | `BaseAuthForm`, `StepsComponent`, `Forms/` (LoginForm, RegisterForm, TwoFAForm) |
+| `ToDoTimeManager.WebUI.Components/StaticComponents/Elements/` | `Input`, `Button`, `CheckInput`, `CustomDropdown`, `CultureSelector` |
+| `ToDoTimeManager.WebUI.Components/StaticComponents/Icons/` | All SVG icon components as Razor files + `Countries/` flags |
+| `ToDoTimeManager.WebUI.Components/StaticComponents/Toast/` | `Toast.razor`, `ToastBox.razor` |
+| `ToDoTimeManager.WebUI.Components/Modals/` | `ModalContainer`, `ConfirmModal` |
+| `ToDoTimeManager.WebUI.Components/Shared/` | `NavMenu`, `Scene` |
+| `ToDoTimeManager.WebUI.Components/Shared/Layouts/` | `MainLayout`, `AuthLayout`, `Helpers/RedirectToLogin` |
+| `ToDoTimeManager.WebUI.Components/Resources/` | `Resource.resx`, `Resource.uk-UA.resx`, `Resource.en-US.resx` |
+| `ToDoTimeManager.WebUI.Services/HttpServices/` | `BaseHttpService` + typed API client services |
+| `ToDoTimeManager.WebUI.Services/Services/Implementations/` | `CustomAuthStateProvider`, `ToastsService`, `ModalService`, `TokenRefreshService`, `TwoFaTimerService` |
+| `ToDoTimeManager.WebUI.Services/Services/Interfaces/` | `IToastsService`, `IModalService`, `ITwoFaTimerService` |
+| `ToDoTimeManager.WebUI.Services/Helpers/CircuitServicesAccesor/` | `CircuitServicesAccesor.cs`, `ServicesAccessorCuircutHandler.cs` |
+| `ToDoTimeManager.WebUI.Services/Helpers/Modal/` | `ModalParameters.cs`, `ModalReference.cs` |
+| `ToDoTimeManager.WebUI.Models/Enums/` | `AuthPageCurrentState`, `ToastType`, button/input style enums |
+| `ToDoTimeManager.WebUI.Models/Models/` | `ToastModel`, `PendingTwoFaSessionState` |
+| `ToDoTimeManager.WebUI.Utils/PotectedLocalStorageHelpers/` | `TokenProtectedStorageHelper`, `ProtectedStorageHelper` |
+| `ToDoTimeManager.WebUI.Utils/StringHelpers/` | `StringValidationHelper` |
+| `ToDoTimeManager.WebUI.Utils/OtherUtils/` | `CultureInfoHelper`, `ProblemDetailsParser` |
+| `ToDoTimeManager.WebUI.Utils/PagesHelpers/` | `PageTitleHelper` |
+
+### Shared
+
+| Path | Purpose |
+|------|---------|
+| `ToDoTimeManager.Shared/Models/` | Domain models (`User`, `ToDo`, `TimeLog`, `Team`, `Project`, `ActivityLog`, …) |
+| `ToDoTimeManager.Shared/DTOs/` | Request/response DTOs, grouped by entity subfolder |
+| `ToDoTimeManager.Shared/Enums/` | All shared enums |
+| `ToDoTimeManager.Shared/Extensions/` | `TimeFilterExtensions`, `MappingExtensions` |
+| `ToDoTimeManager.Shared/Utils/` | `JwtTokenHelper`, `NotEmptyGuidAttribute` |
+
+### Database
+
+| Path | Purpose |
+|------|---------|
+| `ToDoTimeManager.DataBase/Tables/` | SQL table creation scripts |
+| `ToDoTimeManager.DataBase/StoredProcedures/` | All stored procedures, grouped by entity subfolder |
+| `ToDoTimeManager.DataBase/Migrations/` | Versioned migration scripts applied by `DbPublisher` at startup |
 
 ---
 
 ## API Endpoints
 
-All controllers live under `api/[Controller]` (e.g. `api/Auth`, `api/ToDos`).
+All controllers are routed under `api/[Controller]`.
+
+### BaseController
+
+All controllers inherit `BaseController`, which provides:
+- `GetCurrentUserId()` — extracts `UserId` from JWT claims
+- `GetCurrentUserRole()` — extracts `UserRole` from JWT claims
+- `IsAdmin()`, `IsManager()`, `IsProjectManager()`, `IsDeveloper()` — returns `true` for that role and all higher roles
 
 ### AuthController — `[AllowAnonymous]`
+
 | Verb | Route | Description |
 |------|-------|-------------|
-| POST | `Auth/Login` | Authenticate with credentials; returns `TokenModel` |
+| POST | `Auth/Login` | Validate credentials; send 2FA code to email; return `TwoFactorPendingModel` |
+| POST | `Auth/SendCode` | Resend 2FA code |
+| POST | `Auth/VerifyCode` | Verify 2FA code; return `TokenModel` |
 | POST | `Auth/RefreshToken` | Exchange refresh token for new access token |
 
 ### UsersController
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
-| GET | `Users/GetAll` | Admin | Get all users |
+| GET | `Users/GetAll` | Manager, Admin | Get all users (returns `UserResponseDto` — no passwords) |
 | GET | `Users/GetById/{id}` | Auth | Get user by ID (admin or self) |
-| GET | `Users/GetByUsername/{userName}` | Admin | Get user by username |
-| GET | `Users/GetByEmail/{email}` | Admin | Get user by email |
-| GET | `Users/GetByLoginParameter/{loginParameter}` | Admin | Get user by username or email |
+| GET | `Users/GetByUsername/{userName}` | Auth | Get user by username |
+| GET | `Users/GetByEmail/{email}` | Auth | Get user by email |
+| GET | `Users/GetByLoginParameter/{loginParameter}` | Auth | Get user by username or email |
 | POST | `Users/Create` | AllowAnonymous | Register new user |
 | PUT | `Users/Update` | Auth | Update own profile |
 | PUT | `Users/ChangeRole/{id}` | Admin | Change user's role |
 | DELETE | `Users/Delete/{id}` | Admin | Delete user |
 
-### ToDosController
+### ToDosController — `[Authorize]`
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
-| GET | `ToDos/GetAll` | Admin | Get all to-dos |
+| GET | `ToDos/GetAll` | Manager, Admin | Get all to-dos |
 | GET | `ToDos/GetById/{id}` | Auth | Get to-do (admin or assignee) |
 | GET | `ToDos/GetByUserId/{userId}` | Auth | Get user's to-dos (admin or self) |
 | POST | `ToDos/Create` | Auth | Create new to-do |
 | PUT | `ToDos/Update` | Auth | Update to-do (admin or assignee) |
 | DELETE | `ToDos/Delete/{id}` | Auth | Delete to-do (admin or assignee) |
 
-### TimeLogsController
+### TimeLogsController — `[Authorize]`
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
-| GET | `TimeLogs/GetAll` | Admin | Get all time logs |
+| GET | `TimeLogs/GetAll` | Manager, Admin | Get all time logs |
 | GET | `TimeLogs/GetById/{id}` | Auth | Get log (admin or owner) |
 | GET | `TimeLogs/GetByToDoId/{toDoId}` | Auth | Get logs for a to-do |
 | GET | `TimeLogs/GetByUserId/{userId}` | Auth | Get user's logs (admin or self) |
@@ -154,72 +267,102 @@ All controllers live under `api/[Controller]` (e.g. `api/Auth`, `api/ToDos`).
 | PUT | `TimeLogs/Update` | Auth | Update log (admin or owner) |
 | DELETE | `TimeLogs/Delete/{id}` | Auth | Delete log (admin or owner) |
 
-### TeamsController
+### TeamsController — `[Authorize]`
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
-| GET | `Teams/GetAll` | Admin | Get all teams |
+| GET | `Teams/GetAll` | Manager, Admin | Get all teams |
 | GET | `Teams/GetById/{id}` | Auth | Get team (admin or member) |
-| GET | `Teams/GetToDosByTeamId/{teamId}` | Auth | Get team's to-dos (admin or member) |
+| GET | `Teams/GetToDosByTeamId/{teamId}` | Auth | Get team's to-dos |
 | GET | `Teams/GetMyTeams` | Auth | Get current user's teams |
 | PUT | `Teams/Update` | Auth | Update team (admin or creator/owner) |
 | POST | `Teams/AddMember` | Auth | Add member to team |
 | DELETE | `Teams/RemoveMember/{teamId}/{userId}` | Auth | Remove member from team |
 | DELETE | `Teams/Delete/{id}` | Admin | Delete team |
 
-### ProjectsController
+### ProjectsController — `[Authorize]`
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
 | GET | `Projects/GetAll` | Admin | Get all projects |
 | GET | `Projects/GetById/{id}` | Auth | Get project (admin or member via team) |
 | GET | `Projects/GetToDosByProjectId/{projectId}` | Auth | Get project's to-dos |
-| GET | `Projects/GetMyProjects` | Auth | Get current user's projects |
+| GET | `Projects/GetMyProjects` | Auth | Get current user's accessible projects |
 | PUT | `Projects/Update` | Auth | Update project (admin or creator) |
 | POST | `Projects/AddTeam` | Auth | Associate team with project |
 | DELETE | `Projects/RemoveTeam/{projectId}/{teamId}` | Auth | Remove team from project |
 | DELETE | `Projects/Delete/{id}` | Admin | Delete project |
 
-### StatisticController
+### StatisticController — `[Authorize]`
+
 | Verb | Route | Authorization | Description |
 |------|-------|---------------|-------------|
 | GET | `Statistic/GetToDoCountStatisticsOfAllTimeByUserId/{userId}` | Auth | To-do counts by status (admin or self) |
 | POST | `Statistic/GetMainPageStatistic` | Auth | Dashboard stats (time logs, upcoming due dates, status counts) |
 
+### ActivityLogsController — `[Authorize]`
+
+| Verb | Route | Authorization | Description |
+|------|-------|---------------|-------------|
+| GET | `ActivityLogs/GetAll` | Manager, Admin | Get all activity logs |
+| GET | `ActivityLogs/GetByToDoId/{toDoId}` | Auth | Get logs for a to-do |
+| GET | `ActivityLogs/GetByUserId/{userId}` | Auth | Get logs for a user |
+| GET | `ActivityLogs/GetByUserIdAndToDoId/{userId}/{toDoId}` | Auth | Get logs for user + to-do |
+
 ---
 
 ## Shared Project
 
+### Enums (`Shared/Enums/`)
+
+| Enum | Values |
+|------|--------|
+| `UserRole` | User=0, Developer=1, ProjectManager=2, Manager=3, Admin=4 |
+| `ToDoStatus` | New, InProgress, Completed, OnHold, Cancelled |
+| `TeamMemberRole` | Member=0, Owner=1 |
+| `TimeFilter` | AllTime, DayAgo, WeekAgo, MonthAgo, YearAgo |
+| `TaskType` | UserStory=0, Feature=1, Bug=2, Incident=3, Support=4, Meet=5 |
+| `ProjectType` | Backend=0, Frontend=1, DataBase=2, FullStack=3, Mobile=4, DevOps=5, DataScience=6, Security=7, Other=8 |
+| `ActivityType` | ToDoCreated=0, ToDoUpdated=1, ToDoDeleted=2, StatusChanged=3, TimeLogged=4, TimeLogUpdated=5, TimeLogDeleted=6, UserUpdated=7, UserRoleChanged=8 |
+
 ### Models (`Shared/Models/`)
+
 | Model | Key Fields |
 |-------|-----------|
 | `User` | Id, UserName, Email, Password, UserRole |
-| `ToDo` | Id, NumberedId, Title, Description, CreatedAt, DueDate, Status, AssignedTo, TeamId, ProjectId, DisplayDueDate (computed) |
-| `TimeLog` | Id, ToDoId, UserId, HoursSpent (TimeSpan), LogDate, LogDescription |
+| `ToDo` | Id, NumberedId, Title, Description, CreatedAt, DueDate, Status, Type (TaskType?), AssignedTo, TeamId, ProjectId, DisplayDueDate (computed) |
+| `TimeLog` | Id, ToDoId, UserId, HoursSpent (decimal), LogDate, LogDescription |
 | `Team` | Id, Name, Description, CreatedAt, CreatedBy, MemberCount |
 | `Project` | Id, Name, Description, CreatedAt, CreatedBy, TeamCount |
 | `TeamMember` | Id, TeamId, UserId, Role |
 | `ProjectTeam` | Id, ProjectId, TeamId |
+| `ActivityLog` | Id, ToDoId?, UserId, Type (ActivityType), Description, ActivityTime, UserName?, ToDoTitle?, ToDoNumberedId? |
 | `TokenModel` | AccessToken, RefreshToken, RefreshTokenExpiresAt |
+| `TwoFactorPendingModel` | UserId, MaskedEmail |
 | `LoginUser` | LoginParameter (username or email), Password |
 | `MainPageStatisticModel` | TimeLogsForGivenTime, TimeLogsForThisMonth, DueDateTasks (Dictionary\<DateTime, ToDo\>), ToDoStatuses |
-| `MainPageStatisticRequest` | UserId, TimeFilter |
 | `ToDoCountStatisticsOfAllTime` | Statistics by status |
 
 ### DTOs (`Shared/DTOs/`)
-- `CreateUserRequestDto`, `UpdateUserRequestDto`, `UserResponseDto` (no password), `ChangeUserRoleRequestDto`
-- `CreateProjectRequestDto`, `UpdateProjectRequestDto`, `ProjectResponseDto`
-- `CreateTeamRequestDto`, `UpdateTeamRequestDto`, `TeamResponseDto`
-- `ProjectTeamUpsertRequestDto`, `TeamMemberUpsertRequestDto`
-- `ToDoUpsertRequestDto`
-- `TimeLogUpsertRequestDto`
 
-### Enums (`Shared/Enums/`)
-- `UserRole` — User (0), Admin (1)
-- `ToDoStatus` — New, InProgress, Completed, OnHold, Cancelled
-- `TeamMemberRole` — Member (0), Owner (1)
-- `TimeFilter` — AllTime, DayAgo, WeekAgo, MonthAgo, YearAgo
+Organized into subfolders by entity:
+
+- **User/** — `CreateUserRequestDto`, `UpdateUserRequestDto`, `UserResponseDto` (no password), `ChangeUserRoleRequestDto`
+- **ToDo/** — `ToDoUpsertRequestDto`
+- **TimeLog/** — `TimeLogUpsertRequestDto`
+- **Team/** — `CreateTeamRequestDto`, `UpdateTeamRequestDto`, `TeamResponseDto`, `TeamMemberUpsertRequestDto`
+- **Project/** — `CreateProjectRequestDto`, `UpdateProjectRequestDto`, `ProjectResponseDto`, `ProjectTeamUpsertRequestDto`
+- **MainPageStatistic/** — `MainPageStatisticRequestDto`
+- **TwoFactorAuth/** — `SendTwoFactorCodeRequestDto`, `VerifyTwoFactorRequestDto`
+
+### Extensions (`Shared/Extensions/`)
+
+- `TimeFilterExtensions` — converts `TimeFilter` enum to a `DateTime` cutoff.
+- `MappingExtensions` — `.ToResponseDto()` and similar mapping helpers.
 
 ### Utils (`Shared/Utils/`)
-- `JwtTokenHelper` — Parses UserId and UserRole claims from an access token string.
+
+- `JwtTokenHelper` — parses `UserId` and `UserRole` claims from an access token string.
 - `NotEmptyGuidAttribute` — `ValidationAttribute` that rejects `Guid.Empty`.
 
 ---
@@ -233,12 +376,15 @@ All primary keys are `UNIQUEIDENTIFIER`. All FKs reference other tables by GUID.
 | Table | Columns |
 |-------|---------|
 | `Users` | Id, Username, Email, Password, UserRole (INT) |
-| `ToDos` | Id, NumberedId (INT), Title, Description, CreatedAt, DueDate, Status (INT), AssignedTo→Users, TeamId→Teams, ProjectId→Projects |
+| `UsersSecrets` | Id, UserId→Users, PasswordHash, PasswordSalt, RefreshToken, RefreshTokenExpiresAt |
+| `ToDos` | Id, NumberedId (INT), Title, Description, CreatedAt, DueDate, Status (INT), Type (INT nullable), AssignedTo→Users, TeamId→Teams, ProjectId→Projects |
 | `Teams` | Id, Name, Description, CreatedAt, CreatedBy→Users |
 | `TeamMembers` | Id, TeamId→Teams, UserId→Users, Role (INT), UQ(TeamId, UserId) |
 | `Projects` | Id, Name, Description, CreatedAt, CreatedBy→Users |
 | `ProjectTeams` | Id, ProjectId→Projects, TeamId→Teams, UQ(ProjectId, TeamId) |
-| `TimeLogs` | Id, ToDoId→ToDos, UserId→Users, HoursSpent (TIME), LogDate, LogDescription |
+| `TimeLogs` | Id, ToDoId→ToDos, UserId→Users, HoursSpent (DECIMAL), LogDate, LogDescription |
+| `TwoFactorCodes` | Id, UserId→Users, Code, ExpiresAt |
+| `ActivityLogs` | Id, ToDoId→ToDos (nullable), UserId→Users, Type (INT), Description, ActivityTime |
 
 ### Stored Procedures (`DataBase/StoredProcedures/`)
 
@@ -247,27 +393,49 @@ Naming convention: `sp_[EntityName]_[Operation]`
 | Entity | Procedures |
 |--------|-----------|
 | Users | GetAll, GetById, GetbyUsername, GetByEmail, GetByLoginParameter, Create, Update, DeleteById |
-| ToDos | GetAll, GetById, GetByAssignedTo, GetByTeamId, GetByProjectId, GetByNearestDueDateByUserId, GetCountByUserIdAndStatus, Create, Update, DeleteByid |
+| ToDos | GetAll, GetById, GetByAssignedTo, GetByTeamId, GetByProjectId, GetByNearestDueDateByUserId, GetCountByUserIdAndStatus, Create, Update, DeleteById |
 | TimeLogs | GetAll, GetById, GetByToDoId, GetByUserId, GetByUserIdAndToDoId, GetByUserIdAndTime, Create, Update, DeleteById |
 | Teams | GetAll, GetById, GetByUserId, Create, Update, DeleteById |
 | TeamMembers | GetById, GetByTeamId, GetByTeamIdAndUserId, Create, DeleteByTeamIdAndUserId |
 | Projects | GetAll, GetById, GetByUserId, Create, Update, DeleteById |
 | ProjectTeams | GetByProjectId, GetByProjectIdAndTeamId, Create, DeleteByProjectIdAndTeamId |
+| TwoFactorCodes | GetByUserId, Upsert, DeleteByUserId |
+| ActivityLogs | GetAll, GetByUserId, GetByToDoId, GetByUserIdAndToDoId, Create |
+| AccessControl | CanUserAccessProject, CanUserAccessTeam, CanUserAccessTimeLog, CanUserAccessToDo |
+| UsersSecrets | (via `IUserSecretsDataController`) |
+
+### Migrations (`DataBase/Migrations/`)
+
+Versioned migration scripts applied by `DbPublisher` at startup. New `.sql` migration files must be registered in `ToDoTimeManager.DataBase.sqlproj`.
+
+---
+
+## Aspire Orchestration
+
+Startup order enforced in `ToDoTimeManager.AppHost/Program.cs`:
+
+```
+DbPublisher  (WaitForCompletion — deploys schema + applies migrations)
+  → WebApi   (WaitForCompletion(dbPublish))
+    → WebUI  (WaitFor(api), WithReference(api))
+```
+
+`ToDoTimeManager.ServiceDefaults` provides shared Aspire configuration (health-check endpoints, OpenTelemetry, service-discovery defaults) and is referenced by both `WebApi` and `WebUI`.
+
+When running under Aspire, the WebUI `HttpClient` base address resolves to `https+http://webapi` via service discovery. `BaseApiUrlAddress` in `WebUI/appsettings.json` is only used when running WebUI in isolation.
 
 ---
 
 ## WebUI Pages
 
+Only two routed pages exist in `ToDoTimeManager.WebUI/Pages/`:
+
 | File | Route | Description |
 |------|-------|-------------|
-| `AuthPage.razor` | `/auth` | Multi-step auth: Login → (2FA), Registration → (2FA) with animated slide transitions |
-| `MainPage.razor` | `/dashboard` | Dashboard: time stats, heat-map calendar (color-coded by hours), upcoming due-date tasks |
-| `TasksPage.razor` | `/tasks` | To-do list with status filters and CRUD |
-| `TaskDetailsPage.razor` | `/taskDetails/{taskId}` | Single to-do detail view with time log history |
-| `TimeLogsPage.razor` | `/timelogs` | Time entry management |
-| `ProfilePage.razor` | `/profile` | User account settings |
+| `MainPage.razor` | `/` | Dashboard page |
+| `AuthPage.razor` | `/auth` | Multi-step auth: Login → 2FA, Registration → 2FA |
 
-Pages use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` (authenticated), `AuthLayout.razor` (unauthenticated).
+Both use code-behind files (`.razor.cs`). Layouts: `MainLayout.razor` for authenticated routes, `AuthLayout.razor` for the auth page.
 
 ### AuthPage Flow
 
@@ -278,124 +446,182 @@ AuthPage.razor
   └── BaseAuthForm (template: icon, title, subtitle, step indicator)
         ├── LoginForm      — credentials entry (step 1 of login)
         ├── RegisterForm   — account creation (step 1 of registration)
-        └── TwoFaForm      — 2FA code entry (step 2 of both flows)
+        └── TwoFAForm      — 2FA code entry (step 2 of both flows)
 ```
 
 Animation uses CSS classes (`--active`, `--hidden-right`, `--hidden-left`, `--exiting-*`, `--entering-*`) applied with a 450 ms transition.
 
 ---
 
-## WebUI Components
+## WebUI Components (`ToDoTimeManager.WebUI.Components`)
 
-### Base (`Components/Base/`)
-- **BaseComponent.cs** — Abstract base for all components. Provides injected `Localizer`, `IsLoading` state, `Loading(Func<Task>)` async wrapper, and `GetPageTitle(string)` that returns a `RenderFragment` with a localized title + "TaskForge" suffix.
-- **BaseAuthForm.razor** — Template layout for multi-step auth forms. Parameters: `FormContent` (RenderFragment), `Steps` (List\<string\>), `CurrentStep`, `MainIcon`, `MainText`, `SubText`.
+### BaseComponents
 
-### Shared (`Components/Shared/`)
-- **Input.razor** — Validated text input with icon support. Key parameters: `Value`/`ValueChanged`, `Type`, `IsPassword` (toggleable eye button), `Icon`, `IconPosition` (Left/Right), `UseValidation`, `ValidationFunc`. `StringValidationHelper` provides pre-built validators: `DefaultValidation`, `EmailValidation`, `PasswordValidation`, `UsernameValidation`, `ConfirmPasswordValidation`, `EmailOrUsernameValidation`.
-- **Button.razor** — Reusable button with icon, style variants (`Primary`, `Secondary`, `Ghost`), and optional `IsLoading` spinner.
-- **CheckInput.razor** — Checkbox with label.
-- **CustomDropdown.razor** — Searchable dropdown with single/multi-select, icons, and templated items. Uses `Input` internally for the search field.
-- **StepsComponent.razor** — Multi-step form progress indicator. Renders current step with i18n label + "In Progress" status; completed steps show a checkmark.
-- `CultureSelector.razor` — Language switcher (en-US / uk-UA), posts to `CultureController`.
-- `Loader.razor` — Spinner displayed during async operations.
-- `Divider.razor` — Visual separator.
-- `Icons/` — Individual SVG icon components (Bootstrap Icons as Razor components).
+- **`BaseComponent.cs`** — Abstract base for all Razor components. Provides:
+  - Injected `IStringLocalizer<Resource> Localizer`
+  - `IsLoading` flag + `SkeletonLoading` CSS helper string
+  - `Loading(Func<Task>)` async wrapper (sets `IsLoading`, calls `StateHasChanged`)
+  - `GetPageTitle(string)` returns a `<PageTitle>` `RenderFragment` with localized name + " - TaskForge"
 
-### Modals (`Components/Modals/`)
-- **TaskCreateEditModal.razor** — Create/edit to-do (Title, Description, Status, DueDate). Parameters: `Show`, `Title`, `Task`, `IsEditMode`. Emits `ModalResult`.
-- **LogTimeModal.razor** — Create/edit time log (TaskNumber, HoursSpent, LogDescription). Parameters: `Show`, `Title`, `Task`, `BlockTaskNumberInput`, `IsEditMode`, `ExistingTimeLog`. Emits `ModalResult` with `TimeLog` and `TaskNumber`.
-- **ConfirmationModal.razor** — Generic confirmation dialog.
-- **UserEditModal.razor** — User profile editing.
+### PageComponents (`PageComponents/AuthPage/`)
 
-### Toast System (`Components/Toast/`)
-- `Toast.razor` — Single toast notification.
-- `ToastBox.razor` / `ToastBox.razor.cs` — Container that renders active toasts.
-- `ToastsService` (singleton) — `ShowError(msg)` / `ShowSuccess(msg)` used throughout pages.
+- **`BaseAuthForm.razor`** — Template layout for multi-step auth. Parameters: `FormContent` (RenderFragment), `Steps` (List\<string\>), `CurrentStep`, `MainIcon`, `MainText`, `SubText`.
+- **`StepsComponent.razor`** — Multi-step progress indicator.
+- **`Forms/LoginForm.razor`**, **`RegisterForm.razor`**, **`TwoFAForm.razor`** — Auth step components.
+
+### StaticComponents / Elements
+
+- **`Input.razor`** — Validated text input with icon support. Key parameters: `Value`/`ValueChanged`, `Type`, `IsPassword` (toggleable eye button), `Icon`, `IconPosition` (Left/Right), `UseValidation`, `ValidationFunc`. Pre-built validators in `StringValidationHelper`: `DefaultValidation`, `EmailValidation`, `PasswordValidation`, `UsernameValidation`, `ConfirmPasswordValidation`, `EmailOrUsernameValidation`.
+- **`Button.razor`** — Button with icon, style variants (`Primary`, `Secondary`, `Ghost`), and optional `IsLoading` spinner.
+- **`CheckInput.razor`** — Checkbox with label.
+- **`CustomDropdown.razor`** — Searchable dropdown with single/multi-select and templated items.
+- **`CultureSelector.razor`** — Language switcher (en-US / uk-UA), posts to `CultureController`.
+
+### StaticComponents / Icons
+
+All SVG icon components as individual `.razor` files (Bootstrap Icons). Country flag icons are nested under `Icons/Countries/`.
+
+### StaticComponents / Toast
+
+- **`Toast.razor`** — Single toast notification.
+- **`ToastBox.razor`** — Container that renders active toasts.
+
+### Modals
+
+- **`ModalContainer.razor`** — Dynamic modal host; renders modals registered via `IModalService`.
+- **`ConfirmModal.razor`** — Generic confirmation dialog.
+
+### Shared
+
+- **`NavMenu.razor`** — Navigation sidebar.
+- **`Scene.razor`** — Page scene/background wrapper.
+- **`Layouts/MainLayout.razor`** — Authenticated layout.
+- **`Layouts/AuthLayout.razor`** — Unauthenticated layout.
+- **`Layouts/Helpers/RedirectToLogin.razor`** — Redirects unauthenticated users to `/auth`.
 
 ---
 
-## WebUI Services
+## WebUI Services (`ToDoTimeManager.WebUI.Services`)
 
-### HTTP Services (`Services/HttpServices/`)
+### HTTP Services (`HttpServices/`)
 
 `BaseHttpService` creates the named `"TodoTimeManager"` `HttpClient` and provides `Url(action)` helpers.
 
-| Service | WebApi controller |
-|---------|------------------|
-| `AuthService` | `Auth` |
-| `UserService` | `Users` |
-| `ToDosService` | `ToDos` |
-| `TimeLogsService` | `TimeLogs` |
-| `StatisticService` | `Statistic` |
+| Service | Talks to |
+|---------|---------|
+| `AuthService` | `Auth` controller |
+| `UserService` | `Users` controller |
+| `ToDosService` | `ToDos` controller |
+| `TimeLogsService` | `TimeLogs` controller |
+| `TeamsService` | `Teams` controller |
+| `ProjectsService` | `Projects` controller |
+| `StatisticService` | `Statistic` controller |
 
-### Other Services (`Services/Implementations/`)
-- `CustomAuthStateProvider` — Extends `AuthenticationStateProvider`; reads/writes tokens via `ProtectedLocalStorage`; auto-refreshes expired access tokens.
-- `ToastsService` — Singleton; manages the active toast notification list.
+### Services (`Services/`)
 
-### Circuit Services (`Services/CircuitServicesAccesor/`)
-- `CircuitServicesAccesor` — Provides `IServiceProvider` access from outside the Blazor circuit scope (used in `CustomAuthStateProvider`).
-- `ServicesAccessorCircuitHandler` — `CircuitHandler` that sets/clears the accessor on connect/disconnect.
+- **`CustomAuthStateProvider`** — Extends `AuthenticationStateProvider`; reads/writes tokens via `ProtectedLocalStorage`; auto-refreshes expired access tokens using `TokenRefreshService`.
+- **`ToastsService`** — Singleton; manages the active toast notification list. `ShowError(msg)`, `ShowSuccess(msg)`, `ShowWarning(msg)`.
+- **`ModalService`** — Scoped; opens/closes modals via `IModalService`.
+- **`TokenRefreshService`** — Serializes concurrent token-refresh calls so only one outbound refresh request is made at a time.
+- **`TwoFaTimerService`** — Manages the countdown timer displayed on the 2FA form.
+
+### Helpers (`Helpers/`)
+
+- **`CircuitServicesAccesor/`** — `CircuitServicesAccesor.cs` and `ServicesAccessorCuircutHandler.cs` provide `IServiceProvider` access outside the Blazor circuit scope.
+- **`Modal/`** — `ModalParameters.cs` (key-value bag for modal params), `ModalReference.cs` (handle to await modal result).
 
 ---
 
-## WebUI-Only Enums (`WebUI/Models/Enums/`)
+## WebUI Models (`ToDoTimeManager.WebUI.Models`)
 
-These are UI-layer enums that do **not** belong in the Shared project:
+### UI-Only Enums (`Enums/`)
 
 | Enum | Values |
 |------|--------|
+| `AuthPageCurrentState` | Login, Registration, TwoFA |
+| `ToastType` | Success, Error, Warning |
 | `InputStyle` | Default, Ghost |
 | `InputIconPosition` | Left, Right |
 | `ButtonStyle` | Primary, Secondary, Ghost |
 | `ButtonIconPosition` | Left, Right |
-| `AuthPageCurrentState` | Login, Registration, TwoFA |
+
+### Models (`Models/`)
+
+- `ToastModel` — Manages toast lifecycle (animation, auto-dismiss timer, disposal).
+- `PendingTwoFaSessionState` — Holds the pending 2FA session on the client (userId, masked email).
 
 ---
 
 ## Configuration
 
-### WebApi (`WebApi/appsettings.json`)
+### WebApi (`ToDoTimeManager.WebApi/appsettings.json`)
+
 ```json
 {
   "JwtSettings": {
-    "Key": "NbpX8eP2W5pLdSwxkJf3eI2/TsR9aNHJ",
     "Issuer": "ToDoTimeManager",
     "Audience": "ToDoTimeManager.UI",
-    "AccessTokenLifetime": "15",
-    "RefreshTokenLifetime": "14"
+    "AccessTokenLifetime": "30",
+    "RefreshTokenLifetime": "30"
   },
   "ConnectionStrings": {
-    "DefaultConnection": "Data Source=.;Initial Catalog=ToDoTimeManager;Integrated Security=True;Trust Server Certificate=True"
+    "DefaultConnection": "Data Source=.;Initial Catalog=TaskForge_DB;Integrated Security=True;Trust Server Certificate=True"
+  },
+  "TwoFactorSettings": {
+    "CodeLifetimeMinutes": "5"
+  },
+  "EmailSettings": {
+    "Host": "smtp.gmail.com",
+    "Port": "587",
+    "SenderName": "Task Forge"
   }
 }
 ```
-- AccessTokenLifetime is in **minutes**; RefreshTokenLifetime is in **days**.
-- ClockSkew is `TimeSpan.Zero` — no grace period on token expiry.
 
-### WebUI (`WebUI/appsettings.json`)
+- `AccessTokenLifetime` is in **minutes**; `RefreshTokenLifetime` is in **days**.
+- ClockSkew is `TimeSpan.Zero` — no grace period on token expiry.
+- The JWT signing key and email credentials are supplied via user secrets or environment variables — not committed to source control.
+
+### WebUI (`ToDoTimeManager.WebUI/appsettings.json`)
+
 ```json
 {
   "BaseApiUrlAddress": "https://localhost:7130/"
 }
 ```
 
-### CSS Build (`WebUI/gulpfile.js`)
+### CSS Build (`ToDoTimeManager.WebUI/gulpfile.js`)
+
 - Sources: `wwwroot/css/**/*.css` (excluding `site.min.css`)
 - Pipeline: concat → CleanCSS minify → rename to `site.min.css`
-- Per-component CSS files live in `wwwroot/css/components/` (e.g. `inputs.css`)
+- Per-component CSS: `wwwroot/css/components/` (e.g. `inputs.css`, `buttons.css`)
+- Per-page CSS: `wwwroot/css/pages/`
 - `gulp build` — one-shot build; `gulp` (default) — build + watch.
 
 ---
 
 ## Key Conventions for Modifications
 
-1. **New API endpoint** → add a stored procedure in `DataBase/StoredProcedures/`, implement a data controller method (interface + implementation), call it from a business service, expose via controller. Never write inline SQL.
-2. **New shared type** → add to `Shared/Models/` or `Shared/DTOs/`; never duplicate in WebApi or WebUI.
-3. **New UI page** → create `Pages/MyPage.razor` + `Pages/MyPage.razor.cs`; use `MainLayout` for authenticated pages, `AuthLayout` for public ones.
-4. **New reusable component** → extend `BaseComponent` to inherit `Localizer`, `IsLoading`, and `Loading()`. Add component-specific CSS under `wwwroot/css/components/` — it will be picked up by the gulp pipeline automatically.
-5. **Localized strings** → add entries to `WebUI/Localization/Resource.resx` (default/uk-UA) and `Resource.en-US.resx`; inject `IStringLocalizer<Resource>` in the component.
-6. **Error responses** → throw a `CustomException` in service code; `GlobalExceptionHandler` middleware catches it on the API side. On the UI side, `ToastMessageHandler` converts HTTP errors into toast notifications automatically.
-7. **Authorization checks** → role guard with `[Authorize(Roles="Admin")]` on the controller action; ownership checks (is this the user's own resource?) inside the business service.
-8. **DTOs vs Models** → controllers accept/return DTOs; services operate on shared models; entities are internal to `WebApi` and never leak to `WebUI`.
-9. **UI-only enums** → place in `WebUI/Models/Enums/` — not in the Shared project.
+1. **New API endpoint** — add a stored procedure in `DataBase/StoredProcedures/<Entity>/` and register it in `ToDoTimeManager.DataBase.sqlproj`; implement the method on the data controller (interface in `DataAccess/DataControllers/Interfaces/`, implementation in `DataAccess/DataControllers/Implementation/`); call it from a business service in `Business/Services/Implementations/`; expose it via a controller in `WebApi/Controllers/`. Never write inline SQL.
+
+2. **New shared type** — add to `Shared/Models/`, `Shared/DTOs/<Entity>/`, or `Shared/Enums/`. Never duplicate in any other project.
+
+3. **New UI page** — create `WebUI/Pages/MyPage.razor` + `WebUI/Pages/MyPage.razor.cs`; use `@layout MainLayout` for authenticated pages, `@layout AuthLayout` for public ones; inherit `BaseComponent` in the code-behind.
+
+4. **New reusable component** — place in `WebUI.Components/` under the appropriate subfolder. Inherit `BaseComponent` to get `Localizer`, `IsLoading`, and `Loading()`. Add component-specific CSS to `wwwroot/css/components/` — it is picked up by the gulp pipeline automatically.
+
+5. **Localized strings** — add entries to `WebUI.Components/Resources/Resource.resx` (default/uk-UA) and `Resource.en-US.resx`. `BaseComponent` already injects `IStringLocalizer<Resource>` as `Localizer`.
+
+6. **Error responses** — throw a typed exception (`ConflictException`, `ForbiddenException`, `NotFoundException`, `ValidationException`) from `Entities/Exceptions/`. `GlobalExceptionHandler` catches it on the API side. On the UI side, `ToastMessageHandler` converts HTTP errors into toast notifications automatically.
+
+7. **Authorization checks** — use `[Authorize(Roles = "Manager,Admin")]` on controller actions for role guards; perform ownership checks inside business services using `GetCurrentUserId()` / `GetCurrentUserRole()` values passed down from the controller.
+
+8. **Activity log tracking** — whenever a mutating operation succeeds on a `ToDo`, `TimeLog`, or `User`, call `IActivityLogsService` to write an `ActivityLog` entry.
+
+9. **DTOs vs Models** — controllers accept/return DTOs; business services operate on shared models; entities are internal to `DataAccess`/`Business` and must never reach `WebUI`.
+
+10. **UI-only enums** — place in `WebUI.Models/Enums/` — not in the Shared project.
+
+11. **New utility service** — add the interface to `Business.Utils/Interfaces/` and the implementation to `Business.Utils/Implementations/`; register in `WebApi/Program.cs`.
+
+12. **New SQL file** — every new `.sql` file (stored procedure, table, or migration) must be registered in `ToDoTimeManager.DataBase.sqlproj`.
