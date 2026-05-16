@@ -30,7 +30,20 @@
       "PowerShell(New-Item -ItemType Directory -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\" -Force)",
       "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.resx\")",
       "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.en-US.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.en-US.resx\")",
-      "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.uk-UA.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.uk-UA.resx\")"
+      "PowerShell(Copy-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\Resources\\\\Resource.uk-UA.resx\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.uk-UA.resx\")",
+      "Bash(aspire doctor *)",
+      "Bash(Stop-Process -Id 21284 -Force -ErrorAction SilentlyContinue)",
+      "Bash(Stop-Process -Id 46708 -Force -ErrorAction SilentlyContinue)",
+      "Bash(Write-Host \"Processes stopped\")",
+      "PowerShell(Stop-Process *)",
+      "Bash(aspire start *)",
+      "Bash(Get-Content *)",
+      "PowerShell(Start-Process -FilePath \"aspire\" -ArgumentList \"start\" -WorkingDirectory \"D:\\\\Projects\\\\ToDoTimeManager\" -RedirectStandardOutput \"$env:TEMP\\\\aspire_start.log\" -RedirectStandardError \"$env:TEMP\\\\aspire_start_err.log\" -PassThru | Select-Object -ExpandProperty Id)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Remove-Item *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
