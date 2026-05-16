@@ -6,7 +6,7 @@
         {
             var step = Steps[i];
             var isActive = step.Equals(CurrentStep, StringComparison.OrdinalIgnoreCase);
-            var isDone = i < Steps.IndexOf(CurrentStep);
+            var isDone = i < Steps.IndexOf(CurrentStep ?? string.Empty);
             <div class="ladder-step @(isActive ? "active" : isDone ? "done" : string.Empty)">
                 @if(isDone) {
                     <span class="num"><CheckmarkIcon IconSize="10"/> </span>

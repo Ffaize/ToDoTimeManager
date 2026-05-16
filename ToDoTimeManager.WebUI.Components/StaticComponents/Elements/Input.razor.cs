@@ -18,11 +18,7 @@ public partial class Input
 
     [Parameter] public bool UseValidation { get; set; }
     [Parameter] public Func<string?, string>? ValidationFunc { get; set; } = StringValidationHelper.DefaultValidation;
-    [Parameter] public bool IsValid
-    {
-        get => _validationState == ValidationState.Valid;
-        set;
-    }
+    [Parameter] public bool IsValid { get; set; }
     [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
 
 
@@ -51,7 +47,8 @@ public partial class Input
             ? ValidationState.Valid
             : ValidationState.Invalid;
 
-        await IsValidChanged.InvokeAsync(_validationState == ValidationState.Valid);
+        IsValid = _validationState == ValidationState.Valid;
+        await IsValidChanged.InvokeAsync(IsValid);
     }
 
     private string GetStyleClass() => Style switch

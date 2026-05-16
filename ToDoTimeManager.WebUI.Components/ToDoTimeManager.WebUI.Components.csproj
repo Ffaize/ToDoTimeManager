@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ToDoTimeManager.Shared\ToDoTimeManager.Shared.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebUI.Utils\ToDoTimeManager.WebUI.Utils.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebUI.Services\ToDoTimeManager.WebUI.Services.csproj" />

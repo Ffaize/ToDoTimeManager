@@ -23,8 +23,8 @@ public class PendingTwoFaSessionState
         
     }
 
-    public string MaskedEmail { get; set; }
-    public string SenderEmail { get; set; }
+    public string MaskedEmail { get; set; } = string.Empty;
+    public string SenderEmail { get; set; } = string.Empty;
     public bool KeepSignedIn { get; set; }
     public int CodeLifetimeSeconds { get; set; }
     public AuthPageCurrentState SourceState { get; set; }

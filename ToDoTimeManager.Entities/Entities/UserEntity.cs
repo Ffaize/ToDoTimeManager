@@ -8,6 +8,7 @@ public class UserEntity
 
     public UserEntity(User? user)
     {
+        if (user == null) return;
         Id = user.Id;
         UserName = user.UserName;
         Email = user.Email;
