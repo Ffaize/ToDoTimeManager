@@ -66,16 +66,44 @@ if (!File.Exists(dacpacPath))
 Console.WriteLine($"Loading publish profile: {publishXmlPath}");
 var profile = DacProfile.Load(publishXmlPath);
 
-Console.WriteLine($"Publishing '{profile.TargetDatabaseName}'...");
 var dacServices = new DacServices(profile.TargetConnectionString);
 dacServices.Message += (_, e) => Console.WriteLine(e.Message);
 dacServices.ProgressChanged += (_, e) => Console.WriteLine($"[{e.Status}] {e.Message}");
 
 using var dacPackage = DacPackage.Load(dacpacPath);
+
+// --- Check for schema differences before publishing ---
+Console.WriteLine($"Checking '{profile.TargetDatabaseName}' for schema differences...");
+
+try
+{
+    var deployReport = dacServices.GenerateDeployReport(
+        dacPackage,
+        targetDatabaseName: profile.TargetDatabaseName,
+        options: profile.DeployOptions);
+
+    var doc = System.Xml.Linq.XDocument.Parse(deployReport);
+    var ns = doc.Root?.Name.Namespace ?? System.Xml.Linq.XNamespace.None;
+    var operationCount = doc.Descendants(ns + "Operation").Count();
+
+    if (operationCount == 0)
+    {
+        Console.WriteLine("Database is already up to date. Skipping publish.");
+        return 0;
+    }
+
+    Console.WriteLine($"Detected {operationCount} pending schema operation(s). Publishing...");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Schema comparison failed ({ex.Message}). Proceeding with publish to be safe.");
+}
+
 dacServices.Deploy(dacPackage, targetDatabaseName: profile.TargetDatabaseName,
     upgradeExisting: true, options: profile.DeployOptions);
 
 Console.WriteLine("Database published successfully.");
+
 return 0;
 
 static (int ExitCode, string StdOut, string StdErr) Run(string fileName, string arguments)
