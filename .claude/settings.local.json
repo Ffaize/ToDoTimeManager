@@ -43,7 +43,11 @@
       "PowerShell(Remove-Item *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Skill(aspire)",
+      "Bash(aspire stop *)",
+      "Bash(node -e \"const fs=require\\('fs'\\); const css=fs.readFileSync\\('site.min.css','utf8'\\); const idx=css.indexOf\\('auth-form-slide'\\); console.log\\(css.substring\\(idx-10, idx+800\\)\\);\")",
+      "Bash(node -e ' *)"
     ]
   }
 }
