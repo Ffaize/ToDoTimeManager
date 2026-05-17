@@ -1,7 +1,14 @@
 @using ToDoTimeManager.WebUI.Models.Enums.Button
 @inherits ToDoTimeManager.WebUI.Components.BaseComponents.BaseComponent
 
-<div class="form-eyebrow">@Localizer["TWO-FACTOR_UPPER"] · @Localizer["STEP"] 2</div>
+<div class="form-header">
+    <div class="brand-row" style="display: none">
+        <div class="brand-logo">
+        </div>
+        <span class="brand-name">Task<span>Forge</span></span>
+    </div>
+    <div class="form-eyebrow">@Localizer["TWO-FACTOR_UPPER"] · @Localizer["STEP"] 2</div>
+</div>
 <div>
     <h1 class="form-title">@Localizer["Light the forge."]</h1>
     <p class="form-sub">
@@ -34,12 +41,12 @@
 </div>
 
 <Button Disabled="@(IsButtonDisabled)"
-        OnClick="@OnVerifyClicked"
-        IsLoading="@IsLoading"
-        UseLoading="true"
-        Style="@ButtonStyle.Primary"
-        IconPosition="ButtonIconPosition.Right"
-        Text="@Localizer["Verify code"]">
+    OnClick="@OnVerifyClicked"
+    IsLoading="@IsLoading"
+    UseLoading="true"
+    Style="@ButtonStyle.Primary"
+    IconPosition="ButtonIconPosition.Right"
+    Text="@Localizer["Verify code"]">
     <Icon>
         <ArrowRightIcon IconSize="14" />
     </Icon>

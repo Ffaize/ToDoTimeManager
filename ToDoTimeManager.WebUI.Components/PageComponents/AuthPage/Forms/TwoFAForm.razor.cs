@@ -48,11 +48,25 @@ public partial class TwoFAForm : IDisposable
         TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
         if (TwoFaTimer != null)
         {
-            _timerHandler = seconds => { _remainingSeconds = seconds; InvokeAsync(StateHasChanged); };
+            _timerHandler = seconds =>
+            {
+                _remainingSeconds = seconds;
+                if (seconds <= 0)
+                    InvokeAsync(HandleTimerExpiredAsync);
+                else
+                    InvokeAsync(StateHasChanged);
+            };
             TwoFaTimer?.OnRemainingSecondsChanged += _timerHandler;
         }
 
         base.OnParametersSet();
+    }
+
+    private async Task HandleTimerExpiredAsync()
+    {
+        OtpValues = new string[6];
+        await ProtectedLocalStorage.RemovePendingTwoFaContextAsync();
+        if (GoTo != null) await GoTo(AuthPageCurrentState.Login);
     }
 
     private async Task OnResendCodeClicked()

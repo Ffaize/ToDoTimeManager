@@ -100,11 +100,11 @@
 }
 
 .auth-page__form {
-    width: min(960px, 100%);
-    max-height: 100%;
-    min-height: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    width: 90vw;
+    max-width: 900px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: row;
     background: linear-gradient(180deg, rgba(28, 33, 41, 0.85), rgba(17, 19, 23, 0.85));
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -136,7 +136,7 @@
     justify-content: space-between;
     min-height: 0;
     overflow: hidden;
-    width: 450px !important;
+    flex: 1;
 }
 
     .form-panel::after {
@@ -312,9 +312,8 @@
     gap: 10px;
     background: linear-gradient(180deg, rgba(22, 26, 32, .4), rgba(17, 19, 23, .4));
     position: relative;
-    overflow-y: auto;
-    scrollbar-width: none;
-    width: 450px !important;
+    overflow-y: hidden;
+    flex: 1;
 }
 
     .form-wrap::-webkit-scrollbar {
@@ -491,6 +490,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--text-3);
+    gap: 5px;
     letter-spacing: 0.04em;
 }
 
@@ -574,4 +574,30 @@
 .helper-row a:hover {
     color: var(--ember-2);
     border-color: var(--ember-2);
+}
+
+.form-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+@media (max-width: 900px) {
+    .form-panel {
+        display: none;
+    }
+
+    .form-wrap .brand-row {
+        display: flex !important;
+    }
+
+    .form-eyebrow::before {
+        width: 0px;
+    }
+
+    .form-wrap {
+        padding: 20px 24px;
+    }
 }

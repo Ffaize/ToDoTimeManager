@@ -10,56 +10,74 @@
 <div class="auth-page">
     <CultureSelector AdditionalCssClass="auth-page__culture-selector" />
     <div class="auth-page__forms">
-        <div class="@GetSlideClass(AuthPageCurrentState.Login)">
-            <BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
-                <MainIcon>
-                    <CheckGridIcon IconSize="200"/>
-                </MainIcon>
-                <MainText>
-                    <em>@Localizer["Forge clarity"]</em>
-                    <span>@Localizer["from chaos."]</span>
-                </MainText>
-                <SubText>
-                    @Localizer["Track, prioritize, and ship work with the precision of a master smith."]
-                </SubText>
-                <FormContent>
-                    <LoginForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
-                </FormContent>
-            </BaseAuthForm>
-        </div>
-        <div class="@GetSlideClass(AuthPageCurrentState.Registration)">
-            <BaseAuthForm Steps="@([RegisterStepName, TwoFaStepName])" CurrentStep="@RegisterStepName">
-                <MainIcon>
-                    <AnvilIcon IconSize="200"/>
-                </MainIcon>
-                <MainText>
-                    <em>@Localizer["Build something worth shipping."]</em>
-                </MainText>
-                <SubText>
-                    @Localizer["Free for solo smiths. No card required. Bring your team when you're ready."]
-                </SubText>
-                <FormContent>
-                    <RegisterForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
-                </FormContent>
-            </BaseAuthForm>
-        </div>
-        <div class="@GetSlideClass(AuthPageCurrentState.TwoFA)">
-            <BaseAuthForm Steps="@([_session.SourceState == AuthPageCurrentState.Login ? SignInStepName : RegisterStepName, TwoFaStepName])" CurrentStep="@TwoFaStepName">
-                <MainIcon>
-                    <LockShieldIcon IconSize="200"/>
-                </MainIcon>
-                <MainText>
-                    <span>@Localizer["Two-factor"]</span>
-                    <em>@Localizer["authentication"]</em>
-                    <span>@Localizer["keeps your account safe."]</span>
-                </MainText>
-                <SubText>
-                    @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
-                </SubText>
-                <FormContent>
-                    <TwoFAForm GoTo="@GoTo" SessionState="_session" User="_user"/>
-                </FormContent>
-            </BaseAuthForm>
+        @if (_exitingState.HasValue)
+        {
+            <div class="auth-form-slide @_exitingClass">
+                @GetFormSlide(_exitingState.Value)
+            </div>
+        }
+        <div class="auth-form-slide @_activeClass">
+            @GetFormSlide(_activeState)
         </div>
     </div>
 </div>
+
+@code {
+    private RenderFragment GetFormSlide(AuthPageCurrentState state) => state switch
+    {
+        AuthPageCurrentState.Registration => RegistrationSlide,
+        AuthPageCurrentState.TwoFA => TwoFaSlide,
+        _ => LoginSlide
+    };
+
+    private RenderFragment LoginSlide =>
+        @<BaseAuthForm Steps="@([SignInStepName, TwoFaStepName])" CurrentStep="@SignInStepName">
+            <MainIcon>
+                <CheckGridIcon IconSize="200"/>
+            </MainIcon>
+            <MainText>
+                <em>@Localizer["Forge clarity"]</em>
+                <span>@Localizer["from chaos."]</span>
+            </MainText>
+            <SubText>
+                @Localizer["Track, prioritize, and ship work with the precision of a master smith."]
+            </SubText>
+            <FormContent>
+                <LoginForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
+            </FormContent>
+        </BaseAuthForm>;
+
+    private RenderFragment RegistrationSlide =>
+        @<BaseAuthForm Steps="@([RegisterStepName, TwoFaStepName])" CurrentStep="@RegisterStepName">
+            <MainIcon>
+                <AnvilIcon IconSize="200"/>
+            </MainIcon>
+            <MainText>
+                <em>@Localizer["Build something worth shipping."]</em>
+            </MainText>
+            <SubText>
+                @Localizer["Free for solo smiths. No card required. Bring your team when you're ready."]
+            </SubText>
+            <FormContent>
+                <RegisterForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" />
+            </FormContent>
+        </BaseAuthForm>;
+
+    private RenderFragment TwoFaSlide =>
+        @<BaseAuthForm Steps="@([_session.SourceState == AuthPageCurrentState.Login ? SignInStepName : RegisterStepName, TwoFaStepName])" CurrentStep="@TwoFaStepName">
+            <MainIcon>
+                <LockShieldIcon IconSize="200"/>
+            </MainIcon>
+            <MainText>
+                <span>@Localizer["Two-factor"]</span>
+                <em>@Localizer["authentication"]</em>
+                <span>@Localizer["keeps your account safe."]</span>
+            </MainText>
+            <SubText>
+                @Localizer["We send a one-time code to your inbox every time you sign in. Even if someone learns your password, they can't reach your work without it."]
+            </SubText>
+            <FormContent>
+                <TwoFAForm GoTo="@GoTo" SessionState="_session" User="_user"/>
+            </FormContent>
+        </BaseAuthForm>;
+}

@@ -30,49 +30,41 @@ public partial class AuthPage
         AuthPageCurrentState.TwoFA,
     ];
 
-    private AuthPageCurrentState AuthPageCurrentState { get; set; } = AuthPageCurrentState.Login;
     protected const string SignInStepName = "sign-in";
     protected const string RegisterStepName = "register";
     protected const string TwoFaStepName = "two-fa";
 
-    private bool _isAnimating = false;
+    private bool _isAnimating;
+    private AuthPageCurrentState _activeState = AuthPageCurrentState.Login;
+    private AuthPageCurrentState? _exitingState;
+    private string _activeClass = "auth-form-slide--active";
+    private string _exitingClass = string.Empty;
 
     private PendingTwoFaSessionState _session = new();
     private UserResponseDto _user = new();
 
-    private readonly Dictionary<AuthPageCurrentState, string> _slideClasses = new()
-    {
-        { AuthPageCurrentState.Login,         "auth-form-slide--active"       },
-        { AuthPageCurrentState.Registration,  "auth-form-slide--hidden-right" },
-        { AuthPageCurrentState.TwoFA,         "auth-form-slide--hidden-right" },
-    };
-
     protected async Task GoTo(AuthPageCurrentState target)
     {
         if (_isAnimating) return;
-        var current = AuthPageCurrentState;
+        var current = _activeState;
         if (current == target) return;
 
         _isAnimating = true;
         if (target == AuthPageCurrentState.TwoFA)
             _session.SourceState = current;
+
         var isForward = Array.IndexOf(NavOrder, target) > Array.IndexOf(NavOrder, current);
 
-        _slideClasses[current] = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
-        _slideClasses[target] = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
-        AuthPageCurrentState = target;
+        _exitingState = current;
+        _exitingClass = isForward ? "auth-form-slide--exiting-left" : "auth-form-slide--exiting-right";
+        _activeState = target;
+        _activeClass = isForward ? "auth-form-slide--entering-right" : "auth-form-slide--entering-left";
 
         await InvokeAsync(StateHasChanged);
         await Task.Delay(450);
 
-        foreach (var state in NavOrder)
-        {
-            if (state == target) continue;
-            var isOnRight = Array.IndexOf(NavOrder, state) > Array.IndexOf(NavOrder, target);
-            _slideClasses[state] = isOnRight ? "auth-form-slide--hidden-right" : "auth-form-slide--hidden-left";
-        }
-        _slideClasses[target] = "auth-form-slide--active";
-
+        _exitingState = null;
+        _activeClass = "auth-form-slide--active";
         _isAnimating = false;
         await InvokeAsync(StateHasChanged);
     }
@@ -101,21 +93,9 @@ public partial class AuthPage
         var pendingSessionState = await ProtectedLocalStorage.GetPendingTwoFaSessionStateAsync();
         _session = pendingSessionState ?? new PendingTwoFaSessionState { SourceState = AuthPageCurrentState.Login };
 
-
-        foreach (var state in NavOrder)
-        {
-            _slideClasses[state] = state == AuthPageCurrentState.TwoFA
-                ? "auth-form-slide--active"
-                : (Array.IndexOf(NavOrder, state) < Array.IndexOf(NavOrder, AuthPageCurrentState.TwoFA)
-                    ? "auth-form-slide--hidden-left"
-                    : "auth-form-slide--hidden-right");
-        }
-        AuthPageCurrentState = AuthPageCurrentState.TwoFA;
+        _activeState = AuthPageCurrentState.TwoFA;
         await InvokeAsync(StateHasChanged);
     }
-
-    protected string GetSlideClass(AuthPageCurrentState state) =>
-        $"auth-form-slide {_slideClasses[state]}";
 
     protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)
     {

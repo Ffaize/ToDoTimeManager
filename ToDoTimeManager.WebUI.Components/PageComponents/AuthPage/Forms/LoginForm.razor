@@ -4,7 +4,14 @@
 @using ToDoTimeManager.WebUI.Utils
 @inherits BaseComponent
 
-<div class="form-eyebrow">@Localizer["SIGN IN"] · @Localizer["STEP"] 1</div>
+<div class="form-header">
+    <div class="brand-row" style="display: none">
+        <div class="brand-logo">
+        </div>
+        <span class="brand-name">Task<span>Forge</span></span>
+    </div>
+    <div class="form-eyebrow">@Localizer["SIGN IN"] · @Localizer["STEP"] 1</div>
+</div>
 <div>
     <h1 class="form-title">@Localizer[$"Welcome back, smith."]</h1>
     <p class="form-sub">@Localizer["New to TaskForge?"] <a @onclick="OnCreateAccountClicked">@Localizer["Create an account"]</a> · @Localizer["takes 30s."]</p>
@@ -54,7 +61,7 @@
         @Localizer["Keep me signed in"]
     </Text>
 </CheckInput>
-            
+
 <Button Disabled="@(IsButtonDisabled)"
     OnClick="@OnSignInClicked"
     IsLoading="@IsLoading"
