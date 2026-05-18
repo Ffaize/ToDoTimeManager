@@ -171,6 +171,9 @@
   <data name="Contact your forge admin" xml:space="preserve">
     <value>Contact your forge admin</value>
   </data>
+  <data name="Terms of Service" xml:space="preserve">
+    <value>Умови використання</value>
+  </data>
   <data name="Forge clarity" xml:space="preserve">
     <value>Forge clarity</value>
   </data>

@@ -71,6 +71,7 @@ public class Program
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IUsersDataController, UsersDataController>();
+        builder.Services.AddScoped<IUserSettingsDataController, UserSettingsDataController>();
         builder.Services.AddScoped<IAccessControlDataController, AccessControlDataController>();
         builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
         builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
@@ -81,6 +82,7 @@ public class Program
         builder.Services.AddScoped<IActivityLogsDataController, ActivityLogsDataController>();
 
         builder.Services.AddScoped<IUsersService, UsersService>();
+        builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
         builder.Services.AddScoped<IToDosService, ToDosService>();
         builder.Services.AddScoped<ITimeLogsService, TimeLogsService>();
         builder.Services.AddScoped<IAuthService, AuthService>();

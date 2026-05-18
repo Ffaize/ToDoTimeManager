@@ -258,6 +258,9 @@
   <data name="and" xml:space="preserve">
     <value>and</value>
   </data>
+  <data name="Terms of Service" xml:space="preserve">
+    <value>Terms of Service</value>
+  </data>
   <data name="Privacy Policy" xml:space="preserve">
     <value>Privacy Policy</value>
   </data>

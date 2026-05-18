@@ -28,14 +28,13 @@ public class AuthService : BaseHttpService
         }
     }
 
-    // Returns TwoFactorPendingModel — the JWT is issued only after VerifyCode succeeds.
-    public async Task<TwoFactorPendingModel?> Login(LoginUser user)
+    public async Task<LoginResponse?> Login(LoginUser user)
     {
         try
         {
             var response = await _httpClient.PostAsJsonAsync(Url("Login"), user);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TwoFactorPendingModel>();
+            return await response.Content.ReadFromJsonAsync<LoginResponse>();
         }
         catch (Exception ex)
         {

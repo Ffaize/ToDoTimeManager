@@ -1,9 +1,9 @@
-﻿CREATE PROCEDURE [dbo].[sp_Users_GetAll]
+CREATE PROCEDURE [dbo].[sp_Users_GetAll]
 AS
 BEGIN
     SET NOCOUNT ON;
     SELECT Id,
-           UserName,
+           Username,
            Email,
            Password,
            UserRole

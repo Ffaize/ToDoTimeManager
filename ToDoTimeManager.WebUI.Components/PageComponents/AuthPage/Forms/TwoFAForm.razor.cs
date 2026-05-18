@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -48,13 +49,26 @@ public partial class TwoFAForm : IDisposable
         TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
         if (TwoFaTimer != null)
         {
+            var culture = CultureInfo.CurrentCulture;
+            var uiCulture = CultureInfo.CurrentUICulture;
             _timerHandler = seconds =>
             {
-                _remainingSeconds = seconds;
                 if (seconds <= 0)
-                    InvokeAsync(HandleTimerExpiredAsync);
+                    InvokeAsync(async () =>
+                    {
+                        CultureInfo.CurrentCulture = culture;
+                        CultureInfo.CurrentUICulture = uiCulture;
+                        _remainingSeconds = seconds;
+                        await HandleTimerExpiredAsync();
+                    });
                 else
-                    InvokeAsync(StateHasChanged);
+                    InvokeAsync(() =>
+                    {
+                        CultureInfo.CurrentCulture = culture;
+                        CultureInfo.CurrentUICulture = uiCulture;
+                        _remainingSeconds = seconds;
+                        StateHasChanged();
+                    });
             };
             TwoFaTimer?.OnRemainingSecondsChanged += _timerHandler;
         }

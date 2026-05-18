@@ -19,6 +19,7 @@ public class AuthService : IAuthService
     private readonly IConfiguration _configuration;
     private readonly IUsersDataController _usersDataController;
     private readonly IUserSecretsDataController _userSecretsDataController;
+    private readonly IUserSettingsDataController _userSettingsDataController;
     private readonly ITwoFactorService _twoFactorService;
 
     public AuthService(
@@ -28,6 +29,7 @@ public class AuthService : IAuthService
         IConfiguration configuration,
         IUsersDataController usersDataController,
         IUserSecretsDataController userSecretsDataController,
+        IUserSettingsDataController userSettingsDataController,
         ITwoFactorService twoFactorService)
     {
         _logger = logger;
@@ -36,10 +38,11 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _usersDataController = usersDataController;
         _userSecretsDataController = userSecretsDataController;
+        _userSettingsDataController = userSettingsDataController;
         _twoFactorService = twoFactorService;
     }
 
-    public async Task<TwoFactorPendingModel?> Login(LoginUser loginUser)
+    public async Task<LoginResponse?> Login(LoginUser loginUser)
     {
         if (loginUser == null || string.IsNullOrWhiteSpace(loginUser.LoginParameter))
             throw new ValidationException("Login data is invalid");
@@ -56,7 +59,15 @@ public class AuthService : IAuthService
             if (passwordSalt == null || !_passwordHelperService.VerifyPassword(loginUser.Password, userEntity.Password!, passwordSalt))
                 throw new ValidationException("Invalid username or password");
 
-            return await _twoFactorService.SendCode(userEntity);
+            var isTwoFactorEnabled = await _userSettingsDataController.GetTwoFactorEnabled(userEntity.Id);
+            if (isTwoFactorEnabled == true)
+            {
+                var pending = await _twoFactorService.SendCode(userEntity);
+                return new LoginResponse { RequiresTwoFactor = true, TwoFaPending = pending };
+            }
+
+            var token = await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, loginUser.KeepSignedIn);
+            return new LoginResponse { RequiresTwoFactor = false, Token = token };
         }
         catch (ServiceException)
         {
@@ -67,6 +78,32 @@ public class AuthService : IAuthService
             _logger.LogError(ex, "Auth operation failed");
             return null;
         }
+    }
+
+    private async Task<TokenModel> GenerateTokenForUser(Guid userId, UserRole userRole, bool keepSignedIn)
+    {
+        string? plainRefreshToken = null;
+        DateTime? refreshExpiresAt = null;
+
+        if (keepSignedIn)
+        {
+            var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var days) ? days : 14;
+            plainRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
+            refreshExpiresAt = DateTime.UtcNow.AddDays(rtDays);
+            await _userSecretsDataController.UpdateRefreshToken(
+                userId, HashHelper.HashRefreshToken(plainRefreshToken), refreshExpiresAt);
+        }
+        else
+        {
+            await _userSecretsDataController.ClearRefreshToken(userId);
+        }
+
+        return new TokenModel
+        {
+            AccessToken = _jwtGeneratorService.GenerateAccessToken(userId.ToString(), userRole),
+            RefreshToken = plainRefreshToken,
+            RefreshTokenExpiresAt = refreshExpiresAt
+        };
     }
 
     public async Task<TokenModel?> RefreshAuthToken(TokenModel? tokenModel)

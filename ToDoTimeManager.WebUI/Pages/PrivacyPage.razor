@@ -1,0 +1,214 @@
+@page "/privacy"
+@layout AuthLayout
+@inherits BaseComponent
+@GetPageTitle(nameof(PrivacyPage))
+
+<div class="legal-page">
+    <div class="legal-page__inner">
+
+        <header class="legal-page__header">
+            <BrandRow />
+            <a href="/" class="legal-page__back">&#8592; Back</a>
+        </header>
+
+        <nav class="legal-toc legal-toc--inline" aria-label="Contents">
+            <a href="#collect" class="legal-toc__item">Data We Collect</a>
+            <a href="#use" class="legal-toc__item">How We Use It</a>
+            <a href="#storage" class="legal-toc__item">Storage &amp; Security</a>
+            <a href="#cookies" class="legal-toc__item">Cookies</a>
+            <a href="#sharing" class="legal-toc__item">Data Sharing</a>
+            <a href="#rights" class="legal-toc__item">Your Rights</a>
+            <a href="#retention" class="legal-toc__item">Retention</a>
+            <a href="#contact" class="legal-toc__item">Contact</a>
+        </nav>
+
+        <div class="legal-page__layout">
+
+            <aside class="legal-toc" aria-label="Table of contents">
+                <div class="legal-toc__label">On this page</div>
+                <nav class="legal-toc__list">
+                    <a href="#collect" class="legal-toc__item">Information We Collect</a>
+                    <a href="#use" class="legal-toc__item">How We Use It</a>
+                    <a href="#storage" class="legal-toc__item">Storage &amp; Security</a>
+                    <a href="#cookies" class="legal-toc__item">Cookies &amp; Tracking</a>
+                    <a href="#sharing" class="legal-toc__item">Data Sharing</a>
+                    <a href="#rights" class="legal-toc__item">Your Rights</a>
+                    <a href="#retention" class="legal-toc__item">Data Retention</a>
+                    <a href="#contact" class="legal-toc__item">Contact &amp; Updates</a>
+                </nav>
+            </aside>
+
+            <article class="legal-card">
+                <span class="legal-card__eyebrow">Privacy · TaskForge</span>
+                <h1 class="legal-card__title">Privacy Policy</h1>
+                <p class="legal-card__meta">Last updated: May 18, 2026 &nbsp;·&nbsp; GDPR-aligned</p>
+                <hr class="legal-card__divider" />
+
+                <section class="legal-section" id="collect">
+                    <h2 class="legal-section__heading">Information We Collect</h2>
+                    <p class="legal-section__body">
+                        We collect only the information necessary to provide and improve TaskForge. We do not buy
+                        data from third parties or collect information beyond what is listed below.
+                    </p>
+                    <h3 class="legal-section__sub">Account data</h3>
+                    <ul class="legal-section__list">
+                        <li>Name and username — used to identify you within the service.</li>
+                        <li>Email address — used for authentication (2FA codes), account alerts, and optional product updates.</li>
+                        <li>Password — stored as a bcrypt hash with a unique salt. We never store or transmit your plaintext password.</li>
+                    </ul>
+                    <h3 class="legal-section__sub">Usage data</h3>
+                    <ul class="legal-section__list">
+                        <li>Tasks, time logs, team memberships, and project data you create within the service.</li>
+                        <li>Feature usage patterns used in aggregate, anonymized form to guide product development.</li>
+                        <li>Activity logs (task created, status changed, time logged) stored per your account.</li>
+                    </ul>
+                    <h3 class="legal-section__sub">Technical data</h3>
+                    <ul class="legal-section__list">
+                        <li>IP address and approximate geolocation (country level) for security and fraud prevention.</li>
+                        <li>Browser type, operating system, and device category collected via server request headers.</li>
+                        <li>Session identifiers stored in encrypted browser storage (not readable by JavaScript).</li>
+                    </ul>
+                    <div class="legal-callout">
+                        <strong>We never collect sensitive personal data</strong> such as financial information,
+                        health data, or government ID numbers. Payment processing, if applicable, is handled
+                        exclusively by a certified third-party payment processor — we never see your card details.
+                    </div>
+                </section>
+
+                <section class="legal-section" id="use">
+                    <h2 class="legal-section__heading">How We Use Your Information</h2>
+                    <ul class="legal-section__list">
+                        <li>To authenticate you and maintain your session securely.</li>
+                        <li>To deliver the core service: tasks, time logs, teams, projects, and analytics.</li>
+                        <li>To send transactional emails — 2FA codes, password change alerts, and critical account notices. These are not optional as they are security-essential.</li>
+                        <li>To send optional product newsletters and feature announcements — only if you have opted in, and always with a one-click unsubscribe.</li>
+                        <li>To detect, investigate, and prevent fraudulent activity, abuse, and security breaches.</li>
+                        <li>To produce aggregated, anonymized analytics that help us prioritize development. These analytics cannot be traced back to any individual.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        We will never use your data to train machine learning models or sell insights derived from
+                        your content to advertisers or data brokers.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="storage">
+                    <h2 class="legal-section__heading">Data Storage &amp; Security</h2>
+                    <h3 class="legal-section__sub">Where your data lives</h3>
+                    <p class="legal-section__body">
+                        All data is stored on servers located within the European Economic Area (EEA). We do not
+                        transfer personal data outside the EEA except where required by law or where adequate
+                        safeguards (such as Standard Contractual Clauses) are in place.
+                    </p>
+                    <h3 class="legal-section__sub">How we protect it</h3>
+                    <ul class="legal-section__list">
+                        <li>All data in transit is encrypted using TLS 1.2 or higher. Plain HTTP is not accepted.</li>
+                        <li>Data at rest is encrypted using AES-256.</li>
+                        <li>Passwords are hashed with bcrypt using a per-user random salt — they cannot be reversed.</li>
+                        <li>Access to production databases is restricted to a minimum number of authorized personnel.</li>
+                        <li>We perform regular internal security audits and vulnerability assessments.</li>
+                        <li>In the event of a data breach affecting your personal data, we will notify you and the relevant supervisory authority within 72 hours of discovery, as required by GDPR Article 33.</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section" id="cookies">
+                    <h2 class="legal-section__heading">Cookies &amp; Tracking</h2>
+                    <p class="legal-section__body">
+                        TaskForge uses a minimal cookie footprint. We do not use advertising cookies, cross-site
+                        trackers, or third-party analytics pixels.
+                    </p>
+                    <h3 class="legal-section__sub">Cookies we use</h3>
+                    <ul class="legal-section__list">
+                        <li><strong style="color: var(--text-0)">Session cookie</strong> — an encrypted session identifier stored in browser local storage. Strictly necessary for authentication; cannot be disabled without breaking the service.</li>
+                        <li><strong style="color: var(--text-0)">Preference cookie</strong> — stores your UI preferences (language, theme). First-party only; expires after 1 year.</li>
+                        <li><strong style="color: var(--text-0)">Analytics cookie (optional)</strong> — a privacy-preserving, first-party analytics identifier. Contains no personal data. Can be disabled in account settings at any time.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        We do not embed third-party scripts from social networks, ad networks, or tracking pixels
+                        on any page of TaskForge.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="sharing">
+                    <h2 class="legal-section__heading">Data Sharing</h2>
+                    <p class="legal-section__body">
+                        We do not sell, rent, or trade your personal data. Period.
+                    </p>
+                    <h3 class="legal-section__sub">When we share data</h3>
+                    <ul class="legal-section__list">
+                        <li><strong style="color: var(--text-0)">Sub-processors</strong> — we share only the minimum necessary data with infrastructure providers (hosting, email delivery) who are contractually bound by GDPR-equivalent data processing agreements.</li>
+                        <li><strong style="color: var(--text-0)">Legal requirements</strong> — we may disclose data to law enforcement or government authorities when legally compelled. Where permitted, we will notify you before complying.</li>
+                        <li><strong style="color: var(--text-0)">Business transfer</strong> — if TaskForge is acquired or merged, your data may be transferred to the successor entity. You will be notified at least 30 days in advance and given the option to delete your account.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        Team members and project collaborators can see the tasks and time logs you share within
+                        those shared workspaces, as this is the core function of the collaboration features.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="rights">
+                    <h2 class="legal-section__heading">Your Rights</h2>
+                    <p class="legal-section__body">
+                        Under the General Data Protection Regulation (GDPR) and applicable local laws, you have the
+                        following rights regarding your personal data:
+                    </p>
+                    <ul class="legal-section__list">
+                        <li><strong style="color: var(--text-0)">Right of access</strong> — you may request a full export of all personal data we hold about you at any time from your account settings.</li>
+                        <li><strong style="color: var(--text-0)">Right to rectification</strong> — you may correct inaccurate or incomplete personal data directly in your profile settings.</li>
+                        <li><strong style="color: var(--text-0)">Right to erasure</strong> — you may delete your account at any time. All personal data is purged within 30 days. Anonymized aggregate statistics may persist.</li>
+                        <li><strong style="color: var(--text-0)">Right to portability</strong> — you may export your tasks, time logs, and activity data as JSON or CSV from account settings.</li>
+                        <li><strong style="color: var(--text-0)">Right to object</strong> — you may opt out of optional analytics at any time in account settings.</li>
+                        <li><strong style="color: var(--text-0)">Right to restrict processing</strong> — you may request that we restrict processing of your data while we investigate a complaint.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        Users in the EEA and UK have the right to lodge a complaint with their local data
+                        protection authority if they believe we have not adequately addressed a concern.
+                    </p>
+                    <p class="legal-section__body">
+                        To exercise any right not available via self-service, contact us at
+                        <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a>.
+                        We will respond within 30 days.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="retention">
+                    <h2 class="legal-section__heading">Data Retention</h2>
+                    <ul class="legal-section__list">
+                        <li><strong style="color: var(--text-0)">Active accounts</strong> — data is retained for as long as your account exists and the service is active.</li>
+                        <li><strong style="color: var(--text-0)">Deleted accounts</strong> — personal data is permanently deleted from production databases within 30 days of account deletion.</li>
+                        <li><strong style="color: var(--text-0)">Backups</strong> — data present in encrypted backup snapshots is purged within 60 days following account deletion.</li>
+                        <li><strong style="color: var(--text-0)">Anonymized data</strong> — aggregated, non-identifiable statistics derived from your data (e.g., platform-wide task completion rates) may persist indefinitely as they cannot be linked back to you.</li>
+                        <li><strong style="color: var(--text-0)">Inactive accounts</strong> — accounts inactive for more than 18 months may be flagged for deletion. You will receive an email notice 30 days before any deletion.</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section" id="contact">
+                    <h2 class="legal-section__heading">Contact &amp; Updates</h2>
+                    <p class="legal-section__body">
+                        TaskForge is operated by its registered owners. For all privacy-related inquiries, data
+                        subject requests, or complaints:
+                    </p>
+                    <ul class="legal-section__list">
+                        <li>Email: <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a></li>
+                        <li>Response time: within 30 calendar days.</li>
+                        <li>For urgent security issues: <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a></li>
+                    </ul>
+                    <h3 class="legal-section__sub">Policy updates</h3>
+                    <p class="legal-section__body">
+                        We may update this Privacy Policy to reflect changes in our practices or applicable law.
+                        Material changes will be communicated by email at least 14 days before they take effect.
+                        The "Last updated" date at the top of this page will always reflect the most recent
+                        revision. Continued use of TaskForge after the effective date constitutes your acceptance
+                        of the updated policy.
+                    </p>
+                </section>
+
+                <hr class="legal-card__divider" />
+                <p class="legal-footer">
+                    Privacy questions?&nbsp;
+                    <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a>
+                </p>
+            </article>
+
+        </div>
+    </div>
+</div>

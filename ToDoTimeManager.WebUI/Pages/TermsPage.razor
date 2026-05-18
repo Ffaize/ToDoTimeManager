@@ -1,0 +1,222 @@
+@page "/terms"
+@layout AuthLayout
+@inherits BaseComponent
+@GetPageTitle(nameof(TermsPage))
+
+<div class="legal-page">
+    <div class="legal-page__inner">
+
+        <header class="legal-page__header">
+            <BrandRow />
+            <a href="/" class="legal-page__back">&#8592; Back</a>
+        </header>
+
+        <nav class="legal-toc legal-toc--inline" aria-label="Contents">
+            <a href="#acceptance" class="legal-toc__item">Acceptance</a>
+            <a href="#service" class="legal-toc__item">The Service</a>
+            <a href="#accounts" class="legal-toc__item">Accounts</a>
+            <a href="#acceptable-use" class="legal-toc__item">Acceptable Use</a>
+            <a href="#ip" class="legal-toc__item">Intellectual Property</a>
+            <a href="#payment" class="legal-toc__item">Payment</a>
+            <a href="#termination" class="legal-toc__item">Termination</a>
+            <a href="#liability" class="legal-toc__item">Liability</a>
+            <a href="#governing-law" class="legal-toc__item">Governing Law</a>
+        </nav>
+
+        <div class="legal-page__layout">
+
+            <aside class="legal-toc" aria-label="Table of contents">
+                <div class="legal-toc__label">On this page</div>
+                <nav class="legal-toc__list">
+                    <a href="#acceptance" class="legal-toc__item">Acceptance of Terms</a>
+                    <a href="#service" class="legal-toc__item">Description of Service</a>
+                    <a href="#accounts" class="legal-toc__item">Account Registration</a>
+                    <a href="#acceptable-use" class="legal-toc__item">Acceptable Use</a>
+                    <a href="#ip" class="legal-toc__item">Intellectual Property</a>
+                    <a href="#payment" class="legal-toc__item">Fees &amp; Payment</a>
+                    <a href="#termination" class="legal-toc__item">Termination</a>
+                    <a href="#liability" class="legal-toc__item">Limitation of Liability</a>
+                    <a href="#governing-law" class="legal-toc__item">Governing Law</a>
+                </nav>
+            </aside>
+
+            <article class="legal-card">
+                <span class="legal-card__eyebrow">Legal · TaskForge</span>
+                <h1 class="legal-card__title">Terms of Service</h1>
+                <p class="legal-card__meta">Last updated: May 18, 2026 &nbsp;·&nbsp; Effective immediately</p>
+                <hr class="legal-card__divider" />
+
+                <section class="legal-section" id="acceptance">
+                    <h2 class="legal-section__heading">Acceptance of Terms</h2>
+                    <p class="legal-section__body">
+                        By creating an account or otherwise accessing or using TaskForge, you agree to be bound by
+                        these Terms of Service and all policies referenced herein. If you do not agree, do not use
+                        the service.
+                    </p>
+                    <p class="legal-section__body">
+                        If you are using TaskForge on behalf of an organization, you represent and warrant that you
+                        have the authority to bind that organization to these terms. In that case, "you" and "your"
+                        refer to that organization.
+                    </p>
+                    <div class="legal-callout">
+                        <strong>Please read these terms carefully.</strong> They contain important information about
+                        your legal rights, remedies, and obligations, including limitations on our liability and a
+                        governing law clause.
+                    </div>
+                </section>
+
+                <section class="legal-section" id="service">
+                    <h2 class="legal-section__heading">Description of Service</h2>
+                    <p class="legal-section__body">
+                        TaskForge is a cloud-based task and time management platform designed for individuals and
+                        teams. The service includes task creation and assignment, time logging, team collaboration,
+                        project tracking, and activity analytics.
+                    </p>
+                    <h3 class="legal-section__sub">Service availability</h3>
+                    <ul class="legal-section__list">
+                        <li>TaskForge is provided on an "as-is" and "as-available" basis.</li>
+                        <li>We make no guarantee of uninterrupted or error-free operation.</li>
+                        <li>Features may be added, modified, or removed at any time. We will provide reasonable notice of material changes.</li>
+                        <li>Scheduled maintenance windows will be communicated in advance where possible.</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section" id="accounts">
+                    <h2 class="legal-section__heading">Account Registration &amp; Security</h2>
+                    <p class="legal-section__body">
+                        To use TaskForge you must register for an account. You agree to provide accurate, current,
+                        and complete information during registration and to keep your information up to date.
+                    </p>
+                    <h3 class="legal-section__sub">Your responsibilities</h3>
+                    <ul class="legal-section__list">
+                        <li>You must be at least 16 years old to create an account.</li>
+                        <li>You are solely responsible for all activity that occurs under your account.</li>
+                        <li>You must keep your password confidential and not share it with any third party.</li>
+                        <li>You must notify us immediately of any unauthorized access or suspected security breach at <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a>.</li>
+                        <li>One person or legal entity may not maintain more than one free account.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        TaskForge uses two-factor authentication (2FA) via email for all logins. You are responsible
+                        for maintaining access to the email address associated with your account.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="acceptable-use">
+                    <h2 class="legal-section__heading">Acceptable Use</h2>
+                    <p class="legal-section__body">
+                        You agree to use TaskForge only for lawful purposes and in accordance with these Terms. The
+                        following activities are strictly prohibited:
+                    </p>
+                    <ul class="legal-section__list">
+                        <li>Attempting to reverse-engineer, decompile, or disassemble any part of the service.</li>
+                        <li>Automated scraping, crawling, or bulk data extraction without written permission.</li>
+                        <li>Introducing malware, viruses, or any other malicious code.</li>
+                        <li>Harassing, threatening, or impersonating other users or TaskForge personnel.</li>
+                        <li>Using the service to send unsolicited commercial communications (spam).</li>
+                        <li>Attempting to gain unauthorized access to other users' accounts or data.</li>
+                        <li>Reselling or sublicensing access to TaskForge without prior written consent.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        We reserve the right to suspend or terminate accounts that violate these policies, without
+                        prior notice and at our sole discretion. Repeated or severe violations may result in
+                        permanent bans and referral to appropriate authorities.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="ip">
+                    <h2 class="legal-section__heading">Intellectual Property</h2>
+                    <h3 class="legal-section__sub">Our property</h3>
+                    <p class="legal-section__body">
+                        The TaskForge name, logo, interface design, and all related trademarks are the exclusive
+                        property of the service operator. Nothing in these Terms grants you a right to use our
+                        trademarks, trade names, or other brand features without our prior written consent.
+                    </p>
+                    <h3 class="legal-section__sub">Your content</h3>
+                    <p class="legal-section__body">
+                        You retain full ownership of all content you create within TaskForge — tasks, descriptions,
+                        time logs, comments, and attachments remain yours. By using the service, you grant us a
+                        limited, non-exclusive, royalty-free license to store, process, and display your content
+                        solely for the purpose of providing the service to you.
+                    </p>
+                    <p class="legal-section__body">
+                        This license terminates when you delete the content or close your account, subject to any
+                        backup retention periods described in our Privacy Policy.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="payment">
+                    <h2 class="legal-section__heading">Fees &amp; Payment</h2>
+                    <ul class="legal-section__list">
+                        <li>A free tier is available with defined usage limits, as specified on our pricing page.</li>
+                        <li>Paid plans are billed monthly or annually, in advance, at the rates published at the time of purchase.</li>
+                        <li>All prices are exclusive of applicable taxes unless stated otherwise.</li>
+                        <li>We reserve the right to change pricing with 30 days' advance notice.</li>
+                        <li>Partial billing periods are generally non-refundable, except where required by applicable law.</li>
+                        <li>Failure to pay may result in suspension of your account until payment is received.</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section" id="termination">
+                    <h2 class="legal-section__heading">Termination</h2>
+                    <h3 class="legal-section__sub">By you</h3>
+                    <p class="legal-section__body">
+                        You may delete your account at any time from the account settings page. Upon deletion, your
+                        personal data will be purged within 30 days in accordance with our Privacy Policy.
+                    </p>
+                    <h3 class="legal-section__sub">By us</h3>
+                    <p class="legal-section__body">
+                        We may suspend or terminate your access to TaskForge at any time, with or without notice, if
+                        we reasonably believe you have violated these Terms, if your account has been inactive for
+                        more than 18 consecutive months, or if required to do so by law.
+                    </p>
+                    <p class="legal-section__body">
+                        The sections on Intellectual Property, Limitation of Liability, and Governing Law survive
+                        any termination of these Terms.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="liability">
+                    <h2 class="legal-section__heading">Limitation of Liability</h2>
+                    <p class="legal-section__body">
+                        To the maximum extent permitted by applicable law, TaskForge and its operators, directors,
+                        employees, and agents shall not be liable for any indirect, incidental, special,
+                        consequential, or punitive damages arising from your use of or inability to use the service.
+                    </p>
+                    <ul class="legal-section__list">
+                        <li>The service is provided without warranty of uptime, fitness for a particular purpose, or non-infringement.</li>
+                        <li>We are not liable for data loss resulting from user error, third-party outages, or force majeure events.</li>
+                        <li>Our maximum aggregate liability to you for any claim shall not exceed the total fees paid by you in the 12 months preceding the claim, or €50 if no fees were paid.</li>
+                    </ul>
+                    <p class="legal-section__body">
+                        Some jurisdictions do not allow the exclusion of certain warranties or limitations on
+                        liability. In such jurisdictions, our liability is limited to the fullest extent permitted
+                        by law.
+                    </p>
+                </section>
+
+                <section class="legal-section" id="governing-law">
+                    <h2 class="legal-section__heading">Governing Law &amp; Changes</h2>
+                    <h3 class="legal-section__sub">Governing law</h3>
+                    <p class="legal-section__body">
+                        These Terms are governed by and construed in accordance with the laws of Ukraine, without
+                        regard to its conflict of law provisions. Any disputes arising from these Terms shall be
+                        subject to the exclusive jurisdiction of the courts located in Kyiv, Ukraine.
+                    </p>
+                    <h3 class="legal-section__sub">Changes to these terms</h3>
+                    <p class="legal-section__body">
+                        We may update these Terms from time to time. Material changes will be announced via in-app
+                        notification or email at least 30 days before they take effect. Your continued use of
+                        TaskForge after the effective date constitutes acceptance of the revised Terms.
+                    </p>
+                </section>
+
+                <hr class="legal-card__divider" />
+                <p class="legal-footer">
+                    Questions about these Terms?&nbsp;
+                    <a href="mailto:dmitro.danko@gmail.com" class="legal-section__link">dmitro.danko@gmail.com</a>
+                </p>
+            </article>
+
+        </div>
+    </div>
+</div>

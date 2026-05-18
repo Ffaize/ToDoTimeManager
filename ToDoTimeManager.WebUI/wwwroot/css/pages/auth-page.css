@@ -101,7 +101,7 @@
 
 .auth-page__form {
     width: 90vw;
-    max-width: 900px;
+    max-width: 500px;
     max-height: 90vh;
     display: flex;
     flex-direction: row;
@@ -280,7 +280,7 @@
     }
 
         .ladder-step.active .num {
-            background: linear-gradient(180deg, #ff7b3d, #e85a1c);
+            /*background: linear-gradient(180deg, #ff7b3d, #e85a1c);*/
             border-color: var(--ember);
             color: #fff;
             box-shadow: 0 0 0 3px rgba(255, 106, 43, 0.15);
@@ -309,7 +309,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
     background: linear-gradient(180deg, rgba(22, 26, 32, .4), rgba(17, 19, 23, .4));
     position: relative;
     overflow-y: hidden;
@@ -349,17 +349,20 @@
 
 .form-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 30px;
     font-weight: 600;
+    font-size: 25px;
     letter-spacing: -0.02em;
     color: var(--text-0);
     margin: 0 !important;
+    text-align: center;
 }
 
 .form-sub {
     color: var(--text-2);
     font-size: 14px;
-    margin: 0 !important
+    margin: 10px 0 0 0 !important;
+    
+    text-align: center;
 }
 
     .form-sub a {
@@ -453,6 +456,7 @@
     border-radius: 10px;
     height: 56px;
     width: 100%;
+    max-width: 70px;
     text-align: center;
     color: var(--text-0);
     font-size: 24px;
@@ -547,11 +551,11 @@
         color: var(--ember-2);
     }
 
-.hint svg {
-    color: var(--ember);
-    flex-shrink: 0;
-    margin-top: 1px;
-}
+    .hint svg {
+        color: var(--ember);
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
 
 .helper-row {
     display: flex;
@@ -563,18 +567,18 @@
     gap: 10px;
 }
 
-.helper-row a {
-    color: var(--text-1);
-    text-decoration: none;
-    border-bottom: 1px dashed var(--line-2);
-    padding-bottom: 1px;
-    transition: all 0.5s
-}
+    .helper-row a {
+        color: var(--text-1);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--line-2);
+        padding-bottom: 1px;
+        transition: all 0.5s
+    }
 
-.helper-row a:hover {
-    color: var(--ember-2);
-    border-color: var(--ember-2);
-}
+        .helper-row a:hover {
+            color: var(--ember-2);
+            border-color: var(--ember-2);
+        }
 
 .form-header {
     display: flex;
@@ -582,6 +586,11 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 5px;
+}
+
+.auth-form-brand-row {
+    flex-direction: column-reverse;
+    width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -600,4 +609,19 @@
     .form-wrap {
         padding: 20px 24px;
     }
+
+        .form-wrap .form-title {
+            font-size: 20px;
+        }
+
+        .form-wrap .helper-row {
+            justify-content: center;
+        }
+
+            .form-wrap .helper-row a {
+                text-align: center;
+            }
+        .form-wrap .form-eyebrow span {
+            display: none;
+        }
 }

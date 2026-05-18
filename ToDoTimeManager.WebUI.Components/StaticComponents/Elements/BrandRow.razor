@@ -1,0 +1,23 @@
+@inherits BaseComponent
+
+<div class="brand-row @AdditionalCssClass" style="@(Hidden ? "display: none" : null)">
+    @if (Icon is not null)
+    {
+        @Icon
+    }
+    else
+    {
+        <div class="brand-logo"></div>
+    }
+
+    <span class="brand-name">Task<span>Forge</span></span>
+</div>
+
+@code {
+    [Parameter] public bool Hidden { get; set; }
+
+    [Parameter] public string AdditionalCssClass { get; set; } = string.Empty;
+
+    [Parameter] public RenderFragment? Icon { get; set; } = null;
+
+}

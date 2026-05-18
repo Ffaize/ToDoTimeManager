@@ -9,6 +9,12 @@
     transition: all 0.2s;
 }
 
+@media(max-height: 700px) {
+    .input-shell {
+        max-height: 40px;
+    }
+}
+
 .input-shell:focus-within {
     border-color: var(--ember);
     box-shadow: 0 0 0 3px rgba(255, 106, 43, 0.12), 0 0 20px -8px var(--ember-glow);

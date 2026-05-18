@@ -44,8 +44,8 @@ public class AuthController : BaseController
     [EnableRateLimiting("auth-login")]
     public async Task<IActionResult> Login(LoginUser? loginUser)
     {
-        var pending = await _authService.Login(loginUser!);
-        return pending != null ? Ok(pending) : StatusCode(500);
+        var response = await _authService.Login(loginUser!);
+        return response != null ? Ok(response) : StatusCode(500);
     }
 
     /// <summary>

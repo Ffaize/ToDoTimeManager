@@ -258,6 +258,9 @@
   <data name="and" xml:space="preserve">
     <value>та</value>
   </data>
+  <data name="Terms of Service" xml:space="preserve">
+    <value>Умови використання</value>
+  </data>
   <data name="Privacy Policy" xml:space="preserve">
     <value>Політикою конфіденційності</value>
   </data>

@@ -1,4 +1,4 @@
-﻿namespace ToDoTimeManager.Entities.Entities;
+namespace ToDoTimeManager.Entities.Entities;
 
 public class UserEntity
 {

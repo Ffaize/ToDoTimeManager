@@ -15,6 +15,13 @@
     letter-spacing: -0.005em;
 }
 
+@media(max-height: 700px) {
+    .btn {
+        height: 40px !important;
+        padding: 5px;
+    }
+}
+
 .btn-primary {
     background: linear-gradient(180deg, #ff7b3d, #e85a1c) !important;
     color: #fff !important;

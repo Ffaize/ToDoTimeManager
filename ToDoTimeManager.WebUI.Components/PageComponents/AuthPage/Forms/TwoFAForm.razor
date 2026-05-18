@@ -1,16 +1,8 @@
 @using ToDoTimeManager.WebUI.Models.Enums.Button
 @inherits ToDoTimeManager.WebUI.Components.BaseComponents.BaseComponent
 
-<div class="form-header">
-    <div class="brand-row" style="display: none">
-        <div class="brand-logo">
-        </div>
-        <span class="brand-name">Task<span>Forge</span></span>
-    </div>
-    <div class="form-eyebrow">@Localizer["TWO-FACTOR_UPPER"] · @Localizer["STEP"] 2</div>
-</div>
 <div>
-    <h1 class="form-title">@Localizer["Light the forge."]</h1>
+    <h1 class="form-title">@Localizer["Two Factor Authentication"]</h1>
     <p class="form-sub">
         <span>@Localizer["We sent a 6-digit ember code to"]</span>
         <strong>@Email</strong>
@@ -68,7 +60,7 @@
 </div>
 
 <div class="helper-row">
-    <a @onclick="OnUseDifferentEmailClicked" @onclick:preventDefault href="#">
+    <a @onclick="OnUseDifferentEmailClicked" @onclick:preventDefault>
         <span>@Localizer["Use a different email"]</span>
     </a>
     <a href="mailto:dmitro.danko@gmail.com?subject=Звернення до адміна">

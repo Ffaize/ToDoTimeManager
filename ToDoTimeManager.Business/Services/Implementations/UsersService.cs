@@ -20,12 +20,12 @@ public class UsersService : IUsersService
         ILogger<UsersService> logger,
         IPasswordHelperService passwordHelperService)
     {
-        _usersDataController        = usersDataController;
-        _userSecretsDataController  = userSecretsDataController;
-        _accessControlService       = accessControlService;
-        _activityLogsService        = activityLogsService;
-        _logger                     = logger;
-        _passwordHelperService      = passwordHelperService;
+        _usersDataController       = usersDataController;
+        _userSecretsDataController = userSecretsDataController;
+        _accessControlService      = accessControlService;
+        _activityLogsService       = activityLogsService;
+        _logger                    = logger;
+        _passwordHelperService     = passwordHelperService;
     }
 
     public async Task<List<User>> GetAllUsers()
@@ -329,4 +329,5 @@ public class UsersService : IUsersService
             return false;
         }
     }
+
 }

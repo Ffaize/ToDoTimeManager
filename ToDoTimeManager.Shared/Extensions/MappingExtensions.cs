@@ -1,6 +1,7 @@
 using ToDoTimeManager.Shared.DTOs.Project;
 using ToDoTimeManager.Shared.DTOs.Team;
 using ToDoTimeManager.Shared.DTOs.User;
+using ToDoTimeManager.Shared.DTOs.UserSettings;
 using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.Shared.Extensions;
@@ -14,6 +15,13 @@ public static class MappingExtensions
             UserName = user.UserName,
             Email = user.Email,
             UserRole = user.UserRole
+        };
+
+    public static UserSettingsResponseDto ToResponseDto(this UserSettings settings) =>
+        new()
+        {
+            UserId = settings.UserId,
+            IsTwoFactorEnabled = settings.IsTwoFactorEnabled
         };
 
     public static TeamResponseDto ToResponseDto(this Team team, List<TeamMember>? members) =>

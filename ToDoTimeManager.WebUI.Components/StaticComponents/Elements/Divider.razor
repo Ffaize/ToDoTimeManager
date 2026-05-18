@@ -1,0 +1,15 @@
+﻿@inherits BaseComponent
+
+<div class="divider-wrap @AdditionalCssClass">
+    <div class="divider-line"></div>
+    @if (Content is not null)
+    {
+        <span class="divider-text">@Content</span>
+        <div class="divider-line"></div>
+    }
+</div>
+
+@code {
+    [Parameter] public string AdditionalCssClass { get; set; } = string.Empty;
+    [Parameter] public RenderFragment? Content { get; set; } = null;
+}

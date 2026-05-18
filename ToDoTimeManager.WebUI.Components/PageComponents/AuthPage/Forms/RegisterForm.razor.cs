@@ -6,6 +6,8 @@ public partial class RegisterForm
 {
     [Inject] private UserService UserService { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
@@ -47,32 +49,15 @@ public partial class RegisterForm
             var loginResult = await AuthService.Login(new LoginUser
             {
                 LoginParameter = Email,
-                Password = Password
+                Password = Password,
+                KeepSignedIn = true
             });
 
-            if (loginResult is null) return;
+            if (loginResult?.Token is null) return;
 
-            var user = new UserResponseDto
-            {
-                Id = loginResult.UserId,
-                Email = loginResult.Email ?? string.Empty,
-                UserName = null
-            };
-
-            var session = new PendingTwoFaSessionState(
-                loginResult.Email ?? string.Empty,
-                loginResult.SenderEmail ?? string.Empty,
-                true,
-                loginResult.CodeLifetimeSeconds,
-                AuthPageCurrentState.Login
-            );
-
-            await ProtectedLocalStorage.SaveUserInfoAsync(user);
-            await ProtectedLocalStorage.SavePendingTwoFaSessionStateAsync(session);
-
-
-            AuthInfoChanged?.Invoke(session, user);
-            if (GoTo != null) await GoTo(AuthPageCurrentState.TwoFA);
+            if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
+                await authProvider.MarkUserAsAuthenticated(loginResult.Token);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
         });
     }
 

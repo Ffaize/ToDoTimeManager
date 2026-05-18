@@ -52,7 +52,12 @@
       "Bash(findstr \":7262\\\\|:7130\\\\|:15888\")",
       "PowerShell(Start-Process -FilePath \"dotnet\" -ArgumentList \"run --project ToDoTimeManager.AppHost\" -WorkingDirectory \"D:\\\\Projects\\\\ToDoTimeManager\" -WindowStyle Normal)",
       "PowerShell(Get-Process | Where-Object { $_.Name -match \"dotnet|ToDoTime|WebUI|WebApi|AppHost\" } | Select-Object Name, Id)",
-      "mcp__Claude_in_Chrome__javascript_tool"
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "Bash(Select-String -Pattern \"legal\" -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI\\\\wwwroot\\\\css\\\\site.min.css\")",
+      "Bash(Select-Object -First 3)",
+      "Bash(Select-String -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\" -Pattern \"StoredProcedures\\\\\\\\Users\")",
+      "Bash(Select-Object -ExpandProperty Line)",
+      "Bash(grep -n \"StoredProcedures\\\\\\\\\\\\\\\\Users\\\\|Tables\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\")"
     ]
   }
 }

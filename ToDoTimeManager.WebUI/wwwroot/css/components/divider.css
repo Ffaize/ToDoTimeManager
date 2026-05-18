@@ -1,0 +1,23 @@
+.divider-wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-2) 20%, var(--line-2) 80%, transparent);
+}
+
+.divider-text {
+    flex-shrink: 0;
+    color: var(--text-3);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    user-select: none;
+}

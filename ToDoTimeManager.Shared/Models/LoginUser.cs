@@ -4,4 +4,5 @@ public class LoginUser
 {
     public string? LoginParameter { get; set; } = string.Empty;
     public string? Password { get; set; } = string.Empty;
+    public bool KeepSignedIn { get; set; } = true;
 }
