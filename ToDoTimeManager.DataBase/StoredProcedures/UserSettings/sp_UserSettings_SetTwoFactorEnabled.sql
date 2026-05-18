@@ -3,7 +3,6 @@ CREATE PROCEDURE [dbo].[sp_UserSettings_SetTwoFactorEnabled]
     @IsEnabled BIT
 AS
 BEGIN
-    SET NOCOUNT ON;
     UPDATE [dbo].[UserSettings]
     SET IsTwoFactorEnabled = @IsEnabled
     WHERE UserId = @UserId;
