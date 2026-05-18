@@ -5,6 +5,7 @@ using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.WebUI.Models.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
+using ToDoTimeManager.WebUI.Services.Services.Implementations;
 using ToDoTimeManager.WebUI.Services.Services.Interfaces;
 
 using ToDoTimeManager.WebUI.Utils.PotectedLocalStorageHelpers;
@@ -80,6 +81,15 @@ public partial class AuthPage
             return;
         }
 
+        var uri = new Uri(NavigationManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var googleSession = query.TryGetValue("google_session", out var val) ? val.ToString() : null;
+        if (!string.IsNullOrWhiteSpace(googleSession))
+        {
+            await HandleGoogleSessionAsync(googleSession);
+            return;
+        }
+
         var pendingUser = await ProtectedLocalStorage.GetUserInfoAsync();
         if (pendingUser is null || pendingUser.Id == Guid.Empty) return;
         _user = pendingUser;
@@ -95,6 +105,21 @@ public partial class AuthPage
 
         _activeState = AuthPageCurrentState.TwoFA;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task HandleGoogleSessionAsync(string code)
+    {
+        var tokenModel = await AuthService.ExchangeGoogleSessionAsync(code);
+        if (tokenModel == null)
+        {
+            NavigationManager.NavigateTo("/auth", forceLoad: true);
+            return;
+        }
+
+        if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
+            await authProvider.MarkUserAsAuthenticated(tokenModel);
+
+        NavigationManager.NavigateTo(NavigationManager.BaseUri);
     }
 
     protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)

@@ -21,6 +21,7 @@ public class AuthService : IAuthService
     private readonly IUserSecretsDataController _userSecretsDataController;
     private readonly IUserSettingsDataController _userSettingsDataController;
     private readonly ITwoFactorService _twoFactorService;
+    private readonly IUsersService _usersService;
 
     public AuthService(
         ILogger<AuthService> logger,
@@ -30,7 +31,8 @@ public class AuthService : IAuthService
         IUsersDataController usersDataController,
         IUserSecretsDataController userSecretsDataController,
         IUserSettingsDataController userSettingsDataController,
-        ITwoFactorService twoFactorService)
+        ITwoFactorService twoFactorService,
+        IUsersService usersService)
     {
         _logger = logger;
         _passwordHelperService = passwordHelperService;
@@ -40,6 +42,7 @@ public class AuthService : IAuthService
         _userSecretsDataController = userSecretsDataController;
         _userSettingsDataController = userSettingsDataController;
         _twoFactorService = twoFactorService;
+        _usersService = usersService;
     }
 
     public async Task<LoginResponse?> Login(LoginUser loginUser)
@@ -147,6 +150,31 @@ public class AuthService : IAuthService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Auth operation failed");
+            return null;
+        }
+    }
+
+    public async Task<TokenModel?> GetOrCreateGoogleUserTokenAsync(ClaimsPrincipal googleUser)
+    {
+        try
+        {
+            var email = googleUser.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var googleName = googleUser.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+
+            await _usersService.CreateGoogleUserAsync(email, googleName);
+
+            var userEntity = await _usersDataController.GetUserByEmail(email);
+            if (userEntity == null)
+                return null;
+
+            return await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Google login failed");
             return null;
         }
     }

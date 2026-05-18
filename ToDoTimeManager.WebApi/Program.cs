@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
@@ -99,6 +101,7 @@ public class Program
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
+        builder.Services.AddMemoryCache();
     }
 
     private static void VerifyJwtKey(WebApplicationBuilder builder)
@@ -128,6 +131,19 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero
                 };
+            })
+            .AddCookie("ExternalCookieScheme", options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            })
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = builder.Configuration["GoogleAuth:ClientId"] ?? string.Empty;
+                options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"] ?? string.Empty;
+                options.CallbackPath = "/Auth/GoogleCallback";
+                options.SignInScheme = "ExternalCookieScheme";
             });
     }
 

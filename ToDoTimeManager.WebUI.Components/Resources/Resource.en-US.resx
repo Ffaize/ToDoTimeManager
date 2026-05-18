@@ -312,4 +312,10 @@
   <data name="ProjectType_Other" xml:space="preserve">
     <value>Other</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Sign in with Google</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Or</value>
+  </data>
 </root>

@@ -67,6 +67,21 @@
     </Icon>
 </Button>
 
+<Divider>
+    <Content>
+        @Localizer["Or"]
+    </Content>
+</Divider>
+
+<Button OnClick="@OnGoogleLoginClicked"
+    Style="@ButtonStyle.Secondary"
+    AdditionalCssClass=""
+    Text="@Localizer["SignInWithGoogle"]">
+    <Icon>
+        <GoogleIcon IconSize="18" />
+    </Icon>
+</Button>
+
 <div class="footer-line">
     @Localizer["Trouble signing in?"] <a href="mailto:dmitro.danko@gmail.com?subject=Звернення до адміна">@Localizer["Contact your forge admin"]</a>
 </div>

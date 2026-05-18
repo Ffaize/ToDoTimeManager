@@ -203,6 +203,63 @@ public class UsersService : IUsersService
         }
     }
 
+    public async Task<bool> CreateGoogleUserAsync(string email, string googleName)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ValidationException("Email is required");
+
+        try
+        {
+            var existingByEmail = await _usersDataController.GetUserByEmail(email);
+            if (existingByEmail != null)
+                return true;
+
+            var baseUsername = string.IsNullOrWhiteSpace(googleName)
+                ? email.Split('@')[0]
+                : new string(googleName.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+
+            if (baseUsername.Length < 2)
+                baseUsername = "user";
+
+            var username = baseUsername;
+            var existingByUsername = await _usersDataController.GetUserByUsername(username);
+            if (existingByUsername != null)
+                username = $"{baseUsername}_{Guid.NewGuid().ToString("N")[..4]}";
+
+            var salt = _passwordHelperService.GenerateSalt();
+            var hash = _passwordHelperService.HashPassword(salt, Guid.NewGuid().ToString());
+
+            var userId = Guid.NewGuid();
+            var user = new User
+            {
+                Id = userId,
+                UserName = username,
+                Email = email,
+                Password = hash,
+                UserRole = UserRole.User
+            };
+
+            var created = await _usersDataController.CreateUser(new UserEntity(user));
+            if (!created) return false;
+
+            return await _userSecretsDataController.Create(new UserSecretsEntity
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                PasswordSalt = salt
+            });
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
     public async Task<bool> UpdateUser(UpdateUserRequestDto request, Guid currentUserId)
     {
         if (request.Id == Guid.Empty)

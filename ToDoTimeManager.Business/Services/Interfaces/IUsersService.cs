@@ -12,6 +12,7 @@ public interface IUsersService
     Task<User?> GetUserByEmail(string email, Guid currentUserId, UserRole currentUserRole);
     Task<User?> GetUserByLoginParameter(string loginParameter, Guid currentUserId, UserRole currentUserRole);
     Task<bool> CreateUser(CreateUserRequestDto request);
+    Task<bool> CreateGoogleUserAsync(string email, string googleName);
     Task<bool> UpdateUser(UpdateUserRequestDto request, Guid currentUserId);
     Task<bool> ChangeUserRole(Guid userId, UserRole newRole, Guid currentUserId);
     Task<bool> DeleteUser(Guid userId);

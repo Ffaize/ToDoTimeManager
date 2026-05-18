@@ -312,4 +312,10 @@
   <data name="ProjectType_Other" xml:space="preserve">
     <value>Інше</value>
   </data>
+  <data name="SignInWithGoogle" xml:space="preserve">
+    <value>Увійти через Google</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Або</value>
+  </data>
 </root>

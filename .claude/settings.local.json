@@ -57,7 +57,9 @@
       "Bash(Select-Object -First 3)",
       "Bash(Select-String -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\" -Pattern \"StoredProcedures\\\\\\\\Users\")",
       "Bash(Select-Object -ExpandProperty Line)",
-      "Bash(grep -n \"StoredProcedures\\\\\\\\\\\\\\\\Users\\\\|Tables\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\")"
+      "Bash(grep -n \"StoredProcedures\\\\\\\\\\\\\\\\Users\\\\|Tables\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\")",
+      "Bash(dotnet add *)",
+      "Bash(ls /mnt/d/Projects/ToDoTimeManager/ToDoTimeManager.WebUI.Components/Resources/)"
     ]
   }
 }

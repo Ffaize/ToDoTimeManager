@@ -81,6 +81,11 @@ public partial class LoginForm
         }
     }
 
+    private void OnGoogleLoginClicked()
+    {
+        NavigationManager.NavigateTo(AuthService.GetGoogleLoginUrl(), forceLoad: true);
+    }
+
     private async Task OnCreateAccountClicked()
     {
         if (GoTo != null) await GoTo(AuthPageCurrentState.Registration);

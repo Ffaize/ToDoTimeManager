@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Entities.Entities;
 using ToDoTimeManager.Business.Services.Interfaces;
@@ -18,17 +21,21 @@ public class AuthController : BaseController
     private readonly IAuthService _authService;
     private readonly ITwoFactorService _twoFactorService;
     private readonly IUsersService _usersService;
+    private readonly IMemoryCache _cache;
+    private readonly IConfiguration _configuration;
 
-    /// <summary>
-    /// Initializes a new instance of <see cref="AuthController"/>.
-    /// </summary>
-    /// <param name="authService">The authentication service used to validate credentials.</param>
-    /// <param name="twoFactorService">The two-factor authentication service used to manage verification codes and issue tokens.</param>
-    public AuthController(IAuthService authService, ITwoFactorService twoFactorService, IUsersService usersService)
+    public AuthController(
+        IAuthService authService,
+        ITwoFactorService twoFactorService,
+        IUsersService usersService,
+        IMemoryCache cache,
+        IConfiguration configuration)
     {
         _authService = authService;
         _twoFactorService = twoFactorService;
         _usersService = usersService;
+        _cache = cache;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -96,5 +103,52 @@ public class AuthController : BaseController
     {
         var newTokenModel = await _authService.RefreshAuthToken(tokenModel!);
         return newTokenModel != null ? Ok(newTokenModel) : StatusCode(500);
+    }
+
+    [HttpGet("GoogleLogin")]
+    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
+    {
+        var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth");
+        var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("GoogleCallback")]
+    public async Task<IActionResult> GoogleCallback()
+    {
+        var result = await HttpContext.AuthenticateAsync("ExternalCookieScheme");
+        if (!result.Succeeded || result.Principal == null)
+            return Redirect(BuildWebUIUrl("/auth"));
+
+        var tokenModel = await _authService.GetOrCreateGoogleUserTokenAsync(result.Principal);
+
+        await HttpContext.SignOutAsync("ExternalCookieScheme");
+
+        if (tokenModel == null)
+            return Redirect(BuildWebUIUrl("/auth"));
+
+        var code = Guid.NewGuid().ToString("N");
+        _cache.Set($"google:{code}", tokenModel, TimeSpan.FromSeconds(30));
+
+        return Redirect(BuildWebUIUrl($"/auth?google_session={code}"));
+    }
+
+    [HttpGet("ExchangeGoogleSession")]
+    public IActionResult ExchangeGoogleSession([FromQuery] string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+            return BadRequest();
+
+        if (!_cache.TryGetValue($"google:{code}", out TokenModel? tokenModel) || tokenModel == null)
+            return NotFound();
+
+        _cache.Remove($"google:{code}");
+        return Ok(tokenModel);
+    }
+
+    private string BuildWebUIUrl(string path)
+    {
+        var baseUrl = _configuration["WebUIBaseUrl"]?.TrimEnd('/') ?? string.Empty;
+        return $"{baseUrl}{path}";
     }
 }
