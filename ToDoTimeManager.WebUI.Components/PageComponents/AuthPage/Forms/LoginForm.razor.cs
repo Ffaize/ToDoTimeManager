@@ -69,9 +69,8 @@ public partial class LoginForm
         });
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (!firstRender) return;
         var lastLoginParameter = await ProtectedLocalStorage.GetLastLoginParameterAsync();
         if (!string.IsNullOrEmpty(lastLoginParameter))
         {

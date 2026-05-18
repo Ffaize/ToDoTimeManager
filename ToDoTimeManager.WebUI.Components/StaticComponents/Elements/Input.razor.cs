@@ -31,14 +31,24 @@ public partial class Input
         ? (_showPassword ? "text" : "password")
         : Type;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !string.IsNullOrWhiteSpace(Value))
+        {
+            await Validate();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     private void ToggleVisibility() => _showPassword = !_showPassword;
 
     private async Task HandleInput(ChangeEventArgs e)
     {
         await ValueChanged.InvokeAsync(e.Value?.ToString());
+        await Validate();
     }
 
-    private async Task HandleFocusOut()
+    private async Task Validate()
     {
         if (!UseValidation || ValidationFunc is null) return;
 
@@ -48,6 +58,8 @@ public partial class Input
             : ValidationState.Invalid;
 
         IsValid = _validationState == ValidationState.Valid;
+
+        await InvokeAsync(StateHasChanged);
         await IsValidChanged.InvokeAsync(IsValid);
     }
 

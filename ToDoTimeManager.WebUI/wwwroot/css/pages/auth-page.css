@@ -352,7 +352,7 @@
     font-weight: 600;
     font-size: 25px;
     letter-spacing: -0.02em;
-    color: var(--text-0);
+    color: var(--ember-2);
     margin: 0 !important;
     text-align: center;
 }
