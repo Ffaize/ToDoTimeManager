@@ -59,7 +59,7 @@
 .btn-ghost {
     background: transparent;
     color: var(--text-2);
-    border-color: transparent;
+    border: 1px solid transparent;
 }
 
     .btn-ghost:hover {
@@ -67,10 +67,17 @@
         border-color: var(--line);
         color: var(--text-1);
     }
-.btn-ghost:active {
-    border: 2px solid white;
+
+    .btn-ghost:active {
+        border: 1px solid white;
+    }
+
+.btn:focus-visible,
+.btn:focus {
+    outline: none !important;
 }
 
-.btn-ghost:focus {
-        box-shadow: none !important;
-    }
+.btn-ghost:focus,
+.btn-secondary:focus {
+    box-shadow: none !important;
+}

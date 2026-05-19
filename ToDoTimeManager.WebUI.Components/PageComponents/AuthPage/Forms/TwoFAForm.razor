@@ -10,17 +10,7 @@
     </p>
 </div>
 
-<div class="otp-row with-dash" id="otp-inputs">
-    <input class="otp-cell @GetIsFilledCssClass(0)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[0]" @oninput="e => HandleInput(e, 1)">
-    <input class="otp-cell @GetIsFilledCssClass(1)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[1]" @oninput="e => HandleInput(e, 2)">
-    <input class="otp-cell @GetIsFilledCssClass(2)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[2]" @oninput="e => HandleInput(e, 3)">
-    <span class="otp-dash">
-        <span>—</span>
-    </span>
-    <input class="otp-cell @GetIsFilledCssClass(3)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[3]" @oninput="e => HandleInput(e, 4)">
-    <input class="otp-cell @GetIsFilledCssClass(4)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[4]" @oninput="e => HandleInput(e, 5)">
-    <input class="otp-cell @GetIsFilledCssClass(5)" type="text" maxlength="1" autocomplete="off" value="@OtpValues[5]" @oninput="e => HandleInput(e, 6)">
-</div>
+<OtpInputRow @ref="_otpInputRow" ContainerId="otp-inputs" @bind-Values="OtpValues" />
 
 <div class="meta-row">
     <span class="timer">

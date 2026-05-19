@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Components.Web;
 using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.WebUI.Models.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
@@ -46,6 +47,7 @@ public partial class AuthPage
     private PendingTwoFaSessionState _session = new();
     private UserResponseDto _user = new();
     private PendingPasswordResetState _passwordResetSession = new();
+    private string _forgotPasswordInitialEmail = string.Empty;
 
     protected async Task GoTo(AuthPageCurrentState target)
     {
@@ -154,10 +156,30 @@ public partial class AuthPage
         _user = user;
     }
 
+    protected void SetForgotPasswordInitialEmail(string loginParameter)
+    {
+        _forgotPasswordInitialEmail = loginParameter;
+    }
+
     protected void PasswordResetInfoChanged(PendingPasswordResetState state)
     {
         if (state.UserId != Guid.Empty)
             TwoFaTimerService.StartTimer(state.UserId, state.CodeLifetimeSeconds);
         _passwordResetSession = state;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key != "Enter") return;
+        var task = _activeState switch
+        {
+            AuthPageCurrentState.Login => _loginFormRef?.InvokePrimaryAsync(),
+            AuthPageCurrentState.Registration => _registerFormRef?.InvokePrimaryAsync(),
+            AuthPageCurrentState.TwoFA => _twoFaFormRef?.InvokePrimaryAsync(),
+            AuthPageCurrentState.ForgotPassword => _forgotPasswordFormRef?.InvokePrimaryAsync(),
+            AuthPageCurrentState.ResetPassword => _resetPasswordFormRef?.InvokePrimaryAsync(),
+            _ => null
+        };
+        if (task != null) await task;
     }
 }

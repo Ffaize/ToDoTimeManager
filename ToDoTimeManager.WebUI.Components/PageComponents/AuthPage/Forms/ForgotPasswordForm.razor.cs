@@ -14,10 +14,20 @@ public partial class ForgotPasswordForm
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public Action<PendingPasswordResetState>? PasswordResetInfoChanged { get; set; }
+    [Parameter] public string? InitialEmail { get; set; }
 
     private string Email { get; set; } = string.Empty;
     private bool IsEmailValid { get; set; }
     private bool IsButtonDisabled => !IsEmailValid || IsLoading;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrWhiteSpace(InitialEmail) && InitialEmail.Contains('@') && string.IsNullOrEmpty(Email))
+        {
+            Email = InitialEmail;
+            IsEmailValid = true;
+        }
+    }
 
     private async Task OnSendResetCodeClicked()
     {
@@ -44,5 +54,11 @@ public partial class ForgotPasswordForm
     private async Task OnBackToLoginClicked()
     {
         if (GoTo != null) await GoTo(AuthPageCurrentState.Login);
+    }
+
+    public async Task InvokePrimaryAsync()
+    {
+        if (!IsButtonDisabled)
+            await OnSendResetCodeClicked();
     }
 }

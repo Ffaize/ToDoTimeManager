@@ -1,12 +1,11 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using ToDoTimeManager.WebUI.Components.StaticComponents.Elements;
 
 namespace ToDoTimeManager.WebUI.Components.PageComponents.AuthPage.Forms;
 
-public partial class TwoFAForm : IDisposable
+public partial class TwoFaForm : IDisposable
 {
-    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
@@ -21,6 +20,8 @@ public partial class TwoFAForm : IDisposable
     [Parameter] public PendingTwoFaSessionState? SessionState { get; set; }
     [Parameter] public UserResponseDto? User { get; set; }
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
+
+    private OtpInputRow? _otpInputRow;
 
     public string[] OtpValues { get; set; } = new string[6];
 
@@ -96,7 +97,7 @@ public partial class TwoFAForm : IDisposable
                 TwoFaTimer = TwoFaTimerService.GetTimer(UserId);
             }
             OtpValues = new string[6];
-            await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
+            if (_otpInputRow is not null) await _otpInputRow.ReinitializeAsync();
         });
     }
 
@@ -135,21 +136,11 @@ public partial class TwoFAForm : IDisposable
         });
     }
 
-    private void HandleInput(ChangeEventArgs e, int index)
+    public async Task InvokePrimaryAsync()
     {
-        var raw = e.Value?.ToString() ?? string.Empty;
-        var val = raw.Length > 1 ? raw[..1].ToUpper() : raw.ToUpper();
-        OtpValues[index - 1] = val;
+        if (!IsButtonDisabled)
+            await OnVerifyClicked();
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs");
-    }
-
-    private string GetIsFilledCssClass(int index) =>
-        string.IsNullOrEmpty(OtpValues[index]) ? string.Empty : "filled";
 
     public void Dispose()
     {

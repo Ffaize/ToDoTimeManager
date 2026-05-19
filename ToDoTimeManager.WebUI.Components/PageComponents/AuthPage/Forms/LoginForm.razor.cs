@@ -11,6 +11,7 @@ public partial class LoginForm
 
     [Parameter] public Func<AuthPageCurrentState, Task>? GoTo { get; set; }
     [Parameter] public Action<PendingTwoFaSessionState, UserResponseDto>? AuthInfoChanged { get; set; }
+    [Parameter] public Action<string>? OnGoToForgotPassword { get; set; }
 
     private string LogInParameter { get; set; } = string.Empty;
     private string Password { get; set; } = string.Empty;
@@ -97,6 +98,13 @@ public partial class LoginForm
 
     private async Task OnForgotPasswordClicked()
     {
+        OnGoToForgotPassword?.Invoke(LogInParameter);
         if (GoTo != null) await GoTo(AuthPageCurrentState.ForgotPassword);
+    }
+
+    public async Task InvokePrimaryAsync()
+    {
+        if (!IsButtonDisabled)
+            await OnSignInClicked();
     }
 }

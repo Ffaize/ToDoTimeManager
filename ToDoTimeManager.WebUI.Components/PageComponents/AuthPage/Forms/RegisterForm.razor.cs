@@ -65,4 +65,10 @@ public partial class RegisterForm
     {
         if (GoTo != null) await GoTo(AuthPageCurrentState.Login);
     }
+
+    public async Task InvokePrimaryAsync()
+    {
+        if (!IsButtonDisabled)
+            await OnRegisterClicked();
+    }
 }

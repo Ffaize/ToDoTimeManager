@@ -212,9 +212,7 @@ public class UsersService : IUsersService
             if (existingByEmail != null)
                 return true;
 
-            var baseUsername = string.IsNullOrWhiteSpace(googleName)
-                ? email.Split('@')[0]
-                : new string(googleName.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+            var baseUsername = email.Split('@')[0].Replace('.', '_');
 
             if (baseUsername.Length < 2)
                 baseUsername = "user";

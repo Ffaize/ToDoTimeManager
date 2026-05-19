@@ -1,0 +1,13 @@
+@inherits BaseComponent
+
+<div class="otp-row with-dash" id="@ContainerId">
+    <input class="otp-cell @GetIsFilledCssClass(0)" type="text" maxlength="1" autocomplete="off" value="@Values[0]" @oninput="e => HandleInput(e, 1)">
+    <input class="otp-cell @GetIsFilledCssClass(1)" type="text" maxlength="1" autocomplete="off" value="@Values[1]" @oninput="e => HandleInput(e, 2)">
+    <input class="otp-cell @GetIsFilledCssClass(2)" type="text" maxlength="1" autocomplete="off" value="@Values[2]" @oninput="e => HandleInput(e, 3)">
+    <span class="otp-dash">
+        <span>—</span>
+    </span>
+    <input class="otp-cell @GetIsFilledCssClass(3)" type="text" maxlength="1" autocomplete="off" value="@Values[3]" @oninput="e => HandleInput(e, 4)">
+    <input class="otp-cell @GetIsFilledCssClass(4)" type="text" maxlength="1" autocomplete="off" value="@Values[4]" @oninput="e => HandleInput(e, 5)">
+    <input class="otp-cell @GetIsFilledCssClass(5)" type="text" maxlength="1" autocomplete="off" value="@Values[5]" @oninput="e => HandleInput(e, 6)">
+</div>

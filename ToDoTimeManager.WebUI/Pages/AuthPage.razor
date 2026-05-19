@@ -8,7 +8,7 @@
 @page "/auth"
 @GetPageTitle(nameof(AuthPage))
 
-<div class="auth-page">
+<div class="auth-page" @onkeydown="OnKeyDown">
     <div class="auth-page_culture-selector_container">
         <CultureSelector AdditionalCssClass="auth-page__culture-selector" />
     </div>
@@ -35,6 +35,12 @@
 </div>
 
 @code {
+    private LoginForm? _loginFormRef;
+    private RegisterForm? _registerFormRef;
+    private TwoFaForm? _twoFaFormRef;
+    private ForgotPasswordForm? _forgotPasswordFormRef;
+    private ResetPasswordForm? _resetPasswordFormRef;
+
     private RenderFragment GetFormSlide(AuthPageCurrentState state) => state switch
     {
         AuthPageCurrentState.Registration => RegistrationSlide,
@@ -45,18 +51,18 @@
     };
 
     private RenderFragment LoginSlide =>
-        @<LoginForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged"/>;
+        @<LoginForm @ref="_loginFormRef" GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged" OnGoToForgotPassword="@SetForgotPasswordInitialEmail"/>;
 
     private RenderFragment RegistrationSlide =>
-        @<RegisterForm GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged"/>;
+        @<RegisterForm @ref="_registerFormRef" GoTo="@GoTo" AuthInfoChanged="@AuthInfoChanged"/>;
 
     private RenderFragment TwoFaSlide =>
-        @<TwoFAForm GoTo="@GoTo" SessionState="@_session" User="@_user"/>;
+        @<TwoFaForm @ref="_twoFaFormRef" GoTo="@GoTo" SessionState="@_session" User="@_user"/>;
 
     private RenderFragment ForgotPasswordSlide =>
-        @<ForgotPasswordForm GoTo="@GoTo" PasswordResetInfoChanged="@PasswordResetInfoChanged"/>;
+        @<ForgotPasswordForm @ref="_forgotPasswordFormRef" GoTo="@GoTo" PasswordResetInfoChanged="@PasswordResetInfoChanged" InitialEmail="@_forgotPasswordInitialEmail"/>;
 
     private RenderFragment ResetPasswordSlide =>
-        @<ResetPasswordForm GoTo="@GoTo" SessionState="@_passwordResetSession"/>;
+        @<ResetPasswordForm @ref="_resetPasswordFormRef" GoTo="@GoTo" SessionState="@_passwordResetSession"/>;
 
 }

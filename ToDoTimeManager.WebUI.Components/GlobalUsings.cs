@@ -1,4 +1,5 @@
 global using Microsoft.AspNetCore.Components.Authorization;
+global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 global using Microsoft.Extensions.Localization;
 global using Microsoft.Extensions.Logging;

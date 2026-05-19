@@ -1,11 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.JSInterop;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Models.Models;
 using ToDoTimeManager.WebUI.Services.HttpServices;
-using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.Services.Interfaces;
 using ToDoTimeManager.WebUI.Utils.PotectedLocalStorageHelpers;
 
@@ -13,7 +11,6 @@ namespace ToDoTimeManager.WebUI.Components.PageComponents.AuthPage.Forms;
 
 public partial class ResetPasswordForm : IDisposable
 {
-    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private AuthService AuthService { get; set; } = null!;
     [Inject] private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = null!;
     [Inject] private ITwoFaTimerService TwoFaTimerService { get; set; } = null!;
@@ -109,21 +106,12 @@ public partial class ResetPasswordForm : IDisposable
         if (GoTo != null) await GoTo(AuthPageCurrentState.ForgotPassword);
     }
 
-    private void HandleInput(ChangeEventArgs e, int index)
-    {
-        var raw = e.Value?.ToString() ?? string.Empty;
-        var val = raw.Length > 1 ? raw[..1].ToUpper() : raw.ToUpper();
-        OtpValues[index - 1] = val;
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public async Task InvokePrimaryAsync()
     {
-        if (firstRender)
-            await JsRuntime.InvokeVoidAsync("initializeOtpInputs", "otp-inputs-reset");
+        if (!IsButtonDisabled)
+            await OnResetClicked();
     }
-
-    private string GetIsFilledCssClass(int index) =>
-        string.IsNullOrEmpty(OtpValues[index]) ? string.Empty : "filled";
 
     public void Dispose()
     {
