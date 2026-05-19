@@ -11,13 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="MailKit" Version="4.16.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ToDoTimeManager.Business.Utils\ToDoTimeManager.Business.Utils.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.DataAccess\ToDoTimeManager.DataAccess.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.Entities\ToDoTimeManager.Entities.csproj" />

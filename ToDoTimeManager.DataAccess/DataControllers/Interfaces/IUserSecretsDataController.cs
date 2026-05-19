@@ -9,5 +9,6 @@ public interface IUserSecretsDataController
     Task<bool> Create(UserSecretsEntity entity);
     Task<bool> UpdateRefreshToken(Guid userId, string? refreshTokenHash, DateTime? expiresAt);
     Task<bool> UpdatePasswordSalt(Guid userId, string passwordSalt);
+    Task<bool> UpdatePassword(Guid userId, string newPasswordHash, string newPasswordSalt);
     Task<bool> ClearRefreshToken(Guid userId);
 }

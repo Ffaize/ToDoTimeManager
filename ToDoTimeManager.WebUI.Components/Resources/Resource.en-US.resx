@@ -318,4 +318,49 @@
   <data name="Or" xml:space="preserve">
     <value>Or</value>
   </data>
+  <data name="SignInWithGitHub" xml:space="preserve">
+    <value>Sign in with GitHub</value>
+  </data>
+  <data name="LoginForm_ForgotPassword" xml:space="preserve">
+    <value>Forgot password?</value>
+  </data>
+  <data name="ForgotPassword_Title" xml:space="preserve">
+    <value>Forgot password</value>
+  </data>
+  <data name="ForgotPassword_Subtitle" xml:space="preserve">
+    <value>Enter your account email and we'll send you a reset code.</value>
+  </data>
+  <data name="ForgotPassword_EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ForgotPassword_Submit" xml:space="preserve">
+    <value>Send reset code</value>
+  </data>
+  <data name="ForgotPassword_BackToLogin" xml:space="preserve">
+    <value>Back to sign in</value>
+  </data>
+  <data name="ResetPassword_Title" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="ResetPassword_Subtitle" xml:space="preserve">
+    <value>Enter the code from your email and set a new password.</value>
+  </data>
+  <data name="ResetPassword_NewPasswordLabel" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="ResetPassword_ConfirmPasswordLabel" xml:space="preserve">
+    <value>Confirm new password</value>
+  </data>
+  <data name="ResetPassword_Submit" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="ResetPassword_UseDifferentEmail" xml:space="preserve">
+    <value>Use a different email</value>
+  </data>
+  <data name="ResetPassword_CodeExpired" xml:space="preserve">
+    <value>Reset code has expired. Please request a new one.</value>
+  </data>
+  <data name="ResetPassword_Success" xml:space="preserve">
+    <value>Password reset successfully. Please sign in.</value>
+  </data>
 </root>

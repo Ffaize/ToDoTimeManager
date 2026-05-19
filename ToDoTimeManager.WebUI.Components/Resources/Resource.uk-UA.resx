@@ -318,4 +318,49 @@
   <data name="Or" xml:space="preserve">
     <value>Або</value>
   </data>
+  <data name="SignInWithGitHub" xml:space="preserve">
+    <value>Увійти через GitHub</value>
+  </data>
+  <data name="LoginForm_ForgotPassword" xml:space="preserve">
+    <value>Забули пароль?</value>
+  </data>
+  <data name="ForgotPassword_Title" xml:space="preserve">
+    <value>Відновлення доступу</value>
+  </data>
+  <data name="ForgotPassword_Subtitle" xml:space="preserve">
+    <value>Введіть email вашого акаунту, і ми надішлемо код для відновлення пароля.</value>
+  </data>
+  <data name="ForgotPassword_EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ForgotPassword_Submit" xml:space="preserve">
+    <value>Надіслати код</value>
+  </data>
+  <data name="ForgotPassword_BackToLogin" xml:space="preserve">
+    <value>Повернутись до входу</value>
+  </data>
+  <data name="ResetPassword_Title" xml:space="preserve">
+    <value>Новий пароль</value>
+  </data>
+  <data name="ResetPassword_Subtitle" xml:space="preserve">
+    <value>Введіть код з листа та встановіть новий пароль.</value>
+  </data>
+  <data name="ResetPassword_NewPasswordLabel" xml:space="preserve">
+    <value>Новий пароль</value>
+  </data>
+  <data name="ResetPassword_ConfirmPasswordLabel" xml:space="preserve">
+    <value>Підтвердіть пароль</value>
+  </data>
+  <data name="ResetPassword_Submit" xml:space="preserve">
+    <value>Змінити пароль</value>
+  </data>
+  <data name="ResetPassword_UseDifferentEmail" xml:space="preserve">
+    <value>Використати інший email</value>
+  </data>
+  <data name="ResetPassword_CodeExpired" xml:space="preserve">
+    <value>Час дії коду вичерпано. Запросіть новий.</value>
+  </data>
+  <data name="ResetPassword_Success" xml:space="preserve">
+    <value>Пароль успішно змінено. Будь ласка, увійдіть.</value>
+  </data>
 </root>

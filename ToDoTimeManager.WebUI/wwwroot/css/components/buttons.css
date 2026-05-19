@@ -67,3 +67,10 @@
         border-color: var(--line);
         color: var(--text-1);
     }
+.btn-ghost:active {
+    border: 2px solid white;
+}
+
+.btn-ghost:focus {
+        box-shadow: none !important;
+    }

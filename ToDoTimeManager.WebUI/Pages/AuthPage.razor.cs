@@ -29,6 +29,8 @@ public partial class AuthPage
         AuthPageCurrentState.Login,
         AuthPageCurrentState.Registration,
         AuthPageCurrentState.TwoFA,
+        AuthPageCurrentState.ForgotPassword,
+        AuthPageCurrentState.ResetPassword,
     ];
 
     protected const string SignInStepName = "sign-in";
@@ -43,6 +45,7 @@ public partial class AuthPage
 
     private PendingTwoFaSessionState _session = new();
     private UserResponseDto _user = new();
+    private PendingPasswordResetState _passwordResetSession = new();
 
     protected async Task GoTo(AuthPageCurrentState target)
     {
@@ -90,6 +93,13 @@ public partial class AuthPage
             return;
         }
 
+        var githubSession = query.TryGetValue("github_session", out var ghVal) ? ghVal.ToString() : null;
+        if (!string.IsNullOrWhiteSpace(githubSession))
+        {
+            await HandleGitHubSessionAsync(githubSession);
+            return;
+        }
+
         var pendingUser = await ProtectedLocalStorage.GetUserInfoAsync();
         if (pendingUser is null || pendingUser.Id == Guid.Empty) return;
         _user = pendingUser;
@@ -122,10 +132,32 @@ public partial class AuthPage
         NavigationManager.NavigateTo(NavigationManager.BaseUri);
     }
 
+    private async Task HandleGitHubSessionAsync(string code)
+    {
+        var tokenModel = await AuthService.ExchangeGitHubSessionAsync(code);
+        if (tokenModel == null)
+        {
+            NavigationManager.NavigateTo("/auth", forceLoad: true);
+            return;
+        }
+
+        if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
+            await authProvider.MarkUserAsAuthenticated(tokenModel);
+
+        NavigationManager.NavigateTo(NavigationManager.BaseUri);
+    }
+
     protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)
     {
         TwoFaTimerService.StartTimer(user.Id, session.CodeLifetimeSeconds);
         _session = session;
         _user = user;
+    }
+
+    protected void PasswordResetInfoChanged(PendingPasswordResetState state)
+    {
+        if (state.UserId != Guid.Empty)
+            TwoFaTimerService.StartTimer(state.UserId, state.CodeLifetimeSeconds);
+        _passwordResetSession = state;
     }
 }

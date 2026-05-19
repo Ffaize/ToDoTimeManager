@@ -179,6 +179,31 @@ public class AuthService : IAuthService
         }
     }
 
+    public async Task<TokenModel?> GetOrCreateGitHubUserTokenAsync(ClaimsPrincipal githubUser)
+    {
+        try
+        {
+            var email = githubUser.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var githubName = githubUser.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+
+            await _usersService.CreateGoogleUserAsync(email, githubName);
+
+            var userEntity = await _usersDataController.GetUserByEmail(email);
+            if (userEntity == null)
+                return null;
+
+            return await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GitHub login failed");
+            return null;
+        }
+    }
+
     private (string? UserId, string? Role) ValidateAndReadToken(string token)
     {
         var key = _configuration["JwtSettings:Key"] ?? string.Empty;

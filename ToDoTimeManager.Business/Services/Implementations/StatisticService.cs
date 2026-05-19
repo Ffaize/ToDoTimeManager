@@ -24,7 +24,7 @@ public class StatisticService : IStatisticService
     {
         if (userId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (userId != currentUserId && currentUserRole < UserRole.Admin)
+        if (userId != currentUserId && currentUserRole < UserRole.Manager)
             throw new ForbiddenException();
 
         var result = new List<ToDoCountStatisticsOfAllTime>();
@@ -38,7 +38,7 @@ public class StatisticService : IStatisticService
     {
         if (filter.UserId == Guid.Empty)
             throw new ValidationException("Invalid user ID");
-        if (filter.UserId != currentUserId && currentUserRole < UserRole.Admin)
+        if (filter.UserId != currentUserId && currentUserRole < UserRole.Manager)
             throw new ForbiddenException();
 
         try

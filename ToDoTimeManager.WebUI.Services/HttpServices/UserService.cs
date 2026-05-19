@@ -22,7 +22,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return null;
         }
     }
@@ -37,7 +37,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return null;
         }
     }
@@ -52,7 +52,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return null;
         }
     }
@@ -82,7 +82,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return null;
         }
     }
@@ -97,7 +97,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return false;
         }
     }
@@ -127,7 +127,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return false;
         }
     }
@@ -142,7 +142,7 @@ public class UserService : BaseHttpService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, ex.Message);
             return false;
         }
     }

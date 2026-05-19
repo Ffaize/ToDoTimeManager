@@ -4,5 +4,7 @@ public enum AuthPageCurrentState
 {
     Login,
     Registration,
-    TwoFA
+    TwoFA,
+    ForgotPassword,
+    ResetPassword
 }

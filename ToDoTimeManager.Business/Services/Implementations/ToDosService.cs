@@ -10,20 +10,20 @@ namespace ToDoTimeManager.Business.Services.Implementations;
 public class ToDosService : IToDosService
 {
     private readonly IToDosDataController _toDosDataController;
-    private readonly IAccessControlService _accessControlService;
+    private readonly IAccessControlDataController _accessControlDataController;
     private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<ToDosService> _logger;
 
     public ToDosService(
         IToDosDataController toDosDataController,
-        IAccessControlService accessControlService,
+        IAccessControlDataController accessControlDataController,
         IActivityLogsService activityLogsService,
         ILogger<ToDosService> logger)
     {
-        _toDosDataController  = toDosDataController;
-        _accessControlService = accessControlService;
-        _activityLogsService  = activityLogsService;
-        _logger               = logger;
+        _toDosDataController         = toDosDataController;
+        _accessControlDataController = accessControlDataController;
+        _activityLogsService         = activityLogsService;
+        _logger                      = logger;
     }
 
     public async Task<List<ToDo>> GetAllToDos()
@@ -51,7 +51,7 @@ public class ToDosService : IToDosService
             if (res == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetToDoById)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessToDo(currentUserId, toDoId))
                 throw new ForbiddenException();
 
             return res.ToToDo();
@@ -74,7 +74,7 @@ public class ToDosService : IToDosService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetToDosByUserId)))
+            if (currentUserRole < UserRole.Manager && userId != currentUserId)
                 throw new ForbiddenException();
 
             List<ToDoEntity> res = await _toDosDataController.GetToDosByUserId(userId);
@@ -153,7 +153,7 @@ public class ToDosService : IToDosService
         try
         {
             var projectId = newToDo.ProjectId ?? Guid.Empty;
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(CreateToDo)))
+            if (currentUserRole < UserRole.Manager && projectId != Guid.Empty && !await _accessControlDataController.CanAccessProject(currentUserId, projectId))
                 throw new ForbiddenException();
 
             var result = await _toDosDataController.CreateToDo(new ToDoEntity(newToDo));
@@ -180,8 +180,13 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            var projectId = existing.ProjectId ?? Guid.Empty;
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(UpdateToDo)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessToDo(currentUserId, updatedToDo.Id))
+                throw new ForbiddenException();
+
+            var newProjectId = updatedToDo.ProjectId ?? Guid.Empty;
+            var oldProjectId = existing.ProjectId ?? Guid.Empty;
+            if (currentUserRole < UserRole.Manager && newProjectId != oldProjectId && newProjectId != Guid.Empty
+                && !await _accessControlDataController.CanAccessProject(currentUserId, newProjectId))
                 throw new ForbiddenException();
 
             bool statusChanged = existing.Status != updatedToDo.Status;
@@ -216,7 +221,7 @@ public class ToDosService : IToDosService
             if (existing == null)
                 throw new NotFoundException("To-do was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(DeleteToDo)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessToDo(currentUserId, toDoId))
                 throw new ForbiddenException();
 
             var result = await _toDosDataController.DeleteToDo(toDoId);

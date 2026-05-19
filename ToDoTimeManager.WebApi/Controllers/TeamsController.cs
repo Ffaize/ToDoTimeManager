@@ -112,7 +112,7 @@ public class TeamsController : BaseController
     [HttpPost("AddMember")]
     public async Task<IActionResult> AddMember([FromBody] TeamMemberUpsertRequestDto request)
     {
-        var result = await _teamsService.AddMember(request, GetCurrentUserId(), GetCurrentUserRole());
+        var result = await _teamsService.AddMember(request);
         return result ? Ok(result) : StatusCode(500);
     }
 
@@ -130,7 +130,7 @@ public class TeamsController : BaseController
     [HttpDelete("RemoveMember/{teamId}/{userId}")]
     public async Task<IActionResult> RemoveMember(Guid teamId, Guid userId)
     {
-        var result = await _teamsService.RemoveMember(teamId, userId, GetCurrentUserId(), GetCurrentUserRole());
+        var result = await _teamsService.RemoveMember(teamId, userId);
         return result ? Ok(result) : StatusCode(500);
     }
 

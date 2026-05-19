@@ -10,17 +10,17 @@ namespace ToDoTimeManager.Business.Services.Implementations;
 public class ActivityLogsService : IActivityLogsService
 {
     private readonly IActivityLogsDataController _dataController;
-    private readonly IAccessControlService _accessControlService;
+    private readonly IAccessControlDataController _accessControlDataController;
     private readonly ILogger<ActivityLogsService> _logger;
 
     public ActivityLogsService(
         IActivityLogsDataController dataController,
-        IAccessControlService accessControlService,
+        IAccessControlDataController accessControlDataController,
         ILogger<ActivityLogsService> logger)
     {
-        _dataController       = dataController;
-        _accessControlService = accessControlService;
-        _logger               = logger;
+        _dataController              = dataController;
+        _accessControlDataController = accessControlDataController;
+        _logger                      = logger;
     }
 
     public async Task<List<ActivityLog>> GetAllActivityLogs()
@@ -44,7 +44,7 @@ public class ActivityLogsService : IActivityLogsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetActivityLogsByToDoId)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessToDo(currentUserId, toDoId))
                 throw new ForbiddenException();
 
             List<ActivityLogEntity> res = await _dataController.GetActivityLogsByToDoId(toDoId);
@@ -68,7 +68,7 @@ public class ActivityLogsService : IActivityLogsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetActivityLogsByUserId)))
+            if (currentUserRole < UserRole.Manager && userId != currentUserId)
                 throw new ForbiddenException();
 
             List<ActivityLogEntity> res = await _dataController.GetActivityLogsByUserId(userId);
@@ -94,7 +94,7 @@ public class ActivityLogsService : IActivityLogsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, toDoId, nameof(GetActivityLogsByUserIdAndToDoId)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessToDo(currentUserId, toDoId))
                 throw new ForbiddenException();
 
             List<ActivityLogEntity> res = await _dataController.GetActivityLogsByUserIdAndToDoId(userId, toDoId);

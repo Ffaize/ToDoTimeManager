@@ -93,6 +93,23 @@ public class UserSecretsDataController : IUserSecretsDataController
         }
     }
 
+    public async Task<bool> UpdatePassword(Guid userId, string newPasswordHash, string newPasswordSalt)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", userId);
+            parameters.Add("PasswordHash", newPasswordHash);
+            parameters.Add("PasswordSalt", newPasswordSalt);
+            return await _dbAccessService.ExecuteByParameters("sp_UsersSecrets_UpdatePassword", parameters) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
     public async Task<bool> ClearRefreshToken(Guid userId)
     {
         try

@@ -1,5 +1,6 @@
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Entities.Exceptions;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.Business.Services.Implementations;
 
@@ -7,7 +8,6 @@ public class UsersService : IUsersService
 {
     private readonly IUsersDataController _usersDataController;
     private readonly IUserSecretsDataController _userSecretsDataController;
-    private readonly IAccessControlService _accessControlService;
     private readonly IActivityLogsService _activityLogsService;
     private readonly ILogger<UsersService> _logger;
     private readonly IPasswordHelperService _passwordHelperService;
@@ -15,14 +15,12 @@ public class UsersService : IUsersService
     public UsersService(
         IUsersDataController usersDataController,
         IUserSecretsDataController userSecretsDataController,
-        IAccessControlService accessControlService,
         IActivityLogsService activityLogsService,
         ILogger<UsersService> logger,
         IPasswordHelperService passwordHelperService)
     {
         _usersDataController       = usersDataController;
         _userSecretsDataController = userSecretsDataController;
-        _accessControlService      = accessControlService;
         _activityLogsService       = activityLogsService;
         _logger                    = logger;
         _passwordHelperService     = passwordHelperService;
@@ -53,7 +51,7 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, userId, nameof(GetUserById)))
+            if (currentUserRole < UserRole.Manager && userId != currentUserId)
                 throw new ForbiddenException();
 
             return res.ToUser();
@@ -80,7 +78,7 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByUsername)))
+            if (currentUserRole < UserRole.Manager && res.Id != currentUserId)
                 throw new ForbiddenException();
 
             return res.ToUser();
@@ -107,7 +105,7 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByEmail)))
+            if (currentUserRole < UserRole.Manager && res.Id != currentUserId)
                 throw new ForbiddenException();
 
             return res.ToUser();
@@ -134,7 +132,7 @@ public class UsersService : IUsersService
             if (res == null)
                 throw new NotFoundException("User was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, res.Id, nameof(GetUserByLoginParameter)))
+            if (currentUserRole < UserRole.Manager && res.Id != currentUserId)
                 throw new ForbiddenException();
 
             return res.ToUser();
@@ -267,7 +265,7 @@ public class UsersService : IUsersService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.Id, nameof(UpdateUser)))
+            if (currentUserId != request.Id)
                 throw new ForbiddenException();
 
             var existing = await _usersDataController.GetUserById(request.Id);

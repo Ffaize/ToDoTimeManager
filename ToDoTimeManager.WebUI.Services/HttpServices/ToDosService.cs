@@ -74,7 +74,10 @@ public class ToDosService : BaseHttpService
                 CreatedAt = toDo.CreatedAt,
                 DueDate = toDo.DueDate,
                 Status = toDo.Status,
-                AssignedTo = toDo.AssignedTo
+                Type = toDo.Type,
+                AssignedTo = toDo.AssignedTo,
+                TeamId = toDo.TeamId,
+                ProjectId = toDo.ProjectId
             };
 
             var response = await _httpClient.PostAsJsonAsync(Url("Create"), request);
@@ -101,7 +104,10 @@ public class ToDosService : BaseHttpService
                 CreatedAt = toDo.CreatedAt,
                 DueDate = toDo.DueDate,
                 Status = toDo.Status,
-                AssignedTo = toDo.AssignedTo
+                Type = toDo.Type,
+                AssignedTo = toDo.AssignedTo,
+                TeamId = toDo.TeamId,
+                ProjectId = toDo.ProjectId
             };
 
             var response = await _httpClient.PutAsJsonAsync(Url("Update"), request);

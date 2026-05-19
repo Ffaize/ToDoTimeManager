@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.WebUI.Models.Models;
+using ToDoTimeManager.WebUI.Models.Enums;
 
 namespace ToDoTimeManager.WebUI.Utils.PotectedLocalStorageHelpers;
 
@@ -38,4 +39,16 @@ public static class ProtectedStorageHelper
         await storage.DeleteAsync("PendingTwoFaUser");
         await storage.DeleteAsync("PendingTwoFaSessionState");
     }
+
+    public static async Task SavePendingPasswordResetStateAsync(this ProtectedLocalStorage storage, PendingPasswordResetState state)
+        => await storage.SetAsync("PendingPasswordResetState", state);
+
+    public static async Task<PendingPasswordResetState?> GetPendingPasswordResetStateAsync(this ProtectedLocalStorage storage)
+    {
+        var result = await storage.GetAsync<PendingPasswordResetState>("PendingPasswordResetState");
+        return result is { Success: true, Value: not null } ? result.Value : null;
+    }
+
+    public static async Task RemovePendingPasswordResetContextAsync(this ProtectedLocalStorage storage)
+        => await storage.DeleteAsync("PendingPasswordResetState");
 }

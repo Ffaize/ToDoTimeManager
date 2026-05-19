@@ -12,7 +12,7 @@ public interface ITeamsService
     Task<bool> CreateTeam(CreateTeamRequestDto request, Guid createdByUserId);
     Task<bool> UpdateTeam(UpdateTeamRequestDto request, Guid currentUserId, UserRole currentUserRole);
     Task<bool> DeleteTeam(Guid teamId);
-    Task<bool> AddMember(TeamMemberUpsertRequestDto request, Guid currentUserId, UserRole currentUserRole);
-    Task<bool> RemoveMember(Guid teamId, Guid userId, Guid currentUserId, UserRole currentUserRole);
+    Task<bool> AddMember(TeamMemberUpsertRequestDto request);
+    Task<bool> RemoveMember(Guid teamId, Guid userId);
     Task<List<ToDo>> GetToDosByTeamId(Guid teamId, Guid currentUserId, UserRole currentUserRole);
 }

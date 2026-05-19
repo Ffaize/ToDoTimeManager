@@ -85,8 +85,18 @@ public partial class LoginForm
         NavigationManager.NavigateTo(AuthService.GetGoogleLoginUrl(), forceLoad: true);
     }
 
+    private void OnGitHubLoginClicked()
+    {
+        NavigationManager.NavigateTo(AuthService.GetGitHubLoginUrl(), forceLoad: true);
+    }
+
     private async Task OnCreateAccountClicked()
     {
         if (GoTo != null) await GoTo(AuthPageCurrentState.Registration);
+    }
+
+    private async Task OnForgotPasswordClicked()
+    {
+        if (GoTo != null) await GoTo(AuthPageCurrentState.ForgotPassword);
     }
 }

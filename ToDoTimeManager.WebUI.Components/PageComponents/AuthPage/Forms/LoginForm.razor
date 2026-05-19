@@ -1,5 +1,4 @@
-﻿@using System.ComponentModel.DataAnnotations
-@using ToDoTimeManager.WebUI.Models.Enums.Button
+﻿@using ToDoTimeManager.WebUI.Models.Enums.Button
 @using ToDoTimeManager.WebUI.Models.Enums.Input
 @using ToDoTimeManager.WebUI.Utils
 @inherits BaseComponent
@@ -46,14 +45,19 @@
 </Input>
 </div>
 
-<CheckInput @bind-Value="KeepSignedIn"
-    AdditionalCssClass="auth-check-input"
-    Disabled="@IsLoading">
+<div class="password-input-footer">
+    <CheckInput @bind-Value="KeepSignedIn"
+                AdditionalCssClass="auth-check-input"
+                Disabled="@IsLoading">
 
-    <Text>
-        @Localizer["Keep me signed in"]
-    </Text>
-</CheckInput>
+        <Text>
+            @Localizer["Keep me signed in"]
+        </Text>
+    </CheckInput>
+    <a @onclick="OnForgotPasswordClicked" @onclick:preventDefault class="forgot-password-link">
+        @Localizer["LoginForm_ForgotPassword"]
+    </a>
+</div>
 
 <Button Disabled="@(IsButtonDisabled)"
     OnClick="@OnSignInClicked"
@@ -73,14 +77,25 @@
     </Content>
 </Divider>
 
-<Button OnClick="@OnGoogleLoginClicked"
-    Style="@ButtonStyle.Secondary"
-    AdditionalCssClass=""
-    Text="@Localizer["SignInWithGoogle"]">
-    <Icon>
-        <GoogleIcon IconSize="18" />
-    </Icon>
-</Button>
+<div class="sign-in-services-container">
+    <Button OnClick="@OnGoogleLoginClicked"
+            Style="@ButtonStyle.Secondary"
+            AdditionalCssClass=""
+            Text="@Localizer["SignInWithGoogle"]">
+        <Icon>
+            <GoogleIcon IconSize="18" />
+        </Icon>
+    </Button>
+
+    <Button OnClick="@OnGitHubLoginClicked"
+            Style="@ButtonStyle.Secondary"
+            AdditionalCssClass=""
+            Text="@Localizer["SignInWithGitHub"]">
+        <Icon>
+            <GitHubIcon IconSize="18" />
+        </Icon>
+    </Button>
+</div>
 
 <div class="footer-line">
     @Localizer["Trouble signing in?"] <a href="mailto:dmitro.danko@gmail.com?subject=Звернення до адміна">@Localizer["Contact your forge admin"]</a>

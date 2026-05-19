@@ -1,6 +1,7 @@
 @using ToDoTimeManager.WebUI.Components.PageComponents.AuthPage.Forms
 @using ToDoTimeManager.WebUI.Components.Shared
 @using ToDoTimeManager.WebUI.Models.Enums
+@using ToDoTimeManager.WebUI.Models.Models
 @layout AuthLayout
 @inherits BaseComponent
 
@@ -8,17 +9,19 @@
 @GetPageTitle(nameof(AuthPage))
 
 <div class="auth-page">
-    <CultureSelector AdditionalCssClass="auth-page__culture-selector" />
+    <div class="auth-page_culture-selector_container">
+        <CultureSelector AdditionalCssClass="auth-page__culture-selector" />
+    </div>
+
     <div class="auth-page__forms">
-        @if (_exitingState.HasValue)
-        {
+        @if (_exitingState.HasValue) {
             <div class="auth-form-slide @_exitingClass">
                 <div class="auth-page__form">
                     <div class="form-wrap">
                         @GetFormSlide(_exitingState.Value)
                     </div>
                 </div>
-                
+
             </div>
         }
         <div class="auth-form-slide @_activeClass">
@@ -36,6 +39,8 @@
     {
         AuthPageCurrentState.Registration => RegistrationSlide,
         AuthPageCurrentState.TwoFA => TwoFaSlide,
+        AuthPageCurrentState.ForgotPassword => ForgotPasswordSlide,
+        AuthPageCurrentState.ResetPassword => ResetPasswordSlide,
         _ => LoginSlide
     };
 
@@ -47,5 +52,11 @@
 
     private RenderFragment TwoFaSlide =>
         @<TwoFAForm GoTo="@GoTo" SessionState="@_session" User="@_user"/>;
+
+    private RenderFragment ForgotPasswordSlide =>
+        @<ForgotPasswordForm GoTo="@GoTo" PasswordResetInfoChanged="@PasswordResetInfoChanged"/>;
+
+    private RenderFragment ResetPasswordSlide =>
+        @<ResetPasswordForm GoTo="@GoTo" SessionState="@_passwordResetSession"/>;
 
 }

@@ -1,3 +1,4 @@
+using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -91,14 +92,15 @@ public class Program
         builder.Services.AddScoped<IStatisticService, StatisticService>();
         builder.Services.AddScoped<ITeamsService, TeamsService>();
         builder.Services.AddScoped<IProjectsService, ProjectsService>();
-        builder.Services.AddScoped<IAccessControlService, AccessControlService>();
-        builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
+builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
         builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 
         builder.Services.AddScoped<IUserSecretsDataController, UserSecretsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
+        builder.Services.AddScoped<IPasswordResetsDataController, PasswordResetsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesHelper, TwoFactorCodesHelper>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
         builder.Services.AddScoped<GlobalExceptionHandler>();
         builder.Services.AddMemoryCache();
@@ -144,6 +146,14 @@ public class Program
                 options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"] ?? string.Empty;
                 options.CallbackPath = "/Auth/GoogleCallback";
                 options.SignInScheme = "ExternalCookieScheme";
+            })
+            .AddGitHub(GitHubAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = builder.Configuration["GitHubAuth:ClientId"] ?? string.Empty;
+                options.ClientSecret = builder.Configuration["GitHubAuth:ClientSecret"] ?? string.Empty;
+                options.CallbackPath = "/Auth/GitHubCallback";
+                options.SignInScheme = "ExternalCookieScheme";
+                options.Scope.Add("user:email");
             });
     }
 
@@ -210,6 +220,24 @@ public class Program
             });
 
             options.AddSlidingWindowLimiter("auth-register", o =>
+            {
+                o.PermitLimit = 5;
+                o.Window = TimeSpan.FromSeconds(60);
+                o.SegmentsPerWindow = 2;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+
+            options.AddSlidingWindowLimiter("auth-forgot-password", o =>
+            {
+                o.PermitLimit = 3;
+                o.Window = TimeSpan.FromSeconds(300);
+                o.SegmentsPerWindow = 5;
+                o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                o.QueueLimit = 0;
+            });
+
+            options.AddSlidingWindowLimiter("auth-reset-password", o =>
             {
                 o.PermitLimit = 5;
                 o.Window = TimeSpan.FromSeconds(60);

@@ -59,7 +59,17 @@
       "Bash(Select-Object -ExpandProperty Line)",
       "Bash(grep -n \"StoredProcedures\\\\\\\\\\\\\\\\Users\\\\|Tables\" \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.DataBase\\\\ToDoTimeManager.DataBase.sqlproj\")",
       "Bash(dotnet add *)",
-      "Bash(ls /mnt/d/Projects/ToDoTimeManager/ToDoTimeManager.WebUI.Components/Resources/)"
+      "Bash(ls /mnt/d/Projects/ToDoTimeManager/ToDoTimeManager.WebUI.Components/Resources/)",
+      "Skill(anthropic-skills:resx-translations)",
+      "Skill(anthropic-skills:resx-translations:*)",
+      "Bash(Select-Object -Last 5)",
+      "Bash(Select-String -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\Resources\\\\Resource.resx\" -Pattern \"</root>\")",
+      "Bash(Select-Object -Last 1)",
+      "Bash(cd /mnt/d/Projects/ToDoTimeManager && dotnet build ToDoTimeManager.WebApi/ToDoTimeManager.WebApi.csproj --no-restore -v minimal 2>&1 | tail -20)",
+      "PowerShell(dotnet build \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\ToDoTimeManager.WebApi.csproj\" -v minimal 2>&1)",
+      "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Implementations\\\\AccessControlService.cs\")",
+      "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Interfaces\\\\IAccessControlService.cs\")",
+      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\Controllers\\\\\" -Filter \"*.cs\" -File | Select-Object -ExpandProperty FullName)"
     ]
   }
 }

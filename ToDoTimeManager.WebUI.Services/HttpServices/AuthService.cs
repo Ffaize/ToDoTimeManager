@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using ToDoTimeManager.Shared.DTOs.TwoFactorAuth;
+using ToDoTimeManager.Shared.DTOs.PasswordReset;
 using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices;
@@ -20,6 +21,12 @@ public class AuthService : BaseHttpService
     {
         var apiBase = _configuration["BaseApiUrlAddress"]?.TrimEnd('/') ?? string.Empty;
         return $"{apiBase}/api/Auth/GoogleLogin";
+    }
+
+    public string GetGitHubLoginUrl()
+    {
+        var apiBase = _configuration["BaseApiUrlAddress"]?.TrimEnd('/') ?? string.Empty;
+        return $"{apiBase}/api/Auth/GitHubLogin";
     }
 
     public async Task<TokenModel?> RefreshToken(TokenModel tokens, CancellationToken cancellationToken = default)
@@ -82,11 +89,61 @@ public class AuthService : BaseHttpService
         }
     }
 
+    public async Task<PasswordResetPendingModel?> ForgotPassword(string email)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(Url("ForgotPassword"), new ForgotPasswordRequestDto { Email = email });
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<PasswordResetPendingModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Auth HTTP request failed");
+            return null;
+        }
+    }
+
+    public async Task<bool> ResetPassword(Guid userId, string code, string newPassword)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(Url("ResetPassword"), new ResetPasswordRequestDto
+            {
+                UserId = userId,
+                Code = code,
+                NewPassword = newPassword
+            });
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Auth HTTP request failed");
+            return false;
+        }
+    }
+
     public async Task<TokenModel?> ExchangeGoogleSessionAsync(string code)
     {
         try
         {
             var response = await _httpClient.GetAsync(Url($"ExchangeGoogleSession?code={Uri.EscapeDataString(code)}"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<TokenModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Auth HTTP request failed");
+            return null;
+        }
+    }
+
+    public async Task<TokenModel?> ExchangeGitHubSessionAsync(string code)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(Url($"ExchangeGitHubSession?code={Uri.EscapeDataString(code)}"));
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<TokenModel>();
         }

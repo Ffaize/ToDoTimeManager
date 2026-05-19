@@ -8,4 +8,5 @@ public interface IAuthService
     Task<LoginResponse?> Login(LoginUser loginUser);
     Task<TokenModel?> RefreshAuthToken(TokenModel tokenModel);
     Task<TokenModel?> GetOrCreateGoogleUserTokenAsync(ClaimsPrincipal googleUser);
+    Task<TokenModel?> GetOrCreateGitHubUserTokenAsync(ClaimsPrincipal githubUser);
 }

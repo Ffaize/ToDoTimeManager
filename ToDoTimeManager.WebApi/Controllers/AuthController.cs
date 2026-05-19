@@ -1,3 +1,4 @@
+using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@ using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Entities.Entities;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Shared.DTOs.TwoFactorAuth;
+using ToDoTimeManager.Shared.DTOs.PasswordReset;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -21,6 +23,7 @@ public class AuthController : BaseController
     private readonly IAuthService _authService;
     private readonly ITwoFactorService _twoFactorService;
     private readonly IUsersService _usersService;
+    private readonly IPasswordResetService _passwordResetService;
     private readonly IMemoryCache _cache;
     private readonly IConfiguration _configuration;
 
@@ -28,12 +31,14 @@ public class AuthController : BaseController
         IAuthService authService,
         ITwoFactorService twoFactorService,
         IUsersService usersService,
+        IPasswordResetService passwordResetService,
         IMemoryCache cache,
         IConfiguration configuration)
     {
         _authService = authService;
         _twoFactorService = twoFactorService;
         _usersService = usersService;
+        _passwordResetService = passwordResetService;
         _cache = cache;
         _configuration = configuration;
     }
@@ -105,8 +110,24 @@ public class AuthController : BaseController
         return newTokenModel != null ? Ok(newTokenModel) : StatusCode(500);
     }
 
+    [HttpPost("ForgotPassword")]
+    [EnableRateLimiting("auth-forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
+    {
+        var pending = await _passwordResetService.SendResetCode(request.Email);
+        return Ok(pending);
+    }
+
+    [HttpPost("ResetPassword")]
+    [EnableRateLimiting("auth-reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+    {
+        await _passwordResetService.ResetPassword(request.UserId, request.Code, request.NewPassword);
+        return Ok();
+    }
+
     [HttpGet("GoogleLogin")]
-    public IActionResult GoogleLogin([FromQuery] string? returnUrl = null)
+    public IActionResult GoogleLogin()
     {
         var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth");
         var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
@@ -143,6 +164,47 @@ public class AuthController : BaseController
             return NotFound();
 
         _cache.Remove($"google:{code}");
+        return Ok(tokenModel);
+    }
+
+    [HttpGet("GitHubLogin")]
+    public IActionResult GitHubLogin()
+    {
+        var redirectUrl = Url.Action(nameof(GitHubCallback), "Auth");
+        var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+        return Challenge(properties, GitHubAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("GitHubCallback")]
+    public async Task<IActionResult> GitHubCallback()
+    {
+        var result = await HttpContext.AuthenticateAsync("ExternalCookieScheme");
+        if (!result.Succeeded || result.Principal == null)
+            return Redirect(BuildWebUIUrl("/auth"));
+
+        var tokenModel = await _authService.GetOrCreateGitHubUserTokenAsync(result.Principal);
+
+        await HttpContext.SignOutAsync("ExternalCookieScheme");
+
+        if (tokenModel == null)
+            return Redirect(BuildWebUIUrl("/auth"));
+
+        var code = Guid.NewGuid().ToString("N");
+        _cache.Set($"github:{code}", tokenModel, TimeSpan.FromSeconds(30));
+
+        return Redirect(BuildWebUIUrl($"/auth?github_session={code}"));
+    }
+
+    [HttpGet("ExchangeGitHubSession")]
+    public IActionResult ExchangeGitHubSession([FromQuery] string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+            return BadRequest();
+
+        if (!_cache.TryGetValue($"github:{code}", out TokenModel? tokenModel) || tokenModel == null)
+            return NotFound();
+
+        _cache.Remove($"github:{code}");
         return Ok(tokenModel);
     }
 

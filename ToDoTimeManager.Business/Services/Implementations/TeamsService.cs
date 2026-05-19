@@ -1,5 +1,7 @@
+using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Entities.Exceptions;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.Business.Services.Implementations;
 
@@ -8,21 +10,21 @@ public class TeamsService : ITeamsService
     private readonly ITeamsDataController _teamsDataController;
     private readonly ITeamMembersDataController _teamMembersDataController;
     private readonly IToDosService _toDosService;
-    private readonly IAccessControlService _accessControlService;
+    private readonly IAccessControlDataController _accessControlDataController;
     private readonly ILogger<TeamsService> _logger;
 
     public TeamsService(
         ITeamsDataController teamsDataController,
         ITeamMembersDataController teamMembersDataController,
         IToDosService toDosService,
-        IAccessControlService accessControlService,
+        IAccessControlDataController accessControlDataController,
         ILogger<TeamsService> logger)
     {
-        _teamsDataController = teamsDataController;
-        _teamMembersDataController = teamMembersDataController;
-        _toDosService = toDosService;
-        _accessControlService = accessControlService;
-        _logger = logger;
+        _teamsDataController         = teamsDataController;
+        _teamMembersDataController   = teamMembersDataController;
+        _toDosService                = toDosService;
+        _accessControlDataController = accessControlDataController;
+        _logger                      = logger;
     }
 
     public async Task<List<TeamResponseDto>> GetAllTeams()
@@ -42,7 +44,7 @@ public class TeamsService : ITeamsService
             if (entity == null)
                 throw new NotFoundException("Team was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, teamId, nameof(GetTeamById)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessTeam(currentUserId, teamId))
                 throw new ForbiddenException();
 
             List<TeamMemberEntity> memberEntities = await _teamMembersDataController.GetMembersByTeamId(teamId);
@@ -121,7 +123,7 @@ public class TeamsService : ITeamsService
 
         try
         {
-            if (!await _accessControlService.CanAccessTeam(currentUserId, request.Id))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessTeam(currentUserId, request.Id))
                 throw new ForbiddenException();
 
             var entity = new TeamEntity
@@ -163,7 +165,7 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<bool> AddMember(TeamMemberUpsertRequestDto request, Guid currentUserId, UserRole currentUserRole)
+    public async Task<bool> AddMember(TeamMemberUpsertRequestDto request)
     {
         if (request.TeamId == Guid.Empty)
             throw new ValidationException("Invalid team ID");
@@ -194,7 +196,7 @@ public class TeamsService : ITeamsService
         }
     }
 
-    public async Task<bool> RemoveMember(Guid teamId, Guid userId, Guid currentUserId, UserRole currentUserRole)
+    public async Task<bool> RemoveMember(Guid teamId, Guid userId)
     {
         if (teamId == Guid.Empty || userId == Guid.Empty)
             throw new ValidationException("Invalid team or user ID");
@@ -230,7 +232,7 @@ public class TeamsService : ITeamsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, teamId, nameof(GetToDosByTeamId)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessTeam(currentUserId, teamId))
                 throw new ForbiddenException();
 
             return await _toDosService.GetToDosByTeamId(teamId);

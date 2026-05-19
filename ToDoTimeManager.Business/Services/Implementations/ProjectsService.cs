@@ -1,5 +1,7 @@
+using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Entities.Exceptions;
+using ToDoTimeManager.Shared.Enums;
 
 namespace ToDoTimeManager.Business.Services.Implementations;
 
@@ -8,21 +10,21 @@ public class ProjectsService : IProjectsService
     private readonly IProjectsDataController _projectsDataController;
     private readonly IProjectTeamsDataController _projectTeamsDataController;
     private readonly IToDosService _toDosService;
-    private readonly IAccessControlService _accessControlService;
+    private readonly IAccessControlDataController _accessControlDataController;
     private readonly ILogger<ProjectsService> _logger;
 
     public ProjectsService(
         IProjectsDataController projectsDataController,
         IProjectTeamsDataController projectTeamsDataController,
         IToDosService toDosService,
-        IAccessControlService accessControlService,
+        IAccessControlDataController accessControlDataController,
         ILogger<ProjectsService> logger)
     {
-        _projectsDataController = projectsDataController;
+        _projectsDataController     = projectsDataController;
         _projectTeamsDataController = projectTeamsDataController;
-        _toDosService = toDosService;
-        _accessControlService = accessControlService;
-        _logger = logger;
+        _toDosService               = toDosService;
+        _accessControlDataController = accessControlDataController;
+        _logger                     = logger;
     }
 
     public async Task<List<ProjectResponseDto>> GetAllProjects(Guid currentUserId, UserRole currentUserRole)
@@ -49,7 +51,7 @@ public class ProjectsService : IProjectsService
             if (entity == null)
                 throw new NotFoundException("Project was not found");
 
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(GetProjectById)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessProject(currentUserId, projectId))
                 throw new ForbiddenException();
 
             List<ProjectTeamEntity> teamEntities = await _projectTeamsDataController.GetTeamsByProjectId(projectId);
@@ -109,7 +111,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.Id, nameof(UpdateProject)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessProject(currentUserId, request.Id))
                 throw new ForbiddenException();
 
             var entity = new ProjectEntity
@@ -159,7 +161,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, request.ProjectId, nameof(AddTeam)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessProject(currentUserId, request.ProjectId))
                 throw new ForbiddenException();
 
             var existing = await _projectTeamsDataController.GetByProjectIdAndTeamId(request.ProjectId, request.TeamId);
@@ -192,7 +194,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(RemoveTeam)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessProject(currentUserId, projectId))
                 throw new ForbiddenException();
 
             return await _projectTeamsDataController.RemoveTeam(projectId, teamId);
@@ -215,7 +217,7 @@ public class ProjectsService : IProjectsService
 
         try
         {
-            if (!await _accessControlService.IsAccessibleToUser(currentUserId, projectId, nameof(GetToDosByProjectId)))
+            if (currentUserRole < UserRole.Manager && !await _accessControlDataController.CanAccessProject(currentUserId, projectId))
                 throw new ForbiddenException();
 
             return await _toDosService.GetToDosByProjectId(projectId);
