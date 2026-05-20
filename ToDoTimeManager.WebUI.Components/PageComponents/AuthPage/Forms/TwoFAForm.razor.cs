@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.WebUI.Components.StaticComponents.Elements;
 
 namespace ToDoTimeManager.WebUI.Components.PageComponents.AuthPage.Forms;
@@ -28,6 +29,8 @@ public partial class TwoFaForm : IDisposable
     public string Email { get; set; } = string.Empty;
     public Guid UserId { get; set; }
     public bool IsButtonDisabled => OtpValues.Any(string.IsNullOrEmpty) || IsLoading;
+
+    private bool IsAuthApp => SessionState?.TwoFactorMethod == TwoFactorMethod.AuthApp;
 
 
 
@@ -115,7 +118,9 @@ public partial class TwoFaForm : IDisposable
 
         await Loading(async () =>
         {
-            var code = $"{OtpValues[0]}{OtpValues[1]}{OtpValues[2]}-{OtpValues[3]}{OtpValues[4]}{OtpValues[5]}";
+            var code = IsAuthApp
+                ? string.Concat(OtpValues)
+                : $"{OtpValues[0]}{OtpValues[1]}{OtpValues[2]}-{OtpValues[3]}{OtpValues[4]}{OtpValues[5]}";
             var tokens = await AuthService.VerifyCode(new VerifyTwoFactorRequestDto
             {
                 UserId = UserId,

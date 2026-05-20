@@ -75,6 +75,7 @@ public class Program
 
         builder.Services.AddScoped<IUsersDataController, UsersDataController>();
         builder.Services.AddScoped<IUserSettingsDataController, UserSettingsDataController>();
+        builder.Services.AddScoped<IUserTotpSecretsDataController, UserTotpSecretsDataController>();
         builder.Services.AddScoped<IAccessControlDataController, AccessControlDataController>();
         builder.Services.AddScoped<IToDosDataController, ToDosDataController>();
         builder.Services.AddScoped<ITimeLogsDataController, TimeLogsDataController>();
@@ -99,6 +100,7 @@ builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
         builder.Services.AddScoped<ITwoFactorCodesDataController, TwoFactorCodesDataController>();
         builder.Services.AddScoped<IPasswordResetsDataController, PasswordResetsDataController>();
         builder.Services.AddScoped<ITwoFactorCodesHelper, TwoFactorCodesHelper>();
+        builder.Services.AddSingleton<ITotpService, TotpService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 

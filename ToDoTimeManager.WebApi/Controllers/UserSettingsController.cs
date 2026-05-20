@@ -43,4 +43,18 @@ public class UserSettingsController : BaseController
         var result = await _userSettingsService.SetTwoFactorEnabled(GetCurrentUserId(), request.IsEnabled);
         return result ? Ok(result) : StatusCode(500);
     }
+
+    [HttpGet("GenerateTotpSetup")]
+    public async Task<IActionResult> GenerateTotpSetup()
+    {
+        var result = await _userSettingsService.GenerateTotpSetup(GetCurrentUserId());
+        return Ok(result);
+    }
+
+    [HttpPost("ConfirmTotpSetup")]
+    public async Task<IActionResult> ConfirmTotpSetup([FromBody] ConfirmTotpSetupRequestDto request)
+    {
+        await _userSettingsService.ConfirmTotpSetup(GetCurrentUserId(), request.Secret, request.Code);
+        return Ok();
+    }
 }

@@ -4,7 +4,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT UserId,
-           IsTwoFactorEnabled
+           IsTwoFactorEnabled,
+           TwoFactorMethod
     FROM [dbo].[UserSettings]
     WHERE UserId = @UserId;
 END

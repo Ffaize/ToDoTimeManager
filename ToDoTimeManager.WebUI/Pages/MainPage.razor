@@ -1,2 +1,9 @@
-﻿@page "/"
+@page "/"
+@using ToDoTimeManager.WebUI.Components.PageComponents.MainPage
 <PageTitle>@Localizer["Home"] - TaskForge</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <TotpSetupCard />
+    </Authorized>
+</AuthorizeView>

@@ -1,0 +1,33 @@
+@using ToDoTimeManager.Shared.DTOs.UserSettings
+@inherits ToDoTimeManager.WebUI.Components.BaseComponents.BaseComponent
+
+@if (!_confirmed)
+{
+    @if (_setup is null)
+    {
+        <button @onclick="OnGenerateClicked" disabled="@IsLoading">
+            @Localizer["Set up Authenticator App"]
+        </button>
+    }
+    else
+    {
+        <h3>@Localizer["Scan with your authenticator app"]</h3>
+        <img src="data:image/png;base64,@_setup.QrCodeBase64"
+             alt="@Localizer["TOTP QR code"]"
+             style="width:200px;height:200px;" />
+        <p>
+            @Localizer["Manual entry:"] <code>@_setup.Secret</code>
+        </p>
+
+        <OtpInputRow ContainerId="totp-confirm-inputs" @bind-Values="_confirmValues" />
+
+        <button @onclick="OnConfirmClicked"
+                disabled="@(_confirmValues.Any(string.IsNullOrEmpty) || IsLoading)">
+            @Localizer["Confirm"]
+        </button>
+    }
+}
+else
+{
+    <p>@Localizer["Authenticator app configured successfully!"]</p>
+}

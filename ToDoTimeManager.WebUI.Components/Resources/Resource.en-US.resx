@@ -363,4 +363,28 @@
   <data name="ResetPassword_Success" xml:space="preserve">
     <value>Password reset successfully. Please sign in.</value>
   </data>
+  <data name="Open your authenticator app and enter the 6-digit code for" xml:space="preserve">
+    <value>Open your authenticator app and enter the 6-digit code for</value>
+  </data>
+  <data name="Set up Authenticator App" xml:space="preserve">
+    <value>Set up Authenticator App</value>
+  </data>
+  <data name="Scan with your authenticator app" xml:space="preserve">
+    <value>Scan with your authenticator app</value>
+  </data>
+  <data name="Manual entry:" xml:space="preserve">
+    <value>Manual entry:</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Authenticator app configured successfully!" xml:space="preserve">
+    <value>Authenticator app configured successfully!</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TOTP QR code" xml:space="preserve">
+    <value>TOTP QR code</value>
+  </data>
 </root>

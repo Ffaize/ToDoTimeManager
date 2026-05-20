@@ -20,8 +20,9 @@ public static class MappingExtensions
     public static UserSettingsResponseDto ToResponseDto(this UserSettings settings) =>
         new()
         {
-            UserId = settings.UserId,
-            IsTwoFactorEnabled = settings.IsTwoFactorEnabled
+            UserId             = settings.UserId,
+            IsTwoFactorEnabled = settings.IsTwoFactorEnabled,
+            TwoFactorMethod    = settings.TwoFactorMethod
         };
 
     public static TeamResponseDto ToResponseDto(this Team team, List<TeamMember>? members) =>

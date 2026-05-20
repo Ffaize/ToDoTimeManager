@@ -72,6 +72,7 @@
     <Folder Include="StoredProcedures\UsersManagment\UserSettings" />
     <Folder Include="StoredProcedures\UsersManagment\UsersSecrets" />
     <Folder Include="StoredProcedures\UsersManagment\PasswordResets" />
+    <Folder Include="StoredProcedures\UsersManagment\UserTotpSecrets" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Teams.sql" />
@@ -149,6 +150,8 @@
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_GetTwoFactorEnabled.sql" />
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_SetTwoFactorEnabled.sql" />
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_Update.sql" />
+    <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_GetTwoFactorMethod.sql" />
+    <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_SetTwoFactorMethod.sql" />
     <Build Include="StoredProcedures\UsersManagment\UsersSecrets\sp_UsersSecrets_ClearRefreshToken.sql" />
     <Build Include="StoredProcedures\UsersManagment\UsersSecrets\sp_UsersSecrets_Create.sql" />
     <Build Include="StoredProcedures\UsersManagment\UsersSecrets\sp_UsersSecrets_GetByUserId.sql" />
@@ -159,6 +162,10 @@
     <Build Include="StoredProcedures\UsersManagment\PasswordResets\sp_PasswordResets_DeleteByUserId.sql" />
     <Build Include="StoredProcedures\UsersManagment\PasswordResets\sp_PasswordResets_GetByUserId.sql" />
     <Build Include="StoredProcedures\UsersManagment\PasswordResets\sp_PasswordResets_Upsert.sql" />
+    <Build Include="Tables\UsersManagment\UserTotpSecrets.sql" />
+    <Build Include="StoredProcedures\UsersManagment\UserTotpSecrets\sp_UserTotpSecrets_GetByUserId.sql" />
+    <Build Include="StoredProcedures\UsersManagment\UserTotpSecrets\sp_UserTotpSecrets_Upsert.sql" />
+    <Build Include="StoredProcedures\UsersManagment\UserTotpSecrets\sp_UserTotpSecrets_DeleteByUserId.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ToDoTimeManager.DataBase.publish.xml" />

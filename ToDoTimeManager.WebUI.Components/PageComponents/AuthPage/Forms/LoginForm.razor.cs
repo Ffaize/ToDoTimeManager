@@ -51,7 +51,8 @@ public partial class LoginForm
                     result.TwoFaPending.SenderEmail ?? string.Empty,
                     KeepSignedIn,
                     result.TwoFaPending.CodeLifetimeSeconds,
-                    AuthPageCurrentState.Login
+                    AuthPageCurrentState.Login,
+                    result.TwoFaPending.TwoFactorMethod
                 );
 
                 await ProtectedLocalStorage.SaveUserInfoAsync(user);

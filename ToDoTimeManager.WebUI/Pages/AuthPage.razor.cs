@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using ToDoTimeManager.Shared.DTOs.User;
+using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.WebUI.Models.Models;
 using ToDoTimeManager.WebUI.Models.Enums;
 using ToDoTimeManager.WebUI.Services.HttpServices;
@@ -106,13 +107,15 @@ public partial class AuthPage
         if (pendingUser is null || pendingUser.Id == Guid.Empty) return;
         _user = pendingUser;
 
-        if (!TwoFaTimerService.HasActiveTimer(pendingUser.Id))
+        var pendingSessionState = await ProtectedLocalStorage.GetPendingTwoFaSessionStateAsync();
+        var method = pendingSessionState?.TwoFactorMethod ?? TwoFactorMethod.Email;
+
+        if (method == TwoFactorMethod.Email && !TwoFaTimerService.HasActiveTimer(pendingUser.Id))
         {
             await ProtectedLocalStorage.RemovePendingTwoFaContextAsync();
             return;
         }
 
-        var pendingSessionState = await ProtectedLocalStorage.GetPendingTwoFaSessionStateAsync();
         _session = pendingSessionState ?? new PendingTwoFaSessionState { SourceState = AuthPageCurrentState.Login };
 
         _activeState = AuthPageCurrentState.TwoFA;
@@ -152,12 +155,14 @@ public partial class AuthPage
             _user = new UserResponseDto { Id = pending.UserId, Email = pending.Email };
             _session = new PendingTwoFaSessionState
             {
-                MaskedEmail = pending.Email ?? string.Empty,
-                SenderEmail = pending.SenderEmail ?? string.Empty,
+                MaskedEmail         = pending.Email ?? string.Empty,
+                SenderEmail         = pending.SenderEmail ?? string.Empty,
                 CodeLifetimeSeconds = pending.CodeLifetimeSeconds,
-                SourceState = AuthPageCurrentState.Login
+                SourceState         = AuthPageCurrentState.Login,
+                TwoFactorMethod     = pending.TwoFactorMethod
             };
-            TwoFaTimerService.StartTimer(pending.UserId, pending.CodeLifetimeSeconds);
+            if (pending.TwoFactorMethod == TwoFactorMethod.Email)
+                TwoFaTimerService.StartTimer(pending.UserId, pending.CodeLifetimeSeconds);
             _activeState = AuthPageCurrentState.TwoFA;
             await InvokeAsync(StateHasChanged);
             return;
@@ -168,7 +173,8 @@ public partial class AuthPage
 
     protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)
     {
-        TwoFaTimerService.StartTimer(user.Id, session.CodeLifetimeSeconds);
+        if (session.TwoFactorMethod == TwoFactorMethod.Email)
+            TwoFaTimerService.StartTimer(user.Id, session.CodeLifetimeSeconds);
         _session = session;
         _user = user;
     }

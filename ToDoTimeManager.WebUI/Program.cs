@@ -37,6 +37,7 @@ public class Program
         builder.Services.AddScoped<ToastMessageHandler>();
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<UserSettingsService>();
         builder.Services.AddScoped<StatisticService>();
         builder.Services.AddScoped<ToDosService>();
         builder.Services.AddScoped<TimeLogsService>();

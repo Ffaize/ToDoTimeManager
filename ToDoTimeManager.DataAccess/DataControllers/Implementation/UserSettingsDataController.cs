@@ -72,4 +72,34 @@ public class UserSettingsDataController : IUserSettingsDataController
             return false;
         }
     }
+
+    public async Task<int?> GetTwoFactorMethod(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.GetOneByParameter<int?>(
+                "sp_UserSettings_GetTwoFactorMethod", "UserId", userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return null;
+        }
+    }
+
+    public async Task<bool> SetTwoFactorMethod(Guid userId, int method)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", userId);
+            parameters.Add("TwoFactorMethod", method);
+            return await _dbAccessService.ExecuteByParameters("sp_UserSettings_SetTwoFactorMethod", parameters) >= 0;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
 }

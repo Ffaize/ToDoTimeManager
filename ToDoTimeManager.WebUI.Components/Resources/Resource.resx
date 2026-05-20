@@ -363,4 +363,28 @@
   <data name="ResetPassword_Success" xml:space="preserve">
     <value>Пароль успішно змінено. Будь ласка, увійдіть.</value>
   </data>
+  <data name="Open your authenticator app and enter the 6-digit code for" xml:space="preserve">
+    <value>Відкрийте застосунок автентифікатора та введіть 6-значний код для</value>
+  </data>
+  <data name="Set up Authenticator App" xml:space="preserve">
+    <value>Налаштувати застосунок автентифікатора</value>
+  </data>
+  <data name="Scan with your authenticator app" xml:space="preserve">
+    <value>Відскануйте QR-код у застосунку автентифікатора</value>
+  </data>
+  <data name="Manual entry:" xml:space="preserve">
+    <value>Ручне введення:</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="Authenticator app configured successfully!" xml:space="preserve">
+    <value>Застосунок автентифікатора налаштовано успішно!</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="TOTP QR code" xml:space="preserve">
+    <value>QR-код TOTP</value>
+  </data>
 </root>

@@ -1,26 +1,40 @@
 @using ToDoTimeManager.WebUI.Models.Enums.Button
+@using ToDoTimeManager.Shared.Enums
 @inherits ToDoTimeManager.WebUI.Components.BaseComponents.BaseComponent
 
 <div>
     <h1 class="form-title">@Localizer["Two Factor Authentication"]</h1>
-    <p class="form-sub">
-        <span>@Localizer["We sent a 6-digit ember code to"]</span>
-        <strong>@Email</strong>
-        <span>@Localizer["Drop it in below to seal the session."]</span>
-    </p>
+    @if (IsAuthApp)
+    {
+        <p class="form-sub">
+            <span>@Localizer["Open your authenticator app and enter the 6-digit code for"]</span>
+            <strong> TaskForge</strong><span>.</span>
+        </p>
+    }
+    else
+    {
+        <p class="form-sub">
+            <span>@Localizer["We sent a 6-digit ember code to"]</span>
+            <strong>@Email</strong>
+            <span>@Localizer["Drop it in below to seal the session."]</span>
+        </p>
+    }
 </div>
 
 <OtpInputRow @ref="_otpInputRow" ContainerId="otp-inputs" @bind-Values="OtpValues" />
 
-<div class="meta-row">
-    <span class="timer">
-        <span>@Localizer["CODE EXPIRES IN"] </span>
-        <strong>@FormattedTime</strong>
-    </span>
-    <button type="button" class="resend" @onclick="OnResendCodeClicked" disabled="@IsLoading">
-        @Localizer["Resend code"]
-    </button>
-</div>
+@if (!IsAuthApp)
+{
+    <div class="meta-row">
+        <span class="timer">
+            <span>@Localizer["CODE EXPIRES IN"] </span>
+            <strong>@FormattedTime</strong>
+        </span>
+        <button type="button" class="resend" @onclick="OnResendCodeClicked" disabled="@IsLoading">
+            @Localizer["Resend code"]
+        </button>
+    </div>
+}
 
 <Button Disabled="@(IsButtonDisabled)"
     OnClick="@OnVerifyClicked"
@@ -34,24 +48,26 @@
     </Icon>
 </Button>
 
-
-<div class="hint">
-    <TimerIcon IconSize="14" />
-    <div>
-        <strong>
-            <span>@Localizer["Email not in your inbox?"]</span>
-        </strong>
-        <span>@Localizer["Check your spam folder or sender filters for "]</span>
-        <code>
-            <span>@SessionState?.SenderEmail</span>
-        </code>
-        <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
+@if (!IsAuthApp)
+{
+    <div class="hint">
+        <TimerIcon IconSize="14" />
+        <div>
+            <strong>
+                <span>@Localizer["Email not in your inbox?"]</span>
+            </strong>
+            <span>@Localizer["Check your spam folder or sender filters for "]</span>
+            <code>
+                <span>@SessionState?.SenderEmail</span>
+            </code>
+            <span>@Localizer[". The code is single-use and expires in 5 minutes."]</span>
+        </div>
     </div>
-</div>
+}
 
 <div class="helper-row">
     <a @onclick="OnUseDifferentEmailClicked" @onclick:preventDefault>
-        <span>@Localizer["Use a different email"]</span>
+        <span>@(IsAuthApp ? Localizer["Cancel"] : Localizer["Use a different email"])</span>
     </a>
     <a href="mailto:dmitro.danko@gmail.com?subject=Звернення до адміна">
         <span>@Localizer["Lost access? Contact admin"]</span>
