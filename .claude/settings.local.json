@@ -69,7 +69,8 @@
       "PowerShell(dotnet build \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\ToDoTimeManager.WebApi.csproj\" -v minimal 2>&1)",
       "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Implementations\\\\AccessControlService.cs\")",
       "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Interfaces\\\\IAccessControlService.cs\")",
-      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\Controllers\\\\\" -Filter \"*.cs\" -File | Select-Object -ExpandProperty FullName)"
+      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\Controllers\\\\\" -Filter \"*.cs\" -File | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\PageComponents\\\\AuthPage\\\\\" -File | ForEach-Object { $_.Name })"
     ]
   }
 }

@@ -83,7 +83,8 @@
     max-height: 90vh;
     display: flex;
     flex-direction: row;
-    background: linear-gradient(180deg, rgba(28, 33, 41, 0.85), rgba(17, 19, 23, 0.85));
+    background: transparent;
+    /*background: linear-gradient(180deg, rgba(28, 33, 41, 0.85), rgba(17, 19, 23, 0.85));*/
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--line);
@@ -288,7 +289,8 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 20px;
-    background: linear-gradient(180deg, rgba(22, 26, 32, .4), rgba(17, 19, 23, .4));
+    background: transparent;
+    /*background: linear-gradient(180deg, rgba(22, 26, 32, .4), rgba(17, 19, 23, .4));*/
     position: relative;
     overflow-y: hidden;
     flex: 1;
