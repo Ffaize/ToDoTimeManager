@@ -202,6 +202,12 @@ public class UsersService : IUsersService
     }
 
     public async Task<bool> CreateGoogleUserAsync(string email, string googleName)
+        => await CreateOAuthUserAsync(email, googleName, OAuthProvider.Google);
+
+    public async Task<bool> CreateGitHubUserAsync(string email, string githubName)
+        => await CreateOAuthUserAsync(email, githubName, OAuthProvider.GitHub);
+
+    private async Task<bool> CreateOAuthUserAsync(string email, string displayName, OAuthProvider provider)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ValidationException("Email is required");
@@ -210,7 +216,7 @@ public class UsersService : IUsersService
         {
             var existingByEmail = await _usersDataController.GetUserByEmail(email);
             if (existingByEmail != null)
-                return true;
+                return existingByEmail.OAuthProvider == provider;
 
             var baseUsername = email.Split('@')[0].Replace('.', '_');
 
@@ -232,7 +238,8 @@ public class UsersService : IUsersService
                 UserName = username,
                 Email = email,
                 Password = hash,
-                UserRole = UserRole.User
+                UserRole = UserRole.User,
+                OAuthProvider = provider
             };
 
             var created = await _usersDataController.CreateUser(new UserEntity(user));

@@ -70,7 +70,16 @@
       "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Implementations\\\\AccessControlService.cs\")",
       "Bash(Remove-Item \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.Business\\\\Services\\\\Interfaces\\\\IAccessControlService.cs\")",
       "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebApi\\\\Controllers\\\\\" -Filter \"*.cs\" -File | Select-Object -ExpandProperty FullName)",
-      "PowerShell(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\PageComponents\\\\AuthPage\\\\\" -File | ForEach-Object { $_.Name })"
+      "PowerShell(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\PageComponents\\\\AuthPage\\\\\" -File | ForEach-Object { $_.Name })",
+      "Bash(Get-ChildItem -Recurse -Filter \"*PasswordReset*\" -Include \"*.sql\")",
+      "Bash(Select-Object FullName)",
+      "Bash(cat)",
+      "Read(//tmp/**)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Projects\\\\ToDoTimeManager\" -Recurse -Filter \"*AuthController*\")",
+      "Bash(Select-Object -First 10)",
+      "Bash(xargs grep -l \"SaveTokens\\\\|StateDataFormat\\\\|CorrelationCookie\")",
+      "Bash(dotnet script *)",
+      "Bash(xargs ls -la)"
     ]
   }
 }

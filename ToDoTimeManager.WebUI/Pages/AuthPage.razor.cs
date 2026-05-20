@@ -120,33 +120,50 @@ public partial class AuthPage
     }
 
     private async Task HandleGoogleSessionAsync(string code)
-    {
-        var tokenModel = await AuthService.ExchangeGoogleSessionAsync(code);
-        if (tokenModel == null)
-        {
-            NavigationManager.NavigateTo("/auth", forceLoad: true);
-            return;
-        }
-
-        if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
-            await authProvider.MarkUserAsAuthenticated(tokenModel);
-
-        NavigationManager.NavigateTo(NavigationManager.BaseUri);
-    }
+        => await HandleOAuthSessionAsync(code, isGoogle: true);
 
     private async Task HandleGitHubSessionAsync(string code)
+        => await HandleOAuthSessionAsync(code, isGoogle: false);
+
+    private async Task HandleOAuthSessionAsync(string code, bool isGoogle)
     {
-        var tokenModel = await AuthService.ExchangeGitHubSessionAsync(code);
-        if (tokenModel == null)
+        var result = isGoogle
+            ? await AuthService.ExchangeGoogleSessionAsync(code)
+            : await AuthService.ExchangeGitHubSessionAsync(code);
+
+        if (result == null)
         {
             NavigationManager.NavigateTo("/auth", forceLoad: true);
             return;
         }
 
-        if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
-            await authProvider.MarkUserAsAuthenticated(tokenModel);
+        if (result.Token != null)
+        {
+            if (AuthenticationStateProvider is CustomAuthStateProvider authProvider)
+                await authProvider.MarkUserAsAuthenticated(result.Token);
 
-        NavigationManager.NavigateTo(NavigationManager.BaseUri);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri);
+            return;
+        }
+
+        if (result.PendingTwoFactor != null)
+        {
+            var pending = result.PendingTwoFactor;
+            _user = new UserResponseDto { Id = pending.UserId, Email = pending.Email };
+            _session = new PendingTwoFaSessionState
+            {
+                MaskedEmail = pending.Email ?? string.Empty,
+                SenderEmail = pending.SenderEmail ?? string.Empty,
+                CodeLifetimeSeconds = pending.CodeLifetimeSeconds,
+                SourceState = AuthPageCurrentState.Login
+            };
+            TwoFaTimerService.StartTimer(pending.UserId, pending.CodeLifetimeSeconds);
+            _activeState = AuthPageCurrentState.TwoFA;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        NavigationManager.NavigateTo("/auth", forceLoad: true);
     }
 
     protected void AuthInfoChanged(PendingTwoFaSessionState session, UserResponseDto user)

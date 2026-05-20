@@ -141,15 +141,15 @@ public class AuthController : BaseController
         if (!result.Succeeded || result.Principal == null)
             return Redirect(BuildWebUIUrl("/auth"));
 
-        var tokenModel = await _authService.GetOrCreateGoogleUserTokenAsync(result.Principal);
+        var oauthResult = await _authService.GetOrCreateGoogleUserTokenAsync(result.Principal);
 
         await HttpContext.SignOutAsync("ExternalCookieScheme");
 
-        if (tokenModel == null)
+        if (oauthResult == null)
             return Redirect(BuildWebUIUrl("/auth"));
 
         var code = Guid.NewGuid().ToString("N");
-        _cache.Set($"google:{code}", tokenModel, TimeSpan.FromSeconds(30));
+        _cache.Set($"google:{code}", oauthResult, TimeSpan.FromSeconds(30));
 
         return Redirect(BuildWebUIUrl($"/auth?google_session={code}"));
     }
@@ -160,11 +160,11 @@ public class AuthController : BaseController
         if (string.IsNullOrWhiteSpace(code))
             return BadRequest();
 
-        if (!_cache.TryGetValue($"google:{code}", out TokenModel? tokenModel) || tokenModel == null)
+        if (!_cache.TryGetValue($"google:{code}", out OAuthExchangeResult? oauthResult) || oauthResult == null)
             return NotFound();
 
         _cache.Remove($"google:{code}");
-        return Ok(tokenModel);
+        return Ok(oauthResult);
     }
 
     [HttpGet("GitHubLogin")]
@@ -182,15 +182,15 @@ public class AuthController : BaseController
         if (!result.Succeeded || result.Principal == null)
             return Redirect(BuildWebUIUrl("/auth"));
 
-        var tokenModel = await _authService.GetOrCreateGitHubUserTokenAsync(result.Principal);
+        var oauthResult = await _authService.GetOrCreateGitHubUserTokenAsync(result.Principal);
 
         await HttpContext.SignOutAsync("ExternalCookieScheme");
 
-        if (tokenModel == null)
+        if (oauthResult == null)
             return Redirect(BuildWebUIUrl("/auth"));
 
         var code = Guid.NewGuid().ToString("N");
-        _cache.Set($"github:{code}", tokenModel, TimeSpan.FromSeconds(30));
+        _cache.Set($"github:{code}", oauthResult, TimeSpan.FromSeconds(30));
 
         return Redirect(BuildWebUIUrl($"/auth?github_session={code}"));
     }
@@ -201,11 +201,11 @@ public class AuthController : BaseController
         if (string.IsNullOrWhiteSpace(code))
             return BadRequest();
 
-        if (!_cache.TryGetValue($"github:{code}", out TokenModel? tokenModel) || tokenModel == null)
+        if (!_cache.TryGetValue($"github:{code}", out OAuthExchangeResult? oauthResult) || oauthResult == null)
             return NotFound();
 
         _cache.Remove($"github:{code}");
-        return Ok(tokenModel);
+        return Ok(oauthResult);
     }
 
     private string BuildWebUIUrl(string path)

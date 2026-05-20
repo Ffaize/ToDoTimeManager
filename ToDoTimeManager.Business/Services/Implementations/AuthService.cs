@@ -154,52 +154,43 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<TokenModel?> GetOrCreateGoogleUserTokenAsync(ClaimsPrincipal googleUser)
+    public async Task<OAuthExchangeResult?> GetOrCreateGoogleUserTokenAsync(ClaimsPrincipal googleUser)
+        => await HandleOAuthLoginAsync(googleUser, isGoogle: true);
+
+    public async Task<OAuthExchangeResult?> GetOrCreateGitHubUserTokenAsync(ClaimsPrincipal githubUser)
+        => await HandleOAuthLoginAsync(githubUser, isGoogle: false);
+
+    private async Task<OAuthExchangeResult?> HandleOAuthLoginAsync(ClaimsPrincipal principal, bool isGoogle)
     {
+        var providerName = isGoogle ? "Google" : "GitHub";
         try
         {
-            var email = googleUser.FindFirstValue(ClaimTypes.Email);
+            var email = principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            var googleName = googleUser.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            var displayName = principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
 
-            await _usersService.CreateGoogleUserAsync(email, googleName);
+            var providerMatch = isGoogle
+                ? await _usersService.CreateGoogleUserAsync(email, displayName)
+                : await _usersService.CreateGitHubUserAsync(email, displayName);
 
             var userEntity = await _usersDataController.GetUserByEmail(email);
             if (userEntity == null)
                 return null;
 
-            return await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
+            if (providerMatch)
+            {
+                var token = await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
+                return token == null ? null : new OAuthExchangeResult { Token = token };
+            }
+
+            var pending = await _twoFactorService.SendCode(userEntity);
+            return new OAuthExchangeResult { PendingTwoFactor = pending };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Google login failed");
-            return null;
-        }
-    }
-
-    public async Task<TokenModel?> GetOrCreateGitHubUserTokenAsync(ClaimsPrincipal githubUser)
-    {
-        try
-        {
-            var email = githubUser.FindFirstValue(ClaimTypes.Email);
-            if (string.IsNullOrWhiteSpace(email))
-                return null;
-
-            var githubName = githubUser.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
-
-            await _usersService.CreateGoogleUserAsync(email, githubName);
-
-            var userEntity = await _usersDataController.GetUserByEmail(email);
-            if (userEntity == null)
-                return null;
-
-            return await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "GitHub login failed");
+            _logger.LogError(ex, "{Provider} login failed", providerName);
             return null;
         }
     }

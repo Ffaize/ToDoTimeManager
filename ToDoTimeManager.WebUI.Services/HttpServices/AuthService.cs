@@ -124,13 +124,13 @@ public class AuthService : BaseHttpService
         }
     }
 
-    public async Task<TokenModel?> ExchangeGoogleSessionAsync(string code)
+    public async Task<OAuthExchangeResult?> ExchangeGoogleSessionAsync(string code)
     {
         try
         {
             var response = await _httpClient.GetAsync(Url($"ExchangeGoogleSession?code={Uri.EscapeDataString(code)}"));
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TokenModel>();
+            return await response.Content.ReadFromJsonAsync<OAuthExchangeResult>();
         }
         catch (Exception ex)
         {
@@ -139,13 +139,13 @@ public class AuthService : BaseHttpService
         }
     }
 
-    public async Task<TokenModel?> ExchangeGitHubSessionAsync(string code)
+    public async Task<OAuthExchangeResult?> ExchangeGitHubSessionAsync(string code)
     {
         try
         {
             var response = await _httpClient.GetAsync(Url($"ExchangeGitHubSession?code={Uri.EscapeDataString(code)}"));
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TokenModel>();
+            return await response.Content.ReadFromJsonAsync<OAuthExchangeResult>();
         }
         catch (Exception ex)
         {

@@ -14,6 +14,7 @@ public class UserEntity
         Email = user.Email;
         Password = user.Password;
         UserRole = user.UserRole;
+        OAuthProvider = user.OAuthProvider;
     }
 
     public Guid Id { get; set; }
@@ -21,6 +22,7 @@ public class UserEntity
     public string? Email { get; set; }
     public string? Password { get; set; }
     public UserRole? UserRole { get; set; }
+    public OAuthProvider OAuthProvider { get; set; } = OAuthProvider.Standard;
 
     public User ToUser()
     {
@@ -30,7 +32,8 @@ public class UserEntity
             UserName = UserName,
             Email = Email,
             Password = Password,
-            UserRole = UserRole
+            UserRole = UserRole,
+            OAuthProvider = OAuthProvider
         };
     }
 }
