@@ -1,6 +1,7 @@
 .input-shell {
     position: relative;
     display: flex;
+    height: 50px;
     align-items: center;
     background: var(--bg-1);
     border: 1px solid var(--line);

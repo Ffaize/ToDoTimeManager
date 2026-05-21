@@ -1,5 +1,5 @@
 ﻿@using Microsoft.JSInterop
-<div class="scene">
+<div class="scene" >
     @if (UsePattern)
     {
         <div class="pattern">
@@ -12,10 +12,19 @@
     }
 </div>
 
+@if (UseShadow) {
+    <style>
+        .scene:before {
+            background: radial-gradient(ellipse 60% 40% at 50% 60%, rgba(255, 106, 43, 0.12), transparent 70%), radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255, 106, 43, 0.08), transparent 70%);
+        }
+    </style>
+}
+
 @code {
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [Parameter] public bool UsePattern { get; set; } = true;
     [Parameter] public bool UseEmbers { get; set; } = true;
+    [Parameter] public bool UseShadow { get; set; } = true;
 
     protected override void OnAfterRender(bool firstRender)
     {

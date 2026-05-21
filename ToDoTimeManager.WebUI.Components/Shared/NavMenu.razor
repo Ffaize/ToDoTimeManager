@@ -1,6 +1,65 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @using ToDoTimeManager.WebUI.Components.Resources
-<div class="top-row ps-3 navbar navbar-dark">
+@inherits BaseComponent
+<div class="sidebar">
+    <div class="info-upper-row">
+        <BrandRow />
+        <div class="right-side-info-upper-row" @onkeydown="OnEnterPressed">
+            <Input Disabled="@IsLoading"
+                Placeholder="@Localizer["Search for tasks, time logs, projects..."]"
+                Style="@InputStyle.Default"
+                Type="text"
+                @bind-Value="SearchToDoValue"
+                IconPosition="InputIconPosition.Right"
+                AdditionalCssClass="nav-bar-search-input">
+            <Icon>
+                <div @onclick="OnEnterPressed">
+                    <SearchIcon IconSize="14" />
+                </div>
+            </Icon>
+        </Input>
+        <div class="nav-bar-profile">
+            @if (IsOpenProfileDropdown)
+            {
+                <div class="cd-backdrop" @onclick="SwitchProfileDropdownState"></div>
+            }
+            <div @onclick="SwitchProfileDropdownState" role="button" class="btn btn-ghost btn-circle avatar">
+                <img alt="Tailwind CSS Navbar component"
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+            </div>
+            @if (IsOpenProfileDropdown)
+            {
+                <div class="cd-panel nav-bar-profile-cd-panel" role="listbox">
+                    <ul class="cd-list">
+                        <li class="cd-item"
+                            role="option"
+                            @onclick="OnProfileClicked">
+                            <UserNameIcon IconSize="14"/>
+
+                            <span class="cd-item__label">@Localizer["Profile"]</span>
+                        </li>
+                        <li class="cd-item"
+                            role="option"
+                            @onclick="OnProfileClicked">
+                            <UserNameIcon IconSize="14"/>
+
+                            <span class="cd-item__label">@Localizer["Settings"]</span>
+                        </li>
+                        <li class="cd-item"
+                            role="option"
+                            @onclick="OnProfileClicked">
+                            <UserNameIcon IconSize="14"/>
+
+                            <span class="cd-item__label">@Localizer["Logout"]</span>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+</div>
+@* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TaskForge</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -39,24 +98,4 @@
     <div class="nav-bar-culture-selector" @onclick:preventDefault="true" @onclick:stopPropagation="true">
         <CultureSelector/>
     </div>
-</div>
-
-@code {
-
-    [Inject]
-    private IStringLocalizer<Resource> Localizer { get; set; } = null!;
-
-    [Parameter]
-    public bool CollapseNavMenu { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> CollapseNavMenuChanged { get; set; }
-
-    private string? NavMenuCssClass => CollapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu() {
-        CollapseNavMenu = !CollapseNavMenu;
-        StateHasChanged();
-    }
-
-}
+</div> *@
