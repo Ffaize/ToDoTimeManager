@@ -263,6 +263,21 @@
 
 .cd-item--empty::before { display: none; }
 
+.cd-item--danger:hover {
+    background: color-mix(in srgb, var(--ember) 8%, transparent);
+    color: var(--ember);
+}
+
+    .cd-item--danger:hover::before {
+        background: var(--ember);
+        box-shadow: 0 0 6px var(--ember);
+    }
+
+.cd-item--danger:hover .cd-item__icon {
+    color: var(--ember);
+    filter: drop-shadow(0 0 3px var(--ember));
+}
+
 .cd-item__icon {
     flex-shrink: 0;
     display: flex;

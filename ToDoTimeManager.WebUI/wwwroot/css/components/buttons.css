@@ -88,13 +88,17 @@
     height: 44px;
     padding: 3px;
     border-radius: 50%;
-    border: 2px solid var(--text-0);
+    border: 2px solid var(--line);
+    transition: all 0.5s;
 }
 
-.btn-circle:hover {
-    border-color: var(--ember);
-}
-
+    .btn-circle:hover {
+        box-shadow: 0 0 0 3px rgba(255, 106, 43, .12), 0 0 20px -8px var(--ember-glow);
+        border-color: var(--ember);
+    }
+    .btn-circle:active {
+        border: 2px solid var(--ember);
+    }
     .btn-circle * {
         border-radius: 50%;
         width: 40px;

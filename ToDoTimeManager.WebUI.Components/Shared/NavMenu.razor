@@ -13,8 +13,8 @@
                 IconPosition="InputIconPosition.Right"
                 AdditionalCssClass="nav-bar-search-input">
             <Icon>
-                <div @onclick="OnEnterPressed">
-                    <SearchIcon IconSize="14" />
+                <div @onclick="OnEnterPressed" class="nav-bar-search-icon">
+                    <SearchIcon IconSize="20" />
                 </div>
             </Icon>
         </Input>
@@ -30,26 +30,36 @@
             @if (IsOpenProfileDropdown)
             {
                 <div class="cd-panel nav-bar-profile-cd-panel" role="listbox">
+                    <div class="nav-bar-profile-header">
+                        <img class="nav-bar-profile-header__avatar"
+                             src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                             alt="Avatar" />
+                        <div class="nav-bar-profile-header__info">
+                            <span class="nav-bar-profile-header__name">Username</span>
+                            <span class="nav-bar-profile-header__role">User</span>
+                        </div>
+                    </div>
                     <ul class="cd-list">
                         <li class="cd-item"
                             role="option"
                             @onclick="OnProfileClicked">
-                            <UserNameIcon IconSize="14"/>
-
+                            <span class="cd-item__icon"><UserNameIcon IconSize="14"/></span>
                             <span class="cd-item__label">@Localizer["Profile"]</span>
                         </li>
                         <li class="cd-item"
                             role="option"
                             @onclick="OnProfileClicked">
-                            <UserNameIcon IconSize="14"/>
-
+                            <span class="cd-item__icon"><SettingsIcon IconSize="14"/></span>
                             <span class="cd-item__label">@Localizer["Settings"]</span>
                         </li>
-                        <li class="cd-item"
+                    </ul>
+                    <Divider/>
+@*                     <div class="nav-bar-profile-divider"></div> *@
+                    <ul class="cd-list">
+                        <li class="cd-item cd-item--danger"
                             role="option"
                             @onclick="OnProfileClicked">
-                            <UserNameIcon IconSize="14"/>
-
+                            <span class="cd-item__icon"><LogoutIcon IconSize="14"/></span>
                             <span class="cd-item__label">@Localizer["Logout"]</span>
                         </li>
                     </ul>

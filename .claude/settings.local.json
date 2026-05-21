@@ -82,7 +82,10 @@
       "Bash(xargs ls -la)",
       "Bash(ls \"D:\\\\Projects\\\\ToDoTimeManager\\\\\")",
       "PowerShell($projectsDir = \"$env:USERPROFILE\\\\.claude\\\\projects\"; Get-ChildItem $projectsDir -Directory | Select-Object Name | Sort-Object Name)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\dmitr\\\\.claude\\\\\" -Force | ForEach-Object { \"$\\($_.PSIsContainer\\) $\\($_.Name\\)\" })"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\dmitr\\\\.claude\\\\\" -Force | ForEach-Object { \"$\\($_.PSIsContainer\\) $\\($_.Name\\)\" })",
+      "Bash(New-Item -ItemType File -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\StaticComponents\\\\Icons\\\\LogoutIcon.razor\" -Force)",
+      "Bash(Out-Null)",
+      "PowerShell(New-Item -ItemType File -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\StaticComponents\\\\Icons\\\\LogoutIcon.razor\" -Force)"
     ]
   }
 }
