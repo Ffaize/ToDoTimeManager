@@ -54,6 +54,19 @@ public class ProjectsDataController : IProjectsDataController
         }
     }
 
+    public async Task<List<Guid>> GetProjectIdsByUserId(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.GetAllByParameter<Guid>("sp_Projects_GetIdsByUserId", "UserId", userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
     public async Task<bool> CreateProject(ProjectEntity newProject)
     {
         try

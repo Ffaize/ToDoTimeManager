@@ -9,6 +9,7 @@ public interface IProjectsService
     Task<List<ProjectResponseDto>> GetAllProjects(Guid currentUserId, UserRole currentUserRole);
     Task<ProjectResponseDto?> GetProjectById(Guid projectId, Guid currentUserId, UserRole currentUserRole);
     Task<List<ProjectResponseDto>> GetProjectsByUserId(Guid userId);
+    Task<List<Guid>> GetProjectIdsByUserId(Guid userId);
     Task<bool> CreateProject(CreateProjectRequestDto request, Guid createdByUserId);
     Task<bool> UpdateProject(UpdateProjectRequestDto request, Guid currentUserId, UserRole currentUserRole);
     Task<bool> DeleteProject(Guid projectId);

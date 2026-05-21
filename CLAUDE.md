@@ -625,3 +625,7 @@ All SVG icon components as individual `.razor` files (Bootstrap Icons). Country 
 11. **New utility service** — add the interface to `Business.Utils/Interfaces/` and the implementation to `Business.Utils/Implementations/`; register in `WebApi/Program.cs`.
 
 12. **New SQL file** — every new `.sql` file (stored procedure, table, or migration) must be registered in `ToDoTimeManager.DataBase.sqlproj`.
+
+13. **ID-only queries** — when a service or hub needs only entity identifiers (not full entity data), add a dedicated `GetXxxIdsByYyy(Guid id)` method returning `List<Guid>`. Follow the full stack: new stored procedure (`SELECT Id FROM ... WHERE ...`) → data controller interface + implementation → business service interface + implementation. Never fetch a full entity just to extract its `Id`.
+
+14. **Razor component code placement** — always use a code-behind file (`ComponentName.razor.cs`, `partial class`) for any component that contains methods or lifecycle overrides. Use `[Inject]` in the code-behind for DI — do not add `@inject` in the `.razor` file. Inline `@code {}` is allowed only when the component declares parameters and nothing else (no methods, no lifecycle overrides, no fields beyond parameters).

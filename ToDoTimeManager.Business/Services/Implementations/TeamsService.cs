@@ -68,6 +68,9 @@ public class TeamsService : ITeamsService
         return entities.Select(e => e.ToTeam().ToResponseDto(null)).ToList();
     }
 
+    public Task<List<Guid>> GetTeamIdsByUserId(Guid userId)
+        => _teamsDataController.GetTeamIdsByUserId(userId);
+
     public async Task<bool> CreateTeam(CreateTeamRequestDto request, Guid createdByUserId)
     {
         if (string.IsNullOrWhiteSpace(request.Name))
