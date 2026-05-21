@@ -79,7 +79,10 @@
       "Bash(Select-Object -First 10)",
       "Bash(xargs grep -l \"SaveTokens\\\\|StateDataFormat\\\\|CorrelationCookie\")",
       "Bash(dotnet script *)",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(ls \"D:\\\\Projects\\\\ToDoTimeManager\\\\\")",
+      "PowerShell($projectsDir = \"$env:USERPROFILE\\\\.claude\\\\projects\"; Get-ChildItem $projectsDir -Directory | Select-Object Name | Sort-Object Name)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\dmitr\\\\.claude\\\\\" -Force | ForEach-Object { \"$\\($_.PSIsContainer\\) $\\($_.Name\\)\" })"
     ]
   }
 }
