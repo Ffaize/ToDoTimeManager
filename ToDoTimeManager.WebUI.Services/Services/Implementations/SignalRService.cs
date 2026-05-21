@@ -51,11 +51,16 @@ public class SignalRService : ISignalRService
         try
         {
             await _connection.StartAsync(ct);
+
+            if (_connection.State != HubConnectionState.Connected)
+                throw new InvalidOperationException($"SignalR connection did not reach the connected state. Current state: {_connection.State}.");
+
             _logger.LogInformation("SignalR connected.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to start SignalR connection.");
+            throw;
         }
     }
 

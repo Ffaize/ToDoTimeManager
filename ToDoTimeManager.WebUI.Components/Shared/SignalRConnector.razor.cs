@@ -39,10 +39,19 @@ public partial class SignalRConnector : IAsyncDisposable
         catch { /* не крашимо circuit */ }
     }
 
-    private async Task StartAsync()
+    private async Task<bool> StartAsync()
     {
-        await SignalRService.StartAsync();
-        _started = true;
+        try
+        {
+            await SignalRService.StartAsync();
+            _started = true;
+            return true;
+        }
+        catch
+        {
+            _started = false;
+            return false;
+        }
     }
 
     private async Task StopAsync()
