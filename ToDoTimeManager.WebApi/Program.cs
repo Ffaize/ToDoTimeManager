@@ -9,8 +9,11 @@ using System.Globalization;
 using System.Text;
 using System.Threading.RateLimiting;
 using ToDoTimeManager.WebApi.AdditionalComponents;
+using ToDoTimeManager.WebApi.Hubs;
 using ToDoTimeManager.WebApi.Middleware;
 using ToDoTimeManager.WebApi.Seeders;
+using ToDoTimeManager.WebApi.Services.Implementations;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 using ToDoTimeManager.DataAccess.DbAccessServices;
 using ToDoTimeManager.DataAccess.DataControllers.Implementation;
 using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
@@ -52,6 +55,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.MapHub<CommunicationHub>("/hubs/communication").RequireAuthorization();
 
         await DataSeeder.SeedAsync(app.Services);
 
@@ -61,6 +65,8 @@ public class Program
     private static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
+        builder.Services.AddSignalR();
+        builder.Services.AddScoped<IHubNotifier, HubNotifier>();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
 
@@ -134,6 +140,19 @@ builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
                             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"] ?? string.Empty)),
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(token) &&
+                            context.Request.Path.StartsWithSegments("/hubs", StringComparison.OrdinalIgnoreCase))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             })
             .AddCookie("ExternalCookieScheme", options =>

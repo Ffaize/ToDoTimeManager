@@ -44,6 +44,7 @@ public class Program
         builder.Services.AddScoped<TeamsService>();
         builder.Services.AddScoped<ProjectsService>();
 
+        builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
         builder.Services.AddHttpClient("TodoTimeManager", client =>

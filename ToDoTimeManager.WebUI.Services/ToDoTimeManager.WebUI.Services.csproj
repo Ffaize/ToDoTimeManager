@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ToDoTimeManager.Shared\ToDoTimeManager.Shared.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebUI.Utils\ToDoTimeManager.WebUI.Utils.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebUI.Models\ToDoTimeManager.WebUI.Models.csproj" />

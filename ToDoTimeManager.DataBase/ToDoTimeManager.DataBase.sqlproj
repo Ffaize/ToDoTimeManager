@@ -106,6 +106,7 @@
     <Build Include="StoredProcedures\Teams\sp_Teams_Update.sql" />
     <Build Include="StoredProcedures\Teams\sp_Teams_DeleteById.sql" />
     <Build Include="StoredProcedures\Teams\sp_Teams_GetByUserId.sql" />
+    <Build Include="StoredProcedures\Teams\sp_Teams_GetIdsByUserId.sql" />
     <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_Create.sql" />
     <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_GetById.sql" />
     <Build Include="StoredProcedures\TeamMembers\sp_TeamMembers_GetByTeamId.sql" />
@@ -117,6 +118,7 @@
     <Build Include="StoredProcedures\Projects\sp_Projects_Update.sql" />
     <Build Include="StoredProcedures\Projects\sp_Projects_DeleteById.sql" />
     <Build Include="StoredProcedures\Projects\sp_Projects_GetByUserId.sql" />
+    <Build Include="StoredProcedures\Projects\sp_Projects_GetIdsByUserId.sql" />
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_Create.sql" />
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_GetByProjectId.sql" />
     <Build Include="StoredProcedures\ProjectTeams\sp_ProjectTeams_GetByProjectIdAndTeamId.sql" />

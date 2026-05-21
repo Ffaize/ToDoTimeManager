@@ -75,6 +75,9 @@ public class ProjectsService : IProjectsService
         return entities.Select(e => e.ToProject().ToResponseDto(null)).ToList();
     }
 
+    public Task<List<Guid>> GetProjectIdsByUserId(Guid userId)
+        => _projectsDataController.GetProjectIdsByUserId(userId);
+
     public async Task<bool> CreateProject(CreateProjectRequestDto request, Guid createdByUserId)
     {
         if (string.IsNullOrWhiteSpace(request.Name))

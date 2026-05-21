@@ -54,6 +54,19 @@ public class TeamsDataController : ITeamsDataController
         }
     }
 
+    public async Task<List<Guid>> GetTeamIdsByUserId(Guid userId)
+    {
+        try
+        {
+            return await _dbAccessService.GetAllByParameter<Guid>("sp_Teams_GetIdsByUserId", "UserId", userId);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return [];
+        }
+    }
+
     public async Task<bool> CreateTeam(TeamEntity newTeam)
     {
         try
