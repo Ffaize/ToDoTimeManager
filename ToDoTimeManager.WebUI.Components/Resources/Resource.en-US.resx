@@ -387,4 +387,25 @@
   <data name="TOTP QR code" xml:space="preserve">
     <value>TOTP QR code</value>
   </data>
+  <data name="Log In" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Already have an account?" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="Two Factor Authentication" xml:space="preserve">
+    <value>Two Factor Authentication</value>
+  </data>
+  <data name="Search for tasks, time logs, projects..." xml:space="preserve">
+    <value>Search for tasks, time logs, projects...</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
 </root>

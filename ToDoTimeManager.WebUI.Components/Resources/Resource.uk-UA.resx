@@ -387,4 +387,25 @@
   <data name="TOTP QR code" xml:space="preserve">
     <value>QR-код TOTP</value>
   </data>
+  <data name="Log In" xml:space="preserve">
+    <value>Увійти</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Реєстрація</value>
+  </data>
+  <data name="Already have an account?" xml:space="preserve">
+    <value>Вже є акаунт?</value>
+  </data>
+  <data name="Two Factor Authentication" xml:space="preserve">
+    <value>Двофакторна автентифікація</value>
+  </data>
+  <data name="Search for tasks, time logs, projects..." xml:space="preserve">
+    <value>Пошук задач, записів часу, проектів...</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Вийти</value>
+  </data>
 </root>
