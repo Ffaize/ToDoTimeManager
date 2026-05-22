@@ -408,4 +408,28 @@
   <data name="Logout" xml:space="preserve">
     <value>Вийти</value>
   </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Аватар</value>
+  </data>
+  <data name="Profile avatar" xml:space="preserve">
+    <value>Аватар профілю</value>
+  </data>
+  <data name="Change photo" xml:space="preserve">
+    <value>Змінити фото</value>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>Редагувати профіль</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>Новий пароль</value>
+  </data>
+  <data name="(optional)" xml:space="preserve">
+    <value>(необов'язково)</value>
+  </data>
+  <data name="Leave blank to keep current" xml:space="preserve">
+    <value>Залиште порожнім, щоб не змінювати</value>
+  </data>
+  <data name="Save changes" xml:space="preserve">
+    <value>Зберегти зміни</value>
+  </data>
 </root>

@@ -1,5 +1,14 @@
-﻿<h3>ConfirmModal</h3>
+@using ToDoTimeManager.WebUI.Models.Enums.Button
 
-@code {
-    [Parameter] public string MessageDetails { get; set; } = string.Empty;
-}
+<p class="confirm-modal-message">@MessageDetails</p>
+
+<Divider/>
+
+<div class="modal-buttons-container">
+    <Button Text="@CancelText"
+            Style="@ButtonStyle.Secondary"
+            OnClick="OnCancel"></Button>
+    <Button Text="@ConfirmText"
+            Style="@ButtonStyle.Primary"
+            OnClick="OnConfirm"></Button>
+</div>

@@ -7,7 +7,9 @@ BEGIN
            Email,
            Password,
            UserRole,
-           OAuthProvider
+           OAuthProvider,
+           Avatar,
+           Name
     FROM [dbo].[Users]
     WHERE Id = @Id;
 END

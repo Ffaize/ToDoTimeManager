@@ -1,0 +1,21 @@
+@page "/profile"
+@using Microsoft.Extensions.Localization
+@using ToDoTimeManager.WebUI.Components.Resources
+@inject IStringLocalizer<Resource> Localizer
+
+<PageTitle>@Localizer["Profile"] - TaskForge</PageTitle>
+
+<div class="profile-page">
+    @if (_isLoading)
+    {
+        <div class="profile-page__skeleton">
+            <div class="profile-page__skeleton-avatar skeleton"></div>
+            <div class="profile-page__skeleton-info skeleton"></div>
+        </div>
+    }
+    else if (_user is not null)
+    {
+        <ProfileAvatarCard User="_user" OnAvatarChanged="OnAvatarChanged" />
+        <ProfileInfoCard   User="_user" OnUserUpdated="OnUserUpdated" />
+    }
+</div>

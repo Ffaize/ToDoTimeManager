@@ -9,31 +9,37 @@ public class UserEntity
     public UserEntity(User? user)
     {
         if (user == null) return;
-        Id = user.Id;
-        UserName = user.UserName;
-        Email = user.Email;
-        Password = user.Password;
-        UserRole = user.UserRole;
+        Id            = user.Id;
+        UserName      = user.UserName;
+        Email         = user.Email;
+        Password      = user.Password;
+        UserRole      = user.UserRole;
         OAuthProvider = user.OAuthProvider;
+        Avatar        = user.Avatar;
+        Name          = user.Name;
     }
 
-    public Guid Id { get; set; }
-    public string? UserName { get; set; }
-    public string? Email { get; set; }
-    public string? Password { get; set; }
-    public UserRole? UserRole { get; set; }
+    public Guid          Id            { get; set; }
+    public string?       UserName      { get; set; }
+    public string?       Email         { get; set; }
+    public string?       Password      { get; set; }
+    public UserRole?     UserRole      { get; set; }
     public OAuthProvider OAuthProvider { get; set; } = OAuthProvider.Standard;
+    public string?       Avatar        { get; set; }
+    public string?       Name          { get; set; }
 
     public User ToUser()
     {
         return new User
         {
-            Id = Id,
-            UserName = UserName,
-            Email = Email,
-            Password = Password,
-            UserRole = UserRole,
-            OAuthProvider = OAuthProvider
+            Id            = Id,
+            UserName      = UserName,
+            Email         = Email,
+            Password      = Password,
+            UserRole      = UserRole,
+            OAuthProvider = OAuthProvider,
+            Avatar        = Avatar,
+            Name          = Name
         };
     }
 }

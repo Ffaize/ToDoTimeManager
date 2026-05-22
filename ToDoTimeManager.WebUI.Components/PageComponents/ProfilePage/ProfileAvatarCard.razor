@@ -1,0 +1,36 @@
+@using Microsoft.AspNetCore.Components.Forms
+@inherits BaseComponent
+
+<div class="profile-avatar-card">
+    <div class="profile-avatar-card__avatar-wrapper">
+        @if (!string.IsNullOrWhiteSpace(User.Avatar))
+        {
+            <img class="profile-avatar-card__avatar"
+                 src="@User.Avatar"
+                 alt="@Localizer["Profile avatar"]" />
+        }
+        else
+        {
+            <div class="profile-avatar-card__avatar avatar-initials avatar-initials--xl">
+                @GetInitial()
+            </div>
+        }
+
+        <label class="profile-avatar-card__upload-btn @(IsLoading ? "profile-avatar-card__upload-btn--disabled" : "")"
+               for="avatar-file-input"
+               role="button"
+               title="@Localizer["Change photo"]">
+            <CameraIcon IconSize="14" />
+        </label>
+
+        <InputFile id="avatar-file-input"
+                   class="profile-avatar-card__file-input"
+                   accept=".jpg,.jpeg,.png,.webp,.gif"
+                   OnChange="OnFileSelected" />
+    </div>
+
+    <div class="profile-avatar-card__info">
+        <span class="profile-avatar-card__name">@User.UserName</span>
+        <span class="profile-avatar-card__role">@User.UserRole?.ToString()</span>
+    </div>
+</div>

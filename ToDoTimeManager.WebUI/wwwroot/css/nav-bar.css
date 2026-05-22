@@ -4,22 +4,24 @@
     height: auto;
     display: flex;
     flex-direction: column;
+    gap: 15px;
     padding: 10px 10px 0 10px;
 }
 
-.sidebar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(5px);
-    pointer-events: none;
-}
+    .sidebar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(5px);
+        pointer-events: none;
+    }
 
 .info-upper-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
+
 .right-side-info-upper-row {
     display: flex;
     flex-direction: row;
@@ -48,7 +50,8 @@
 }
 
 .nav-bar-profile-cd-panel {
-    width: 190px !important;
+    min-width: 190px !important;
+    width: fit-content;
     right: 0;
     left: unset !important;
     padding-bottom: 4px;
@@ -116,3 +119,50 @@
     border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
 }
+
+.nav-links-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: paged-x;
+    gap: 5px;
+}
+
+    .nav-links-row a {
+        z-index: 3;
+        padding: 5px 10px  5px 10px; 
+        text-align: center;
+        text-decoration: none;
+        color: var(--text-2);
+        line-height: 1rem;
+    }
+
+        .nav-links-row a.active {
+            border-color: var(--ember) !important;
+            border-width: 1px !important;
+            border-top: solid;
+            border-left: solid;
+            border-right: solid;
+            position: relative;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            color: var(--text-1)
+        }
+
+            .nav-links-row a.active:before {
+                content: '';
+                width: 100vw;
+                position: absolute;
+                right: 100%;
+                bottom: 0;
+                border-bottom: 1px solid var(--ember);
+            }
+
+            .nav-links-row a.active:after {
+                content: '';
+                width: 100vw;
+                position: absolute;
+                left: 100%;
+                bottom: 0;
+                border-bottom: 1px solid var(--ember);
+            }

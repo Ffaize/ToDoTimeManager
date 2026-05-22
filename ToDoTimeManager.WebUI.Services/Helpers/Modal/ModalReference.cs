@@ -2,9 +2,9 @@ namespace ToDoTimeManager.WebUI.Services.Helpers.Modal;
 
 public class ModalReference
 {
-    private readonly TaskCompletionSource<bool> _tcs = new();
+    private readonly TaskCompletionSource<object> _tcs = new();
 
-    public Task<bool> Result => _tcs.Task;
+    public Task<object> Result => _tcs.Task;
 
-    internal void SetResult(bool confirmed) => _tcs.TrySetResult(confirmed);
+    internal void SetResult(object result) => _tcs.TrySetResult(result);
 }

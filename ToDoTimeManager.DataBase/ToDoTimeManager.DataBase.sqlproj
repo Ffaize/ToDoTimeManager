@@ -148,6 +148,7 @@
     <Build Include="StoredProcedures\UsersManagment\Users\sp_Users_GetbyUsername.sql" />
     <Build Include="StoredProcedures\UsersManagment\Users\sp_Users_GetUserRoleByUserId.sql" />
     <Build Include="StoredProcedures\UsersManagment\Users\sp_Users_Update.sql" />
+    <Build Include="StoredProcedures\UsersManagment\Users\sp_Users_UpdateAvatar.sql" />
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_GetByUserId.sql" />
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_GetTwoFactorEnabled.sql" />
     <Build Include="StoredProcedures\UsersManagment\UserSettings\sp_UserSettings_SetTwoFactorEnabled.sql" />

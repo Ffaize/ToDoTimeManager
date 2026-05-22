@@ -5,5 +5,7 @@
     Email         NVARCHAR(255)    NULL,
     Password      NVARCHAR(MAX)    NULL,
     UserRole      INT              NULL,
-    OAuthProvider INT              NOT NULL DEFAULT 0
+    OAuthProvider INT              NOT NULL DEFAULT 0,
+    Avatar        NVARCHAR(MAX)    NULL,
+    Name          NVARCHAR(255)    NULL
 )

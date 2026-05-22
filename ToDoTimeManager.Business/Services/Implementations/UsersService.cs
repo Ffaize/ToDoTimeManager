@@ -172,11 +172,12 @@ public class UsersService : IUsersService
 
             var user = new User
             {
-                Id = request.Id,
+                Id       = request.Id,
                 UserName = request.UserName,
-                Email = request.Email,
+                Email    = request.Email,
                 Password = hash,
-                UserRole = UserRole.User
+                UserRole = UserRole.User,
+                Name     = request.Name
             };
 
             var created = await _usersDataController.CreateUser(new UserEntity(user));
@@ -201,13 +202,13 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<bool> CreateGoogleUserAsync(string email, string googleName)
-        => await CreateOAuthUserAsync(email, googleName, OAuthProvider.Google);
+    public async Task<bool> CreateGoogleUserAsync(string email, string googleName, string? avatarUrl = null)
+        => await CreateOAuthUserAsync(email, googleName, OAuthProvider.Google, avatarUrl);
 
-    public async Task<bool> CreateGitHubUserAsync(string email, string githubName)
-        => await CreateOAuthUserAsync(email, githubName, OAuthProvider.GitHub);
+    public async Task<bool> CreateGitHubUserAsync(string email, string githubName, string? avatarUrl = null)
+        => await CreateOAuthUserAsync(email, githubName, OAuthProvider.GitHub, avatarUrl);
 
-    private async Task<bool> CreateOAuthUserAsync(string email, string displayName, OAuthProvider provider)
+    private async Task<bool> CreateOAuthUserAsync(string email, string displayName, OAuthProvider provider, string? avatarUrl)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ValidationException("Email is required");
@@ -216,7 +217,10 @@ public class UsersService : IUsersService
         {
             var existingByEmail = await _usersDataController.GetUserByEmail(email);
             if (existingByEmail != null)
+            {
+                await EnsureUserSecretsAsync(existingByEmail.Id);
                 return existingByEmail.OAuthProvider == provider;
+            }
 
             var baseUsername = email.Split('@')[0].Replace('.', '_');
 
@@ -232,25 +236,31 @@ public class UsersService : IUsersService
             var hash = _passwordHelperService.HashPassword(salt, Guid.NewGuid().ToString());
 
             var userId = Guid.NewGuid();
+
+            var resolvedAvatar = IsRealAvatarUrl(avatarUrl) ? avatarUrl : null;
+            var resolvedName   = string.IsNullOrWhiteSpace(displayName) ? null : displayName;
+
             var user = new User
             {
-                Id = userId,
-                UserName = username,
-                Email = email,
-                Password = hash,
-                UserRole = UserRole.User,
-                OAuthProvider = provider
+                Id            = userId,
+                UserName      = username,
+                Email         = email,
+                Password      = hash,
+                UserRole      = UserRole.User,
+                OAuthProvider = provider,
+                Name          = resolvedName,
+                Avatar        = resolvedAvatar
             };
 
-            var created = await _usersDataController.CreateUser(new UserEntity(user));
-            if (!created) return false;
+            await _usersDataController.CreateUser(new UserEntity(user));
 
-            return await _userSecretsDataController.Create(new UserSecretsEntity
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                PasswordSalt = salt
-            });
+            // sp_Users_Create uses SET NOCOUNT ON so AddRecord may return -1 even on success.
+            // Verify by reading back from DB instead of trusting the rows-affected value.
+            var created = await _usersDataController.GetUserByEmail(email);
+            if (created == null) return false;
+
+            await EnsureUserSecretsAsync(created.Id, salt);
+            return true;
         }
         catch (ServiceException)
         {
@@ -262,6 +272,26 @@ public class UsersService : IUsersService
             return false;
         }
     }
+
+    private async Task EnsureUserSecretsAsync(Guid userId, string? knownSalt = null)
+    {
+        var existing = await _userSecretsDataController.GetByUserId(userId);
+        if (existing != null) return;
+
+        var salt = knownSalt ?? _passwordHelperService.GenerateSalt();
+        await _userSecretsDataController.Create(new UserSecretsEntity
+        {
+            Id           = Guid.NewGuid(),
+            UserId       = userId,
+            PasswordSalt = salt
+        });
+    }
+
+    private static bool IsRealAvatarUrl(string? url) =>
+        !string.IsNullOrWhiteSpace(url) && url.Length > 1 &&
+        (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+         url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+         url.StartsWith("data:", StringComparison.OrdinalIgnoreCase));
 
     public async Task<bool> UpdateUser(UpdateUserRequestDto request, Guid currentUserId)
     {
@@ -287,11 +317,13 @@ public class UsersService : IUsersService
 
                 var updatedEntity = new UserEntity
                 {
-                    Id = request.Id,
+                    Id       = request.Id,
                     UserName = request.UserName,
-                    Email = request.Email,
+                    Email    = request.Email,
                     UserRole = existing.UserRole,
-                    Password = passwordHash
+                    Password = passwordHash,
+                    Avatar   = existing.Avatar,
+                    Name     = request.Name
                 };
 
                 var result = await _usersDataController.UpdateUser(updatedEntity);
@@ -309,11 +341,13 @@ public class UsersService : IUsersService
             {
                 var updatedEntity = new UserEntity
                 {
-                    Id = request.Id,
+                    Id       = request.Id,
                     UserName = request.UserName,
-                    Email = request.Email,
+                    Email    = request.Email,
                     UserRole = existing.UserRole,
-                    Password = passwordHash
+                    Password = passwordHash,
+                    Avatar   = existing.Avatar,
+                    Name     = request.Name
                 };
 
                 var result = await _usersDataController.UpdateUser(updatedEntity);
@@ -353,6 +387,37 @@ public class UsersService : IUsersService
             if (result)
                 _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserRoleChanged,
                     $"changed role of {existing.UserName} to {newRole}");
+            return result;
+        }
+        catch (ServiceException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateAvatar(Guid userId, string avatar, Guid currentUserId)
+    {
+        if (userId == Guid.Empty)
+            throw new ValidationException("Invalid user ID");
+        if (string.IsNullOrWhiteSpace(avatar))
+            throw new ValidationException("Avatar is required");
+        if (currentUserId != userId)
+            throw new ForbiddenException();
+
+        try
+        {
+            var existing = await _usersDataController.GetUserById(userId);
+            if (existing == null)
+                throw new NotFoundException("User was not found");
+
+            var result = await _usersDataController.UpdateUserAvatar(userId, avatar);
+            if (result)
+                _ = _activityLogsService.LogActivity(null, currentUserId, ActivityType.UserUpdated, "updated profile avatar");
             return result;
         }
         catch (ServiceException)

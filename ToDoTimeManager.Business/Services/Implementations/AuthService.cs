@@ -90,6 +90,8 @@ public class AuthService : IAuthService
 
         if (keepSignedIn)
         {
+            await EnsureUserSecretsRowAsync(userId);
+
             var rtDays = int.TryParse(_configuration["JwtSettings:RefreshTokenLifetime"], out var days) ? days : 14;
             plainRefreshToken = _jwtGeneratorService.GenerateRefreshToken();
             refreshExpiresAt = DateTime.UtcNow.AddDays(rtDays);
@@ -107,6 +109,20 @@ public class AuthService : IAuthService
             RefreshToken = plainRefreshToken,
             RefreshTokenExpiresAt = refreshExpiresAt
         };
+    }
+
+    private async Task EnsureUserSecretsRowAsync(Guid userId)
+    {
+        var existing = await _userSecretsDataController.GetByUserId(userId);
+        if (existing != null) return;
+
+        var salt = _passwordHelperService.GenerateSalt();
+        await _userSecretsDataController.Create(new UserSecretsEntity
+        {
+            Id           = Guid.NewGuid(),
+            UserId       = userId,
+            PasswordSalt = salt
+        });
     }
 
     public async Task<TokenModel?> RefreshAuthToken(TokenModel? tokenModel)
@@ -171,20 +187,28 @@ public class AuthService : IAuthService
 
             var displayName = principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
 
-            var providerMatch = isGoogle
-                ? await _usersService.CreateGoogleUserAsync(email, displayName)
-                : await _usersService.CreateGitHubUserAsync(email, displayName);
+            var avatarUrl = isGoogle
+                ? (principal.FindFirstValue("picture") ?? principal.FindFirstValue(ClaimTypes.Uri))
+                : (principal.FindFirstValue("urn:github:avatar_url") ?? principal.FindFirstValue(ClaimTypes.Uri));
+
+            if (isGoogle)
+                await _usersService.CreateGoogleUserAsync(email, displayName, avatarUrl);
+            else
+                await _usersService.CreateGitHubUserAsync(email, displayName, avatarUrl);
 
             var userEntity = await _usersDataController.GetUserByEmail(email);
             if (userEntity == null)
                 return null;
 
-            if (providerMatch)
+            var expectedProvider = isGoogle ? OAuthProvider.Google : OAuthProvider.GitHub;
+
+            if (userEntity.OAuthProvider == expectedProvider)
             {
                 var token = await GenerateTokenForUser(userEntity.Id, userEntity.UserRole!.Value, keepSignedIn: true);
                 return token == null ? null : new OAuthExchangeResult { Token = token };
             }
 
+            // Email already registered with a different provider → verify identity via 2FA
             var pending = await _twoFactorService.SendCode(userEntity);
             return new OAuthExchangeResult { PendingTwoFactor = pending };
         }

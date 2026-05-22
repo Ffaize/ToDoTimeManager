@@ -8,7 +8,7 @@ public interface IModalService
     ModalReference Show<TComponent>(string title, ModalParameters? parameters = null)
         where TComponent : IComponent;
 
-    void Close(bool confirmed);
+    void Close(object result);
 
     event Action? OnChange;
 

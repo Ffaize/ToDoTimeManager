@@ -408,4 +408,28 @@
   <data name="Logout" xml:space="preserve">
     <value>Log out</value>
   </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="Profile avatar" xml:space="preserve">
+    <value>Profile avatar</value>
+  </data>
+  <data name="Change photo" xml:space="preserve">
+    <value>Change photo</value>
+  </data>
+  <data name="Edit profile" xml:space="preserve">
+    <value>Edit profile</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="(optional)" xml:space="preserve">
+    <value>(optional)</value>
+  </data>
+  <data name="Leave blank to keep current" xml:space="preserve">
+    <value>Leave blank to keep current</value>
+  </data>
+  <data name="Save changes" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
 </root>

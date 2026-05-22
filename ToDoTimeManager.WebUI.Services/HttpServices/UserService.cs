@@ -1,4 +1,5 @@
 using ToDoTimeManager.Shared.DTOs.User;
+using ToDoTimeManager.Shared.Models;
 
 namespace ToDoTimeManager.WebUI.Services.HttpServices;
 
@@ -137,6 +138,37 @@ public class UserService : BaseHttpService
         try
         {
             var response = await _httpClient.PutAsJsonAsync(Url($"ChangeRole/{id}"), request);
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return false;
+        }
+    }
+
+    public async Task<NavBarUserModel?> GetNavBarInfo()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(Url("GetNavBarInfo"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<NavBarUserModel>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return null;
+        }
+    }
+
+    public async Task<bool> UpdateAvatar(string avatarDataUri)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(Url("UpdateAvatar"),
+                new UpdateUserAvatarRequestDto { Avatar = avatarDataUri });
             response.EnsureSuccessStatusCode();
             return true;
         }

@@ -11,10 +11,12 @@ public static class MappingExtensions
     public static UserResponseDto ToResponseDto(this User user) =>
         new()
         {
-            Id = user.Id,
+            Id       = user.Id,
             UserName = user.UserName,
-            Email = user.Email,
-            UserRole = user.UserRole
+            Email    = user.Email,
+            UserRole = user.UserRole,
+            Avatar   = user.Avatar,
+            Name     = user.Name
         };
 
     public static UserSettingsResponseDto ToResponseDto(this UserSettings settings) =>

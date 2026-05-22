@@ -18,4 +18,7 @@ public sealed class UpdateUserRequestDto
     public string Email { get; set; } = string.Empty;
 
     [MinLength(6)] [MaxLength(200)] public string? Password { get; set; }
+
+    [MaxLength(255)]
+    public string? Name { get; set; }
 }

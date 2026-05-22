@@ -14,4 +14,5 @@ public interface IUsersDataController
     Task<bool> UpdateUser(UserEntity updatedUser);
     Task<bool> DeleteUser(Guid userId);
     Task<UserRole?> GetUserRoleByUserId(Guid userId);
+    Task<bool> UpdateUserAvatar(Guid userId, string avatar);
 }

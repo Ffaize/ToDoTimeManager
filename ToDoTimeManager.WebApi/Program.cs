@@ -1,6 +1,7 @@
 using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
@@ -57,7 +58,7 @@ public class Program
         app.MapControllers();
         app.MapHub<CommunicationHub>("/hubs/communication").RequireAuthorization();
 
-        await DataSeeder.SeedAsync(app.Services);
+        //await DataSeeder.SeedAsync(app.Services);
 
         await app.RunAsync();
     }
@@ -167,6 +168,19 @@ builder.Services.AddScoped<IActivityLogsService, ActivityLogsService>();
                 options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"] ?? string.Empty;
                 options.CallbackPath = "/Auth/GoogleCallback";
                 options.SignInScheme = "ExternalCookieScheme";
+                options.Events = new OAuthEvents
+                {
+                    OnCreatingTicket = ctx =>
+                    {
+                        if (ctx.User.TryGetProperty("picture", out var pic))
+                        {
+                            var url = pic.GetString();
+                            if (!string.IsNullOrEmpty(url))
+                                ctx.Identity?.AddClaim(new System.Security.Claims.Claim("picture", url));
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             })
             .AddGitHub(GitHubAuthenticationDefaults.AuthenticationScheme, options =>
             {

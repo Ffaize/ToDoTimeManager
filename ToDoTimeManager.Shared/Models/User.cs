@@ -10,4 +10,6 @@ public class User
     public string? Password { get; set; }
     public UserRole? UserRole { get; set; }
     public OAuthProvider OAuthProvider { get; set; } = OAuthProvider.Standard;
+    public string? Avatar { get; set; }
+    public string? Name { get; set; }
 }

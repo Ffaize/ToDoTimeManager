@@ -85,7 +85,12 @@
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\dmitr\\\\.claude\\\\\" -Force | ForEach-Object { \"$\\($_.PSIsContainer\\) $\\($_.Name\\)\" })",
       "Bash(New-Item -ItemType File -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\StaticComponents\\\\Icons\\\\LogoutIcon.razor\" -Force)",
       "Bash(Out-Null)",
-      "PowerShell(New-Item -ItemType File -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\StaticComponents\\\\Icons\\\\LogoutIcon.razor\" -Force)"
+      "PowerShell(New-Item -ItemType File -Path \"D:\\\\Projects\\\\ToDoTimeManager\\\\ToDoTimeManager.WebUI.Components\\\\StaticComponents\\\\Icons\\\\LogoutIcon.razor\" -Force)",
+      "Bash(Select-String -Pattern \"Error\")",
+      "Bash(Select-Object -Last 20)",
+      "PowerShell(cd \"D:\\\\Projects\\\\ToDoTimeManager\"; dotnet build ToDoTimeManager.WebApi/ToDoTimeManager.WebApi.csproj --no-incremental -v minimal 2>&1 | Select-String -Pattern \"error\" | Where-Object { $_ -notmatch \"NU1900\" } | Select-Object -Last 20)",
+      "Bash(dotnet list *)",
+      "Bash(powershell -Command ' *)"
     ]
   }
 }

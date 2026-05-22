@@ -25,9 +25,9 @@ public class ModalService : IModalService
         return _current;
     }
 
-    public void Close(bool confirmed)
+    public void Close(object result)
     {
-        _current?.SetResult(confirmed);
+        _current?.SetResult(result);
         ActiveComponentType = null;
         ActiveTitle = null;
         ActiveParameters = null;

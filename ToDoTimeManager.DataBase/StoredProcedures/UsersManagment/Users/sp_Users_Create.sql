@@ -3,12 +3,14 @@ CREATE PROCEDURE [dbo].[sp_Users_Create] @Id UNIQUEIDENTIFIER,
                                          @Email NVARCHAR(255),
                                          @Password NVARCHAR(MAX),
                                          @UserRole INT,
-                                         @OAuthProvider INT = 0
+                                         @OAuthProvider INT = 0,
+                                         @Name NVARCHAR(255) = NULL,
+                                         @Avatar NVARCHAR(MAX) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO [dbo].[Users] (Id, Username, Email, Password, UserRole, OAuthProvider)
-    VALUES (@Id, @Username, @Email, @Password, @UserRole, @OAuthProvider);
+    INSERT INTO [dbo].[Users] (Id, Username, Email, Password, UserRole, OAuthProvider, Name, Avatar)
+    VALUES (@Id, @Username, @Email, @Password, @UserRole, @OAuthProvider, @Name, @Avatar);
 
     INSERT INTO [dbo].[UserSettings] (UserId, IsTwoFactorEnabled)
     VALUES (@Id, 0);

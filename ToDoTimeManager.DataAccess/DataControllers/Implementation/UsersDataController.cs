@@ -1,4 +1,5 @@
-﻿using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
+﻿using Dapper;
+using ToDoTimeManager.DataAccess.DataControllers.Interfaces;
 using ToDoTimeManager.DataAccess.DbAccessServices;
 using ToDoTimeManager.Entities.Entities;
 using ToDoTimeManager.Shared.Enums;
@@ -132,6 +133,22 @@ public class UsersDataController : IUsersDataController
         {
             _logger.LogError(e, e.Message);
             return null;
+        }
+    }
+
+    public async Task<bool> UpdateUserAvatar(Guid userId, string avatar)
+    {
+        try
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id",     userId);
+            parameters.Add("@Avatar", avatar);
+            return await _dbAccessService.ExecuteByParameters("sp_Users_UpdateAvatar", parameters) >= 1;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return false;
         }
     }
 

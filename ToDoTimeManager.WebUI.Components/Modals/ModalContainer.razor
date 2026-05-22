@@ -1,7 +1,7 @@
 @if (ModalService.ActiveComponentType is not null)
 {
-    <div class="modal-backdrop">
-        <div class="modal-window">
+    <div class="modal-backdrop" @onclick="OnBackdropClick">
+        <div class="modal-window" @onclick:stopPropagation="true">
             <div class="modal-header">
                 <span class="modal-title">@ModalService.ActiveTitle</span>
                 <button class="modal-close-btn" @onclick="OnCancel">

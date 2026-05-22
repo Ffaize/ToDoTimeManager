@@ -6,68 +6,91 @@
         <BrandRow />
         <div class="right-side-info-upper-row" @onkeydown="OnEnterPressed">
             <Input Disabled="@IsLoading"
-                Placeholder="@Localizer["Search for tasks, time logs, projects..."]"
-                Style="@InputStyle.Default"
-                Type="text"
-                @bind-Value="SearchToDoValue"
-                IconPosition="InputIconPosition.Right"
-                AdditionalCssClass="nav-bar-search-input">
-            <Icon>
-                <div @onclick="OnEnterPressed" class="nav-bar-search-icon">
-                    <SearchIcon IconSize="20" />
-                </div>
-            </Icon>
-        </Input>
-        <div class="nav-bar-profile">
-            @if (IsOpenProfileDropdown)
-            {
-                <div class="cd-backdrop" @onclick="SwitchProfileDropdownState"></div>
-            }
-            <div @onclick="SwitchProfileDropdownState" role="button" class="btn btn-ghost btn-circle avatar">
-                <img alt="Tailwind CSS Navbar component"
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-            </div>
-            @if (IsOpenProfileDropdown)
-            {
-                <div class="cd-panel nav-bar-profile-cd-panel" role="listbox">
-                    <div class="nav-bar-profile-header">
-                        <img class="nav-bar-profile-header__avatar"
-                             src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                             alt="Avatar" />
-                        <div class="nav-bar-profile-header__info">
-                            <span class="nav-bar-profile-header__name">Username</span>
-                            <span class="nav-bar-profile-header__role">User</span>
-                        </div>
+                   Placeholder="@Localizer["Search for tasks, time logs, projects..."]"
+                   Style="@InputStyle.Default"
+                   Type="text"
+                   @bind-Value="SearchToDoValue"
+                   IconPosition="InputIconPosition.Right"
+                   AdditionalCssClass="nav-bar-search-input">
+                <Icon>
+                    <div @onclick="OnEnterPressed" class="nav-bar-search-icon">
+                        <SearchIcon IconSize="20" />
                     </div>
-                    <ul class="cd-list">
-                        <li class="cd-item"
-                            role="option"
-                            @onclick="OnProfileClicked">
-                            <span class="cd-item__icon"><UserNameIcon IconSize="14"/></span>
-                            <span class="cd-item__label">@Localizer["Profile"]</span>
-                        </li>
-                        <li class="cd-item"
-                            role="option"
-                            @onclick="OnProfileClicked">
-                            <span class="cd-item__icon"><SettingsIcon IconSize="14"/></span>
-                            <span class="cd-item__label">@Localizer["Settings"]</span>
-                        </li>
-                    </ul>
-                    <Divider/>
-@*                     <div class="nav-bar-profile-divider"></div> *@
-                    <ul class="cd-list">
-                        <li class="cd-item cd-item--danger"
-                            role="option"
-                            @onclick="OnProfileClicked">
-                            <span class="cd-item__icon"><LogoutIcon IconSize="14"/></span>
-                            <span class="cd-item__label">@Localizer["Logout"]</span>
-                        </li>
-                    </ul>
+                </Icon>
+            </Input>
+            <div class="nav-bar-profile">
+                @if (IsOpenProfileDropdown)
+                {
+                    <div class="cd-backdrop" @onclick="SwitchProfileDropdownState"></div>
+                }
+                <div @onclick="SwitchProfileDropdownState" role="button" class="btn btn-ghost btn-circle avatar">
+                    @if (!string.IsNullOrWhiteSpace(_navBarUser?.Avatar))
+                    {
+                        <img alt="@Localizer["Avatar"]" src="@_navBarUser.Avatar" />
+                    }
+                    else
+                    {
+                        <div class="avatar-initials">@GetInitial()</div>
+                    }
                 </div>
-            }
+                @if (IsOpenProfileDropdown)
+                {
+                    <div class="cd-panel nav-bar-profile-cd-panel" role="listbox">
+                        <div class="nav-bar-profile-header">
+                            @if (!string.IsNullOrWhiteSpace(_navBarUser?.Avatar))
+                            {
+                                <img class="nav-bar-profile-header__avatar"
+                                     src="@_navBarUser.Avatar"
+                                     alt="@Localizer["Avatar"]" />
+                            }
+                            else
+                            {
+                                <div class="nav-bar-profile-header__avatar avatar-initials avatar-initials--lg">@GetInitial()</div>
+                            }
+                            <div class="nav-bar-profile-header__info">
+                                <span class="nav-bar-profile-header__name">@GetDisplayName()</span>
+                                <span class="nav-bar-profile-header__role">@GetDisplayUserNameRole()</span>
+                            </div>
+                        </div>
+                        <ul class="cd-list">
+                            <li class="cd-item"
+                                role="option"
+                                @onclick="OnProfileClicked">
+                                <span class="cd-item__icon"><UserNameIcon IconSize="14"/></span>
+                                <span class="cd-item__label">@Localizer["Profile"]</span>
+                            </li>
+                            <li class="cd-item"
+                                role="option"
+                                @onclick="OnProfileClicked">
+                                <span class="cd-item__icon"><SettingsIcon IconSize="14"/></span>
+                                <span class="cd-item__label">@Localizer["Settings"]</span>
+                            </li>
+                        </ul>
+                        <Divider/>
+                        <ul class="cd-list">
+                            <li class="cd-item cd-item--danger"
+                                role="option"
+                                @onclick="OnLogoutClicked">
+                                <span class="cd-item__icon"><LogoutIcon IconSize="14"/></span>
+                                <span class="cd-item__label">@Localizer["Logout"]</span>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-</div>
+    <div class="nav-links-row">
+        <NavLink ActiveClass="active" href="/" Match="NavLinkMatch.All">
+            Dashboard
+        </NavLink>
+        <NavLink ActiveClass="active" href="/profile" Match="NavLinkMatch.All">
+            Profile
+        </NavLink>
+        <NavLink ActiveClass="active" href="/tasks" Match="NavLinkMatch.All">
+            Tasks
+        </NavLink>
+    </div>
 </div>
 @* <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">

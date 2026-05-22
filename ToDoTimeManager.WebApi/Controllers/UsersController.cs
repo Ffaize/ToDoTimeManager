@@ -6,6 +6,7 @@ using ToDoTimeManager.Shared.DTOs.User;
 using ToDoTimeManager.Shared.Enums;
 using ToDoTimeManager.Shared.Extensions;
 using ToDoTimeManager.Shared.Models;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -15,15 +16,18 @@ namespace ToDoTimeManager.WebApi.Controllers;
 /// </summary>
 public class UsersController : BaseController
 {
-    private readonly IUsersService _usersService;
+    private readonly IUsersService  _usersService;
+    private readonly IHubNotifier   _hubNotifier;
 
     /// <summary>
     /// Initializes a new instance of <see cref="UsersController"/>.
     /// </summary>
     /// <param name="usersService">The service used to perform user account operations.</param>
-    public UsersController(IUsersService usersService)
+    /// <param name="hubNotifier">The SignalR hub notifier used to push real-time updates to clients.</param>
+    public UsersController(IUsersService usersService, IHubNotifier hubNotifier)
     {
         _usersService = usersService;
+        _hubNotifier  = hubNotifier;
     }
 
     /// <summary>
@@ -139,7 +143,66 @@ public class UsersController : BaseController
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
     {
         var result = await _usersService.UpdateUser(request, GetCurrentUserId());
-        return result ? Ok(result) : StatusCode(500);
+        if (!result) return StatusCode(500);
+
+        var user = await _usersService.GetUserById(request.Id, request.Id, GetCurrentUserRole());
+        if (user != null)
+            await _hubNotifier.NotifyUserAsync(request.Id, "UserUpdated", new NavBarUserModel
+            {
+                Username = user.UserName,
+                Name     = user.Name,
+                Role     = user.UserRole,
+                Avatar   = user.Avatar
+            });
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Returns the nav-bar display data (username, role, avatar) for the currently authenticated user.
+    /// </summary>
+    /// <returns>200 OK with a <see cref="NavBarUserModel"/>; 500 if the user cannot be found.</returns>
+    [Authorize]
+    [HttpGet("GetNavBarInfo")]
+    public async Task<IActionResult> GetNavBarInfo()
+    {
+        var userId = GetCurrentUserId();
+        var user   = await _usersService.GetUserById(userId, userId, GetCurrentUserRole());
+        if (user == null) return StatusCode(500);
+
+        return Ok(new NavBarUserModel
+        {
+            Username = user.UserName,
+            Name     = user.Name,
+            Role     = user.UserRole,
+            Avatar   = user.Avatar
+        });
+    }
+
+    /// <summary>
+    /// Uploads or replaces the avatar (base64 data URI) for the currently authenticated user.
+    /// </summary>
+    /// <param name="request">The payload containing the base64 data URI of the new avatar image.</param>
+    /// <returns>200 OK on success; 500 Internal Server Error if the operation fails.</returns>
+    [Authorize]
+    [HttpPost("UpdateAvatar")]
+    public async Task<IActionResult> UpdateAvatar([FromBody] UpdateUserAvatarRequestDto request)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _usersService.UpdateAvatar(userId, request.Avatar, userId);
+        if (!result) return StatusCode(500);
+
+        var user = await _usersService.GetUserById(userId, userId, GetCurrentUserRole());
+        if (user != null)
+            await _hubNotifier.NotifyUserAsync(userId, "UserUpdated", new NavBarUserModel
+            {
+                Username = user.UserName,
+                Name     = user.Name,
+                Role     = user.UserRole,
+                Avatar   = user.Avatar
+            });
+
+        return Ok();
     }
 
     /// <summary>

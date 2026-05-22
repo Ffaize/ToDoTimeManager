@@ -2,7 +2,9 @@ CREATE PROCEDURE [dbo].[sp_Users_Update] @Id UNIQUEIDENTIFIER,
                                          @UserName NVARCHAR(256),
                                          @Email NVARCHAR(256),
                                          @Password NVARCHAR(512),
-                                         @UserRole INT
+                                         @UserRole INT,
+                                         @Avatar NVARCHAR(MAX) = NULL,
+                                         @Name NVARCHAR(255) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -10,6 +12,8 @@ BEGIN
     SET Username = @UserName,
         Email    = @Email,
         Password = @Password,
-        UserRole = @UserRole
+        UserRole = @UserRole,
+        Avatar   = @Avatar,
+        Name     = @Name
     WHERE Id = @Id;
 END

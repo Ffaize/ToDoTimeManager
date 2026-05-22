@@ -7,7 +7,9 @@ BEGIN
            Email,
            Password,
            UserRole,
-           OAuthProvider
+           OAuthProvider,
+           Avatar,
+           Name
     FROM dbo.Users
     ORDER BY UserName ASC;
 END

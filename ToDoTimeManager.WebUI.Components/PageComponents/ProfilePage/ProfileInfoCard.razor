@@ -1,0 +1,48 @@
+@using ToDoTimeManager.WebUI.Utils
+@using ToDoTimeManager.WebUI.Models.Enums.Button
+@inherits BaseComponent
+
+<div class="profile-info-card">
+    <h3 class="profile-info-card__title">@Localizer["Edit profile"]</h3>
+
+    <div class="profile-info-card__field">
+        <label class="profile-info-card__label">@Localizer["Username"]</label>
+        <Input @bind-Value="_userName"
+               Placeholder="@Localizer["Username"]"
+               Style="@InputStyle.Default"
+               Type="text"
+               UseValidation="true"
+               ValidationFunc="StringValidationHelper.UsernameValidation"
+               Disabled="@IsLoading" />
+    </div>
+
+    <div class="profile-info-card__field">
+        <label class="profile-info-card__label">@Localizer["Email"]</label>
+        <Input @bind-Value="_email"
+               Placeholder="@Localizer["Email"]"
+               Style="@InputStyle.Default"
+               Type="email"
+               UseValidation="true"
+               ValidationFunc="StringValidationHelper.EmailValidation"
+               Disabled="@IsLoading" />
+    </div>
+
+    <div class="profile-info-card__field">
+        <label class="profile-info-card__label">
+            @Localizer["New password"]
+            <span class="profile-info-card__optional">@Localizer["(optional)"]</span>
+        </label>
+        <Input @bind-Value="_password"
+               Placeholder="@Localizer["Leave blank to keep current"]"
+               Style="@InputStyle.Default"
+               Type="text"
+               IsPassword="true"
+               UseValidation="false"
+               Disabled="@IsLoading" />
+    </div>
+
+    <Button Text="@Localizer["Save changes"]"
+            Style="@ButtonStyle.Primary"
+            OnClick="OnSaveClicked"
+            Disabled="@IsLoading" />
+</div>

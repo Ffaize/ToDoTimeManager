@@ -8,7 +8,9 @@ BEGIN
         Email,
         Password,
         UserRole,
-        OAuthProvider
+        OAuthProvider,
+        Avatar,
+        Name
     FROM dbo.Users
     WHERE Username = @LoginParameter
        OR Email = @LoginParameter
