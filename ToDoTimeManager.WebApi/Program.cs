@@ -33,6 +33,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddServiceDefaults();
+        builder.AddAzureBlobClient("blobs");
 
         VerifyJwtKey(builder);
         AddServices(builder);
