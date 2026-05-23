@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.3.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ToDoTimeManager.DbPublisher\ToDoTimeManager.DbPublisher.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebApi\ToDoTimeManager.WebApi.csproj" />
     <ProjectReference Include="..\ToDoTimeManager.WebUI\ToDoTimeManager.WebUI.csproj" />
