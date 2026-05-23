@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var storage = builder.AddAzureStorage("storage").RunAsEmulator();
+var storage = builder.AddAzureStorage("storage").RunAsEmulator(e => e.WithDataVolume());
 var blobs = storage.AddBlobs("blobs");
 
 var dbPublish = builder.AddProject<Projects.ToDoTimeManager_DbPublisher>("db-publish")
