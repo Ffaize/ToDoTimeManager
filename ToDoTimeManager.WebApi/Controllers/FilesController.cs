@@ -1,6 +1,3 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.DTOs.Files;
@@ -10,100 +7,62 @@ namespace ToDoTimeManager.WebApi.Controllers;
 [Authorize]
 public class FilesController : BaseController
 {
-    private const string ContainerName = "media";
-    private readonly BlobServiceClient _blobServiceClient;
+    private const string UploadsFolderName = "uploads";
+    private readonly IWebHostEnvironment _env;
     private readonly ILogger<FilesController> _logger;
 
-    public FilesController(BlobServiceClient blobServiceClient, ILogger<FilesController> logger)
+    public FilesController(IWebHostEnvironment env, ILogger<FilesController> logger)
     {
-        _blobServiceClient = blobServiceClient;
+        _env = env;
         _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Dictionary<string, string>>> GetFiles()
+    public IActionResult GetFiles()
     {
-        try
-        {
-            var container = await GetContainerAsync();
-            var result = new Dictionary<string, string>();
+        var uploadsPath = GetUploadsPath();
+        if (!Directory.Exists(uploadsPath))
+            return Ok(new Dictionary<string, string>());
 
-            await foreach (var blobItem in container.GetBlobsAsync())
-            {
-                var blobClient = container.GetBlobClient(blobItem.Name);
-                var lifetime = IsVideoFile(blobItem.Name)
-                    ? TimeSpan.FromMinutes(60)
-                    : TimeSpan.FromMinutes(30);
-                var sasUrl = GenerateSasUrl(blobClient, BlobSasPermissions.Read, lifetime);
-                if (sasUrl != null)
-                    result[blobItem.Name] = sasUrl;
-            }
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var files = Directory.GetFiles(uploadsPath)
+            .ToDictionary(
+                f => Path.GetFileName(f),
+                f => $"{baseUrl}/{UploadsFolderName}/{Uri.EscapeDataString(Path.GetFileName(f))}"
+            );
 
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error listing files from container '{Container}'", ContainerName);
-            return StatusCode(500);
-        }
+        return Ok(files);
     }
 
-    [HttpGet("upload-url")]
-    public async Task<ActionResult<UploadUrlResponseDto>> GetUploadUrl([FromQuery] string fileName)
+    [HttpPost("upload")]
+    [RequestSizeLimit(100 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)]
+    public async Task<ActionResult<FileUploadResponseDto>> UploadFile(IFormFile file)
     {
-        if (string.IsNullOrWhiteSpace(fileName))
-            return BadRequest("fileName is required");
+        if (file is null || file.Length == 0)
+            return BadRequest("No file provided");
 
-        try
-        {
-            var container = await GetContainerAsync();
-            var blobName = $"{Guid.NewGuid()}_{fileName}";
-            var blobClient = container.GetBlobClient(blobName);
+        var uploadsPath = GetUploadsPath();
+        Directory.CreateDirectory(uploadsPath);
 
-            var sasUrl = GenerateSasUrl(
-                blobClient,
-                BlobSasPermissions.Write | BlobSasPermissions.Create,
-                TimeSpan.FromMinutes(10));
+        // Prefix with GUID to avoid collisions and path traversal
+        var safeOriginalName = Path.GetFileName(file.FileName);
+        var storedName = $"{Guid.NewGuid()}_{safeOriginalName}";
+        var filePath = Path.Combine(uploadsPath, storedName);
 
-            if (sasUrl == null)
-                return StatusCode(500, "Cannot generate SAS URL — storage client does not support shared-key signing.");
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await file.CopyToAsync(stream);
 
-            return Ok(new UploadUrlResponseDto(blobName, sasUrl));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error generating upload URL for '{FileName}'", fileName);
-            return StatusCode(500);
-        }
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var url = $"{baseUrl}/{UploadsFolderName}/{Uri.EscapeDataString(storedName)}";
+
+        _logger.LogInformation("Saved file '{StoredName}' ({Bytes} bytes)", storedName, file.Length);
+        return Ok(new FileUploadResponseDto(storedName, url));
     }
 
-    private async Task<BlobContainerClient> GetContainerAsync()
+    private string GetUploadsPath()
     {
-        var container = _blobServiceClient.GetBlobContainerClient(ContainerName);
-        await container.CreateIfNotExistsAsync(PublicAccessType.None);
-        return container;
-    }
-
-    private static string? GenerateSasUrl(BlobClient blobClient, BlobSasPermissions permissions, TimeSpan lifetime)
-    {
-        if (!blobClient.CanGenerateSasUri)
-            return null;
-
-        var sasBuilder = new BlobSasBuilder
-        {
-            BlobContainerName = blobClient.BlobContainerName,
-            BlobName = blobClient.Name,
-            Resource = "b",
-            ExpiresOn = DateTimeOffset.UtcNow.Add(lifetime)
-        };
-        sasBuilder.SetPermissions(permissions);
-
-        return blobClient.GenerateSasUri(sasBuilder).ToString();
-    }
-
-    private static bool IsVideoFile(string blobName)
-    {
-        var ext = Path.GetExtension(blobName).ToLowerInvariant();
-        return ext is ".mp4" or ".webm" or ".ogg" or ".mov" or ".avi" or ".mkv";
+        var webRoot = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+        return Path.Combine(webRoot, UploadsFolderName);
     }
 }

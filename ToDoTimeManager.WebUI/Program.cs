@@ -49,11 +49,6 @@ public class Program
         builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
-        builder.Services.AddHttpClient("AzureBlob", client =>
-        {
-            client.Timeout = TimeSpan.FromMinutes(10);
-        });
-
         builder.Services.AddHttpClient("TodoTimeManager", client =>
         {
             client.BaseAddress = new Uri("https+http://webapi");

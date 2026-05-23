@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Uploaded files (local storage)
+ToDoTimeManager.WebApi/wwwroot/uploads/*
+!ToDoTimeManager.WebApi/wwwroot/uploads/.gitkeep

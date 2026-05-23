@@ -33,7 +33,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddServiceDefaults();
-        builder.AddAzureBlobClient("blobs");
 
         VerifyJwtKey(builder);
         AddServices(builder);
@@ -52,6 +51,7 @@ public class Program
 
         app.MapDefaultEndpoints();
         app.UseMiddleware<GlobalExceptionHandler>();
+        app.UseStaticFiles();
         app.UseHttpsRedirection();
         app.UseRateLimiter();
         app.UseAuthentication();

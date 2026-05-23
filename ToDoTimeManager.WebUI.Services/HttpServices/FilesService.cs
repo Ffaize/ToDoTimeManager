@@ -6,13 +6,11 @@ namespace ToDoTimeManager.WebUI.Services.HttpServices;
 public class FilesService : BaseHttpService
 {
     private readonly ILogger<FilesService> _logger;
-    private readonly HttpClient _blobHttpClient;
 
     public FilesService(IHttpClientFactory httpClientFactory, ILogger<FilesService> logger) : base(httpClientFactory)
     {
         ApiControllerName = "Files";
         _logger = logger;
-        _blobHttpClient = httpClientFactory.CreateClient("AzureBlob");
     }
 
     public async Task<Dictionary<string, string>> GetFilesAsync()
@@ -30,45 +28,27 @@ public class FilesService : BaseHttpService
         }
     }
 
-    public async Task<UploadUrlResponseDto?> GetUploadUrlAsync(string fileName)
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync(Url($"upload-url?fileName={Uri.EscapeDataString(fileName)}"));
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<UploadUrlResponseDto>();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error requesting upload URL for '{FileName}'", fileName);
-            return null;
-        }
-    }
-
     /// <summary>
-    /// Uploads file content directly to Azure Blob Storage via a pre-signed SAS URL (PUT).
-    /// This request bypasses the API and goes straight to the blob endpoint.
+    /// Uploads a file to the API via multipart/form-data.
+    /// The API saves it to wwwroot/uploads/ and returns the accessible URL.
     /// </summary>
-    public async Task<bool> UploadToSasUrlAsync(string sasUrl, Stream content, string contentType, long contentLength)
+    public async Task<FileUploadResponseDto?> UploadFileAsync(string fileName, Stream content, string contentType)
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Put, sasUrl);
-            var body = new StreamContent(content);
-            body.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-            body.Headers.ContentLength = contentLength;
-            request.Content = body;
-            request.Headers.Add("x-ms-blob-type", "BlockBlob");
+            using var form = new MultipartFormDataContent();
+            var fileContent = new StreamContent(content);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            form.Add(fileContent, "file", fileName);
 
-            var response = await _blobHttpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
-                _logger.LogWarning("Blob PUT returned {StatusCode}", response.StatusCode);
-            return response.IsSuccessStatusCode;
+            var response = await _httpClient.PostAsync(Url("upload"), form);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<FileUploadResponseDto>();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error uploading to SAS URL");
-            return false;
+            _logger.LogError(ex, "Error uploading file '{FileName}'", fileName);
+            return null;
         }
     }
 }
