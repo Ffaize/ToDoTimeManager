@@ -1,0 +1,62 @@
+/* ─── App Shell Grid Layout ─────────────────────────────────────────────────── */
+
+.page {
+    position: relative;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 64px 1fr;
+    grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+    height: 100vh;
+    height: 100dvh;
+}
+
+main {
+    grid-area: main;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.content {
+    height: auto;
+    min-height: 100%;
+}
+
+.mobile-topbar,
+.mobile-tabs,
+.mobile-drawer-backdrop,
+.mobile-drawer {
+    display: none;
+}
+
+@media (max-width: 880px) {
+    .page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        grid-template-areas:
+            "mobile-topbar"
+            "mobile-tabs"
+            "main";
+    }
+
+    .sidebar,
+    .topbar {
+        display: none;
+    }
+
+    .mobile-topbar {
+        display: flex;
+        grid-area: mobile-topbar;
+    }
+
+    .mobile-tabs {
+        display: flex;
+        grid-area: mobile-tabs;
+    }
+
+    .mobile-drawer-backdrop,
+    .mobile-drawer {
+        display: flex;
+    }
+}

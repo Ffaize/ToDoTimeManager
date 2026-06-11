@@ -1,0 +1,53 @@
+/* ─── Notifications Bell ────────────────────────────────────────────────────── */
+
+.notifications-bell {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.notifications-bell__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-1);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.notifications-bell__trigger:hover {
+    border-color: var(--ember);
+    color: var(--ember);
+}
+
+.notifications-bell__dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 0 2px var(--bg-1), 0 0 6px var(--ember-glow);
+}
+
+.notifications-bell__panel {
+    left: auto;
+    right: 0;
+    width: max-content;
+    min-width: 260px;
+}
+
+.notifications-bell__header {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-0);
+    font-size: 13px;
+    font-weight: 600;
+}

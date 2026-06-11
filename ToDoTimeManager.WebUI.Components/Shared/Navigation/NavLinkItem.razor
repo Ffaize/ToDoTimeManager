@@ -1,0 +1,18 @@
+<NavLink class="nav-link-item @AdditionalCssClass" href="@Href" Match="Match" ActiveClass="nav-link-item--active" @onclick="OnClick">
+    <span class="nav-link-item__icon">@Icon</span>
+    <span class="nav-link-item__label">@Label</span>
+    @if (Count is > 0)
+    {
+        <span class="nav-link-item__badge">@Count</span>
+    }
+</NavLink>
+
+@code {
+    [Parameter] public string Href { get; set; } = "/";
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public RenderFragment? Icon { get; set; }
+    [Parameter] public int? Count { get; set; }
+    [Parameter] public string AdditionalCssClass { get; set; } = string.Empty;
+    [Parameter] public EventCallback OnClick { get; set; }
+}

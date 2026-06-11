@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Shared.DTOs.ToDo;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -14,14 +15,20 @@ namespace ToDoTimeManager.WebApi.Controllers;
 public class ToDosController : BaseController
 {
     private readonly IToDosService _toDosService;
+    private readonly IStatisticService _statisticService;
+    private readonly IHubNotifier _hubNotifier;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ToDosController"/>.
     /// </summary>
     /// <param name="toDosService">The service used to perform to-do CRUD operations.</param>
-    public ToDosController(IToDosService toDosService)
+    /// <param name="statisticService">The service used to compute nav-bar badge counts.</param>
+    /// <param name="hubNotifier">The SignalR hub notifier used to push real-time updates to clients.</param>
+    public ToDosController(IToDosService toDosService, IStatisticService statisticService, IHubNotifier hubNotifier)
     {
         _toDosService = toDosService;
+        _statisticService = statisticService;
+        _hubNotifier = hubNotifier;
     }
 
     /// <summary>
@@ -96,6 +103,10 @@ public class ToDosController : BaseController
         };
 
         var created = await _toDosService.CreateToDo(toDo, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return created ? Ok(created) : StatusCode(500);
     }
 
@@ -129,6 +140,10 @@ public class ToDosController : BaseController
         };
 
         var updated = await _toDosService.UpdateToDo(toDo, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return updated ? Ok(updated) : StatusCode(500);
     }
 
@@ -146,6 +161,10 @@ public class ToDosController : BaseController
     public async Task<IActionResult> DeleteToDo(Guid id)
     {
         var deleted = await _toDosService.DeleteToDo(id, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 }

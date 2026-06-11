@@ -432,4 +432,43 @@
   <data name="Save changes" xml:space="preserve">
     <value>Save changes</value>
   </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Projects</value>
+  </data>
+  <data name="Workspace" xml:space="preserve">
+    <value>Workspace</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="Set up 2FA" xml:space="preserve">
+    <value>Set up 2FA</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="No notifications yet" xml:space="preserve">
+    <value>No notifications yet</value>
+  </data>
+  <data name="Two-factor auth" xml:space="preserve">
+    <value>Two-factor auth</value>
+  </data>
+  <data name="This page is under construction." xml:space="preserve">
+    <value>This page is under construction.</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
 </root>

@@ -61,4 +61,15 @@ public class StatisticController : BaseController
         var statistic = await _statisticService.GetMainPageStatistic(filter, GetCurrentUserId(), GetCurrentUserRole());
         return statistic != null ? Ok(statistic) : StatusCode(500);
     }
+
+    /// <summary>
+    /// Retrieves nav-bar badge counts (active tasks, time logs this month, projects) for the current user.
+    /// </summary>
+    /// <returns>200 OK with a <see cref="NavBarCountsModel"/>.</returns>
+    [HttpGet("GetNavBarCounts")]
+    public async Task<IActionResult> GetNavBarCounts()
+    {
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        return Ok(counts);
+    }
 }

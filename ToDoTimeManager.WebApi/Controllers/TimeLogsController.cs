@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.Business.Services.Interfaces;
 using ToDoTimeManager.Shared.DTOs.TimeLog;
+using ToDoTimeManager.WebApi.Services.Interfaces;
 
 namespace ToDoTimeManager.WebApi.Controllers;
 
@@ -15,14 +16,20 @@ namespace ToDoTimeManager.WebApi.Controllers;
 public class TimeLogsController : BaseController
 {
     private readonly ITimeLogsService _timeLogsService;
+    private readonly IStatisticService _statisticService;
+    private readonly IHubNotifier _hubNotifier;
 
     /// <summary>
     /// Initializes a new instance of <see cref="TimeLogsController"/>.
     /// </summary>
     /// <param name="timeLogsService">The service used to perform time-log CRUD operations.</param>
-    public TimeLogsController(ITimeLogsService timeLogsService)
+    /// <param name="statisticService">The service used to compute nav-bar badge counts.</param>
+    /// <param name="hubNotifier">The SignalR hub notifier used to push real-time updates to clients.</param>
+    public TimeLogsController(ITimeLogsService timeLogsService, IStatisticService statisticService, IHubNotifier hubNotifier)
     {
         _timeLogsService = timeLogsService;
+        _statisticService = statisticService;
+        _hubNotifier = hubNotifier;
     }
 
     /// <summary>
@@ -120,6 +127,10 @@ public class TimeLogsController : BaseController
         };
 
         var created = await _timeLogsService.CreateTimeLog(timeLog, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return created ? Ok(created) : StatusCode(500);
     }
 
@@ -148,6 +159,10 @@ public class TimeLogsController : BaseController
         };
 
         var updated = await _timeLogsService.UpdateTimeLog(timeLog, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return updated ? Ok(updated) : StatusCode(500);
     }
 
@@ -164,6 +179,10 @@ public class TimeLogsController : BaseController
     public async Task<IActionResult> DeleteTimeLog(Guid id)
     {
         var deleted = await _timeLogsService.DeleteTimeLog(id, GetCurrentUserId(), GetCurrentUserRole());
+
+        var counts = await _statisticService.GetNavBarCountsAsync(GetCurrentUserId());
+        await _hubNotifier.NotifyUserAsync(GetCurrentUserId(), "NavBarCountsUpdated", counts);
+
         return deleted ? Ok(deleted) : StatusCode(500);
     }
 }

@@ -11,4 +11,6 @@ public interface IStatisticService
 
     Task<MainPageStatisticModel?> GetMainPageStatistic(MainPageStatisticRequestDto filter, Guid currentUserId,
         UserRole currentUserRole);
+
+    Task<NavBarCountsModel> GetNavBarCountsAsync(Guid userId);
 }

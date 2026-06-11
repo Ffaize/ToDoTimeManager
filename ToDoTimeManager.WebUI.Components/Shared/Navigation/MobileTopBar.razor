@@ -1,0 +1,57 @@
+@inherits BaseComponent
+
+<header class="mobile-topbar">
+    <div class="mobile-topbar__row">
+        <BrandRow AdditionalCssClass="mobile-topbar__brand" />
+        <div class="mobile-topbar__actions">
+            <button type="button" class="mobile-topbar__icon-btn" aria-label="@Localizer["Search"]" @onclick="ToggleSearch">
+                <SearchIcon IconSize="20" />
+            </button>
+            <NotificationsBell />
+            <button type="button" class="mobile-topbar__icon-btn" aria-label="@Localizer["Menu"]" @onclick="OnToggleDrawer">
+                <MenuIcon IconSize="22" />
+            </button>
+        </div>
+    </div>
+    @if (_isSearchOpen)
+    {
+        <div class="mobile-topbar__search" @onkeydown="OnSearchKeyDown">
+            <Input Disabled="@IsLoading"
+                   Placeholder="@Localizer["Search"]"
+                   Style="@InputStyle.Default"
+                   Type="text"
+                   @bind-Value="SearchValue"
+                   IconPosition="InputIconPosition.Left"
+                   AdditionalCssClass="mobile-topbar__search-input">
+                <Icon><SearchIcon IconSize="18" /></Icon>
+            </Input>
+        </div>
+    }
+</header>
+
+<nav class="mobile-tabs" aria-label="@Localizer["Workspace"]">
+    <NavLink class="mobile-tabs__item" href="/" Match="NavLinkMatch.All" ActiveClass="mobile-tabs__item--active">
+        @Localizer["Dashboard"]
+    </NavLink>
+    <NavLink class="mobile-tabs__item" href="/tasks" ActiveClass="mobile-tabs__item--active">
+        @Localizer["Tasks"]
+        @if (Counts?.TasksCount > 0)
+        {
+            <span class="mobile-tabs__badge">@Counts.TasksCount</span>
+        }
+    </NavLink>
+    <NavLink class="mobile-tabs__item" href="/time-logs" ActiveClass="mobile-tabs__item--active">
+        @Localizer["TimeLogs"]
+        @if (Counts?.TimeLogsCount > 0)
+        {
+            <span class="mobile-tabs__badge">@Counts.TimeLogsCount</span>
+        }
+    </NavLink>
+    <NavLink class="mobile-tabs__item" href="/projects" ActiveClass="mobile-tabs__item--active">
+        @Localizer["Projects"]
+        @if (Counts?.ProjectsCount > 0)
+        {
+            <span class="mobile-tabs__badge">@Counts.ProjectsCount</span>
+        }
+    </NavLink>
+</nav>

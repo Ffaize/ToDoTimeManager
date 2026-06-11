@@ -7,6 +7,12 @@
             {"AuthPage", "Authorization"},
             {"TermsPage", "Terms of Service"},
             {"PrivacyPage", "Privacy Policy"},
+            {"MainPage", "Dashboard"},
+            {"TasksPage", "Tasks"},
+            {"TimeLogsPage", "TimeLogs"},
+            {"ProjectsPage", "Projects"},
+            {"SettingsPage", "Settings"},
+            {"SecurityPage", "Security"},
         };
 
         public static string GetPageTitle(string pageKey)

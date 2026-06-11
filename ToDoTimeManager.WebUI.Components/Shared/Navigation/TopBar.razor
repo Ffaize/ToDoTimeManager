@@ -1,0 +1,30 @@
+@inherits BaseComponent
+
+<header class="topbar">
+    <nav class="topbar__breadcrumb" aria-label="breadcrumb">
+        <span class="topbar__breadcrumb-root">@Localizer["Workspace"]</span>
+        <span class="topbar__breadcrumb-sep">/</span>
+        <span class="topbar__breadcrumb-current">@GetCurrentLabel()</span>
+    </nav>
+
+    <div class="topbar__search" @onkeydown="OnSearchKeyDown">
+        <Input Disabled="@IsLoading"
+               Placeholder="@Localizer["Search"]"
+               Style="@InputStyle.Default"
+               Type="text"
+               @bind-Value="SearchValue"
+               IconPosition="InputIconPosition.Left"
+               AdditionalCssClass="topbar__search-input">
+            <Icon><SearchIcon IconSize="18" /></Icon>
+        </Input>
+        <span class="topbar__search-hint">⌘K</span>
+    </div>
+
+    <div class="topbar__actions">
+        <NavLink class="topbar__2fa-link" href="/security">
+            <LockShieldIcon IconSize="16" />
+            <span>@Localizer["Set up 2FA"]</span>
+        </NavLink>
+        <NotificationsBell />
+    </div>
+</header>

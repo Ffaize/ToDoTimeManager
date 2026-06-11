@@ -7,15 +7,18 @@ public class StatisticService : IStatisticService
 {
     private readonly IToDosService _toDosService;
     private readonly ITimeLogsService _timeLogsService;
+    private readonly IProjectsService _projectsService;
     private readonly ILogger<StatisticService> _logger;
 
     public StatisticService(
         IToDosService toDosService,
         ITimeLogsService timeLogsService,
+        IProjectsService projectsService,
         ILogger<StatisticService> logger)
     {
         _toDosService = toDosService;
         _timeLogsService = timeLogsService;
+        _projectsService = projectsService;
         _logger = logger;
     }
 
@@ -73,6 +76,34 @@ public class StatisticService : IStatisticService
         {
             _logger.LogError(e, e.Message);
             return null;
+        }
+    }
+
+    public async Task<NavBarCountsModel> GetNavBarCountsAsync(Guid userId)
+    {
+        try
+        {
+            var newCount        = await _toDosService.GetToDosCountByUserIdAndStatus(userId, ToDoStatus.New);
+            var inProgressCount = await _toDosService.GetToDosCountByUserIdAndStatus(userId, ToDoStatus.InProgress);
+            var onHoldCount     = await _toDosService.GetToDosCountByUserIdAndStatus(userId, ToDoStatus.OnHold);
+
+            var daysIntoCurrentMonth = (int)(DateTime.UtcNow -
+                new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc)).TotalDays;
+            var timeLogsThisMonth = await _timeLogsService.GetTimeLogsByUserIdAndTime(userId, daysIntoCurrentMonth);
+
+            var projects = await _projectsService.GetProjectsByUserId(userId);
+
+            return new NavBarCountsModel
+            {
+                TasksCount    = newCount + inProgressCount + onHoldCount,
+                TimeLogsCount = timeLogsThisMonth.Count,
+                ProjectsCount = projects.Count
+            };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return new NavBarCountsModel();
         }
     }
 

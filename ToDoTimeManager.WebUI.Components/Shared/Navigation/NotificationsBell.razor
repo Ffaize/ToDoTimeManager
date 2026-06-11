@@ -1,0 +1,24 @@
+@inherits BaseComponent
+
+<div class="notifications-bell">
+    @if (_isOpen)
+    {
+        <div class="cd-backdrop" @onclick="Close"></div>
+    }
+    <button type="button"
+            class="notifications-bell__trigger"
+            aria-label="@Localizer["Notifications"]"
+            @onclick="Toggle">
+        <BellIcon IconSize="20" />
+        <span class="notifications-bell__dot"></span>
+    </button>
+    @if (_isOpen)
+    {
+        <div class="cd-panel notifications-bell__panel" role="listbox">
+            <div class="notifications-bell__header">@Localizer["Notifications"]</div>
+            <ul class="cd-list">
+                <li class="cd-item cd-item--empty">@Localizer["No notifications yet"]</li>
+            </ul>
+        </div>
+    }
+</div>

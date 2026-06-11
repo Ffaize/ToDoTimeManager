@@ -47,4 +47,20 @@ public class StatisticService : BaseHttpService
             return new MainPageStatisticModel();
         }
     }
+
+    public async Task<NavBarCountsModel> GetNavBarCounts()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(Url("GetNavBarCounts"));
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<NavBarCountsModel>();
+            return result ?? new NavBarCountsModel();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occurred while fetching nav-bar counts");
+            return new NavBarCountsModel();
+        }
+    }
 }

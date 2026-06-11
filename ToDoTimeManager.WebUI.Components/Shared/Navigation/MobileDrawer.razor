@@ -1,0 +1,55 @@
+@inherits BaseComponent
+
+@if (IsOpen)
+{
+    <div class="mobile-drawer-backdrop" @onclick="OnClose"></div>
+    <aside class="mobile-drawer">
+        <div class="mobile-drawer__header">
+            <UserCard User="User" ShowRole="true" AdditionalCssClass="mobile-drawer__user-card" />
+            <button type="button" class="mobile-drawer__close" aria-label="@Localizer["Close"]" @onclick="OnClose">
+                <CloseIcon IconSize="18" />
+            </button>
+        </div>
+
+        <nav class="mobile-drawer__nav">
+            <NavLinkItem Href="/" Match="NavLinkMatch.All" Label="@Localizer["Dashboard"]" OnClick="OnClose">
+                <Icon><GridIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/tasks" Label="@Localizer["Tasks"]" Count="Counts?.TasksCount" OnClick="OnClose">
+                <Icon><ListCheckIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/time-logs" Label="@Localizer["TimeLogs"]" Count="Counts?.TimeLogsCount" OnClick="OnClose">
+                <Icon><HistoryIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/projects" Label="@Localizer["Projects"]" Count="Counts?.ProjectsCount" OnClick="OnClose">
+                <Icon><FolderIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/profile" Label="@Localizer["Profile"]" OnClick="OnClose">
+                <Icon><UserNameIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+        </nav>
+
+        <Divider />
+
+        <nav class="mobile-drawer__nav">
+            <NavLinkItem Href="/settings" Label="@Localizer["Settings"]" OnClick="OnClose">
+                <Icon><SettingsIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/security" Label="@Localizer["Two-factor auth"]" OnClick="OnClose">
+                <Icon><LockShieldIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <button type="button" class="nav-link-item nav-link-item--danger" @onclick="OnLogout">
+                <span class="nav-link-item__icon"><LogoutIcon IconSize="18" /></span>
+                <span class="nav-link-item__label">@Localizer["Logout"]</span>
+            </button>
+        </nav>
+    </aside>
+}
+
+@code {
+    [Parameter] public NavBarUserModel? User { get; set; }
+    [Parameter] public NavBarCountsModel? Counts { get; set; }
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnLogout { get; set; }
+}
