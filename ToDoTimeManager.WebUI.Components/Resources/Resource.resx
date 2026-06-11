@@ -432,4 +432,43 @@
   <data name="Save changes" xml:space="preserve">
     <value>Зберегти зміни</value>
   </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Дашборд</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Проекти</value>
+  </data>
+  <data name="Workspace" xml:space="preserve">
+    <value>Робочий простір</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Акаунт</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Безпека</value>
+  </data>
+  <data name="Set up 2FA" xml:space="preserve">
+    <value>Налаштувати 2FA</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Сповіщення</value>
+  </data>
+  <data name="No notifications yet" xml:space="preserve">
+    <value>Поки немає сповіщень</value>
+  </data>
+  <data name="Two-factor auth" xml:space="preserve">
+    <value>Двофакторна автентифікація</value>
+  </data>
+  <data name="This page is under construction." xml:space="preserve">
+    <value>Ця сторінка ще в розробці.</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Пошук...</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Меню</value>
+  </data>
 </root>

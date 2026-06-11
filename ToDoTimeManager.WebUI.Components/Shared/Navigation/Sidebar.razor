@@ -1,0 +1,49 @@
+@inherits BaseComponent
+
+<aside class="sidebar">
+    <BrandRow AdditionalCssClass="sidebar__brand" />
+
+    <nav class="sidebar__nav">
+        <div class="sidebar__section">
+            <span class="sidebar__section-title">@Localizer["Workspace"]</span>
+            <NavLinkItem Href="/" Match="NavLinkMatch.All" Label="@Localizer["Dashboard"]">
+                <Icon><GridIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/tasks" Label="@Localizer["Tasks"]" Count="Counts?.TasksCount">
+                <Icon><ListCheckIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/time-logs" Label="@Localizer["TimeLogs"]" Count="Counts?.TimeLogsCount">
+                <Icon><HistoryIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/projects" Label="@Localizer["Projects"]" Count="Counts?.ProjectsCount">
+                <Icon><FolderIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/profile" Label="@Localizer["Profile"]">
+                <Icon><UserNameIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+        </div>
+
+        <div class="sidebar__section">
+            <span class="sidebar__section-title">@Localizer["Account"]</span>
+            <NavLinkItem Href="/settings" Label="@Localizer["Settings"]">
+                <Icon><SettingsIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+            <NavLinkItem Href="/security" Label="@Localizer["Security"]">
+                <Icon><LockShieldIcon IconSize="18" /></Icon>
+            </NavLinkItem>
+        </div>
+    </nav>
+
+    <div class="sidebar__footer">
+        <UserCard User="User" AdditionalCssClass="sidebar__user-card" />
+        <button type="button" class="sidebar__logout" aria-label="@Localizer["Logout"]" @onclick="OnLogout">
+            <LogoutIcon IconSize="18" />
+        </button>
+    </div>
+</aside>
+
+@code {
+    [Parameter] public NavBarUserModel? User { get; set; }
+    [Parameter] public NavBarCountsModel? Counts { get; set; }
+    [Parameter] public EventCallback OnLogout { get; set; }
+}

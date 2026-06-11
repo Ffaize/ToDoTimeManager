@@ -1,0 +1,181 @@
+/* ─── Mobile Top Bar ────────────────────────────────────────────────────────── */
+
+.mobile-topbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--line);
+}
+
+.mobile-topbar__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.mobile-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mobile-topbar__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-2);
+    color: var(--text-1);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mobile-topbar__icon-btn:hover {
+    border-color: var(--ember);
+    color: var(--ember);
+}
+
+.mobile-topbar__search-input.input-shell {
+    height: 38px;
+}
+
+/* ─── Mobile Pill Tabs ──────────────────────────────────────────────────────── */
+
+.mobile-tabs {
+    gap: 8px;
+    padding: 0 14px 10px;
+    overflow-x: auto;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+}
+
+.mobile-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-tabs__item {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-2);
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.mobile-tabs__item--active {
+    border-color: var(--ember);
+    background: color-mix(in srgb, var(--ember) 10%, var(--bg-2));
+    color: var(--text-0);
+}
+
+.mobile-tabs__badge {
+    display: flex;
+    min-width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 1px solid var(--line-2);
+    border-radius: 9px;
+    background: var(--bg-3);
+    color: var(--text-2);
+    font-size: 10.5px;
+    font-weight: 600;
+}
+
+.mobile-tabs__item--active .mobile-tabs__badge {
+    border-color: rgba(255, 106, 43, 0.3);
+    background: rgba(255, 106, 43, 0.12);
+    color: var(--ember-2);
+}
+
+/* ─── Mobile Drawer ─────────────────────────────────────────────────────────── */
+
+.mobile-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    animation: mobile-drawer-fade-in 0.2s ease;
+}
+
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 201;
+    width: min(300px, 85vw);
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    background: var(--bg-1);
+    border-left: 1px solid var(--line);
+    overflow-y: auto;
+    animation: mobile-drawer-slide-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-drawer__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 14px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+}
+
+.mobile-drawer__user-card {
+    flex: 1;
+    min-width: 0;
+}
+
+.mobile-drawer__close {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-2);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mobile-drawer__close:hover {
+    border-color: var(--ember);
+    color: var(--ember);
+}
+
+.mobile-drawer__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+@keyframes mobile-drawer-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes mobile-drawer-slide-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}

@@ -1,0 +1,18 @@
+@inherits BaseComponent
+
+<div class="user-card @AdditionalCssClass">
+    <div class="user-card__avatar">
+        @if (!string.IsNullOrWhiteSpace(User?.Avatar))
+        {
+            <img src="@User.Avatar" alt="@Localizer["Avatar"]" />
+        }
+        else
+        {
+            <div class="avatar-initials">@GetInitial()</div>
+        }
+    </div>
+    <div class="user-card__info">
+        <span class="user-card__name">@GetDisplayName()</span>
+        <span class="user-card__meta">@GetSecondaryLine()</span>
+    </div>
+</div>

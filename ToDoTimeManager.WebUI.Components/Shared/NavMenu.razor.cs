@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 using ToDoTimeManager.Shared.Models;
 using ToDoTimeManager.WebUI.Components.Modals;
 using ToDoTimeManager.WebUI.Services.Helpers.Modal;
@@ -11,17 +10,17 @@ namespace ToDoTimeManager.WebUI.Components.Shared;
 
 public partial class NavMenu : IAsyncDisposable
 {
-    private bool IsOpenProfileDropdown { get; set; }
     [Inject] private UserService UserService { get; set; } = null!;
+    [Inject] private StatisticService StatisticService { get; set; } = null!;
     [Inject] private ISignalRService SignalRService { get; set; } = null!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private IModalService ModalService { get; set; } = null!;
 
-    public string SearchToDoValue { get; set; } = string.Empty;
-
-    private NavBarUserModel? _navBarUser;
-    private IDisposable?     _signalRSubscription;
+    private NavBarUserModel?   _navBarUser;
+    private NavBarCountsModel? _counts;
+    private bool               _isDrawerOpen;
+    private IDisposable?       _userUpdatedSubscription;
+    private IDisposable?       _countsUpdatedSubscription;
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,44 +28,36 @@ public partial class NavMenu : IAsyncDisposable
         var isAuth    = authState.User.Identity?.IsAuthenticated == true;
         if (!isAuth) return;
 
-        _navBarUser          = await UserService.GetNavBarInfo();
-        _signalRSubscription = SignalRService.On<NavBarUserModel>("UserUpdated", updated =>
+        _navBarUser = await UserService.GetNavBarInfo();
+        _counts     = await StatisticService.GetNavBarCounts();
+
+        _userUpdatedSubscription = SignalRService.On<NavBarUserModel>("UserUpdated", updated =>
         {
             _navBarUser = updated;
             InvokeAsync(StateHasChanged);
         });
+
+        _countsUpdatedSubscription = SignalRService.On<NavBarCountsModel>("NavBarCountsUpdated", updated =>
+        {
+            _counts = updated;
+            InvokeAsync(StateHasChanged);
+        });
     }
 
-    private string GetDisplayName()  => !string.IsNullOrWhiteSpace(_navBarUser?.Name)
-                                            ? _navBarUser.Name
-                                            : _navBarUser?.Username ?? string.Empty;
-    private string GetDisplayUserNameRole()  => "@" + _navBarUser?.Username + " · " + _navBarUser?.Role;
-    private string GetInitial()      => _navBarUser?.Name?.Length > 0
-                                            ? _navBarUser.Name[..1].ToUpperInvariant()
-                                            : "?";
-
-    private Task OnEnterPressed()
+    private void ToggleDrawer()
     {
-        // TODO: implement global search navigation
-        return Task.CompletedTask;
+        _isDrawerOpen = !_isDrawerOpen;
     }
 
-    private void SwitchProfileDropdownState()
+    private void CloseDrawer()
     {
-        IsOpenProfileDropdown = !IsOpenProfileDropdown;
-        InvokeAsync(StateHasChanged);
-    }
-
-    private Task OnProfileClicked()
-    {
-        IsOpenProfileDropdown = false;
-        NavigationManager.NavigateTo("/profile");
-        return Task.CompletedTask;
+        _isDrawerOpen = false;
     }
 
     public async ValueTask DisposeAsync()
     {
-        _signalRSubscription?.Dispose();
+        _userUpdatedSubscription?.Dispose();
+        _countsUpdatedSubscription?.Dispose();
         await ValueTask.CompletedTask;
     }
 
