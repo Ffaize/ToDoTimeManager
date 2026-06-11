@@ -13,9 +13,9 @@
     justify-content: center;
     width: 36px;
     height: 36px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--glass-border);
     border-radius: 8px;
-    background: var(--bg-2);
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-1);
     cursor: pointer;
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -34,7 +34,7 @@
     height: 8px;
     border-radius: 50%;
     background: var(--ember);
-    box-shadow: 0 0 0 2px var(--bg-2), 0 0 6px var(--ember-glow);
+    box-shadow: 0 0 0 2px var(--bg-1), 0 0 6px var(--ember-glow);
 }
 
 .notifications-bell__panel {

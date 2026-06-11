@@ -34,4 +34,9 @@
     --tf-error-2: #a3261c;
     --tf-error-accent: #ff7a5e;
     --tf-error-glow: rgba(232, 69, 50, 0.5);
+    /******************************************************************************************/
+    /* Glass surfaces — frosted panels, matches the auth page card */
+    --glass-bg: linear-gradient(160deg, rgba(28, 33, 41, 0.78) 0%, rgba(17, 19, 23, 0.78) 100%);
+    --glass-border: rgba(255, 255, 255, 0.07);
+    --glass-blur: 14px;
 }

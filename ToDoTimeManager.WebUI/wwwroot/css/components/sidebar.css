@@ -6,8 +6,11 @@
     flex-direction: column;
     gap: 18px;
     padding: 18px 14px;
-    background: var(--bg-1);
-    border-right: 1px solid var(--line);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.02) inset;
     overflow-y: auto;
 }
 
@@ -42,7 +45,7 @@
     align-items: center;
     gap: 8px;
     padding-top: 12px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--glass-border);
 }
 
 .sidebar__user-card {
@@ -57,9 +60,9 @@
     justify-content: center;
     width: 36px;
     height: 36px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--glass-border);
     border-radius: 8px;
-    background: var(--bg-2);
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-2);
     cursor: pointer;
     transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
