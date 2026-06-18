@@ -51,6 +51,7 @@ public class Program
 
         app.MapDefaultEndpoints();
         app.UseMiddleware<GlobalExceptionHandler>();
+        app.UseStaticFiles();
         app.UseHttpsRedirection();
         app.UseRateLimiter();
         app.UseAuthentication();

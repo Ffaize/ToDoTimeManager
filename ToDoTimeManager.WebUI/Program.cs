@@ -27,6 +27,7 @@ public class Program
         builder.Services.AddServerSideBlazor();
         builder.Services.AddLocalization();
         builder.Services.AddServerSideBlazor()
+            .AddHubOptions(o => o.MaximumReceiveMessageSize = 100 * 1024 * 1024)
             .AddCircuitOptions(options => { options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromDays(1); });
 
         builder.Services.AddSingleton<IToastsService, ToastsService>();
@@ -43,6 +44,7 @@ public class Program
         builder.Services.AddScoped<TimeLogsService>();
         builder.Services.AddScoped<TeamsService>();
         builder.Services.AddScoped<ProjectsService>();
+        builder.Services.AddScoped<FilesService>();
 
         builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
